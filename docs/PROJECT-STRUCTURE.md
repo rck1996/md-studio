@@ -113,13 +113,12 @@ Sistema CSS por capas.
 
 - `index.css`: entrypoint unico.
 - `tokens.css`: tokens y variables compartidas.
-- `legacy.css`: base visual actual de la app.
-- `workspace-layout.css`: layout principal.
-- `panel-states.css`: estados de paneles.
-- `controls.css`: estados de controles.
+- `base.css`: reset y controles compartidos.
+- `app-shell.css`: layout principal y estados de vista.
+- `panels.css`: navegacion y paneles laterales.
+- `editor-preview.css`: editor, preview y modos de lectura.
 - `overlays.css`: overlays y dialogs.
-- `reading-modes.css`: presentation mode y preferencias de lectura.
-- `mobile.css`: responsive final.
+- `responsive.css`: tablet, mobile y reduced motion.
 
 ## Como leer el proyecto
 
@@ -133,6 +132,6 @@ Sistema CSS por capas.
 ## Estado actual
 
 La estructura ya no esta concentrada en un unico bootstrap.
-Todavia existe un `legacy.css` grande y un `app-runtime.js` amplio, pero ambos ya estan rodeados por modulos mas claros y con responsabilidades mejor ubicadas.
+`app-runtime.js` sigue siendo el orquestador mas amplio, pero dominio, editor, persistencia, paneles y estilos ya tienen limites reconocibles.
 
 La regla para seguir avanzando es simple: cuando aparezca una nueva pieza importante, debe entrar en la carpeta que ya representa su responsabilidad, no volver al runtime o al CSS base por defecto.

@@ -47,7 +47,7 @@ Objetivo: cerrar estabilidad operativa y dejar la experiencia consistente en des
 
 ### Riesgos a vigilar
 
-- Reglas legacy de CSS que sigan peleando con `mobile.css`.
+- Reglas de componentes que contradigan los tokens o `responsive.css`.
 - Estados de `data-view`, `data-side-visible` y `data-side-panel` que se contradigan entre desktop y mobile.
 - Cambios visuales correctos en local pero mal servidos por Cloudflare si la configuracion del proyecto no queda fija.
 ## Fase 4

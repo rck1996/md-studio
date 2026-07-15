@@ -261,9 +261,10 @@ const syncResponsiveWorkspace = ({ preserveView = true } = {}) => {
     if (workspace.dataset.view === "editor" && workspace.dataset.sidePanel === "outline") {
       setSidePanel("documents");
     }
-    if (!storageGet(insertPanelStorageKey)) {
-      setSidePanelVisible(false);
-    }
+    setSidePanelVisible(false, { persist: false });
+  } else {
+    const storedVisibility = storageGet(insertPanelStorageKey);
+    setSidePanelVisible(storedVisibility ? storedVisibility !== "false" : true, { persist: false });
   }
 
   updateStickyOffsets();
@@ -1208,13 +1209,13 @@ const setSidePanel = (panel) => {
   });
 };
 
-const setSidePanelVisible = (visible) => {
+const setSidePanelVisible = (visible, { persist = !mobileViewMedia.matches } = {}) => {
   workspace.dataset.sideVisible = String(visible);
   workspace.dataset.insertVisible = String(visible);
   hideSidePanelButton.setAttribute("aria-label", visible ? "Ocultar navegacion" : "Mostrar navegacion");
   hideSidePanelButton.setAttribute("title", visible ? "Ocultar navegacion" : "Mostrar navegacion");
   hideSidePanelButton.dataset.tooltip = visible ? "Ocultar navegacion" : "Mostrar navegacion";
-  storageSet(insertPanelStorageKey, String(visible));
+  if (persist) storageSet(insertPanelStorageKey, String(visible));
 };
 
 sidePanelButtons.forEach((button) => {

@@ -31,7 +31,7 @@
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 900px) {
   :root {
     --workspace-pad: 8px;
     --panel-gap: 10px;
@@ -164,7 +164,18 @@
     max-height: var(--mobile-nav-height);
     background: var(--surface-elevated);
     box-shadow: var(--shadow-lg);
-    backdrop-filter: blur(18px);
+  }
+
+  .side-tabs button::after {
+    left: 50%;
+    top: auto;
+    bottom: calc(100% + 10px);
+    transform: translate(-50%, 4px);
+  }
+
+  .side-tabs button:hover::after,
+  .side-tabs button:focus-visible::after {
+    transform: translate(-50%, 0);
   }
 
   .side-tablist {

@@ -104,16 +104,15 @@ El sistema de estilos ahora entra por `src/styles/index.css` y usa capas ordenad
 
 Orden actual:
 
-- `tokens.css`: punto de entrada para variables y tokens compartidos.
-- `legacy.css`: base visual actual de la app.
-- `workspace-layout.css`: matriz de layout principal.
-- `panel-states.css`: visibilidad y comportamiento de paneles laterales.
-- `controls.css`: estados de controles y variantes dark.
-- `overlays.css`: overlays y dialogs.
-- `reading-modes.css`: presentation mode y preferencias de lectura.
-- `mobile.css`: overrides responsive finales.
+- `tokens.css`: colores, tipografia, radios, sombras y medidas compartidas.
+- `base.css`: reset y controles reutilizables.
+- `app-shell.css`: workspace, topbar, layout y estados de vista.
+- `panels.css`: navegacion, explorador, insertar, indice e inspector.
+- `editor-preview.css`: CodeMirror, preview y modos de lectura.
+- `overlays.css`: menus, overlays y dialogs.
+- `responsive.css`: tablet, mobile y reduced motion.
 
-Esto resuelve un problema real del proyecto: antes el responsive, el layout y los estados de panel competian dentro de un unico archivo gigante.
+El lenguaje visual neobrutalista se define principalmente mediante tokens. Los componentes consumen esos tokens y no deben introducir variantes aisladas de bordes, radios o sombras sin una necesidad funcional.
 
 ## Flujo principal
 
@@ -132,7 +131,7 @@ Hoy existe separacion real entre runtime, dominio, editor, UI y estilos.
 Lo que aun queda por seguir reduciendo:
 
 - extraer mas casos de uso desde `app-runtime.js`;
-- seguir adelgazando `legacy.css` moviendo componentes finales a archivos dedicados;
+- separar render y eventos del explorador cuando aparezca una nueva responsabilidad real;
 - mantener la regla de una sola fuente por responsabilidad.
 
 ## Direccion recomendada

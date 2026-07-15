@@ -9,8 +9,7 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgba(15, 20, 26, 0.28);
-  backdrop-filter: blur(12px);
+  background: rgba(9, 15, 29, 0.58);
 }
 
 .help-dialog,
@@ -24,7 +23,7 @@
   width: min(960px, calc(100vw - 32px));
   max-height: min(88vh, 960px);
   overflow: hidden;
-  border: 1px solid var(--border);
+  border: 2px solid var(--border-strong);
   border-radius: var(--radius-xl);
   padding: 18px;
   background: var(--surface);
@@ -79,7 +78,7 @@
   display: grid;
   align-content: start;
   gap: 14px;
-  border: 1px solid var(--border);
+  border: 2px solid var(--border-strong);
   border-radius: var(--radius-lg);
   padding: 16px;
   background: var(--surface-soft);
@@ -155,6 +154,7 @@
   min-height: 190px;
   padding: 15px;
   text-align: left;
+  box-shadow: var(--shadow-sm);
 }
 
 .template-card strong {
