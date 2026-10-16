@@ -64,6 +64,7 @@ import { renderHistoryPanelView } from "../ui/history-panel.js";
 import { renderNotesPanel } from "../ui/notes-panel.js";
 import { renderOutlinePanel } from "../ui/outline-panel.js";
 import { createSlashMenuController } from "../ui/slash-menu.js";
+import { bindToolboxFilter } from "../ui/toolbox-filter.js";
 import { createCodeMirrorEditor } from "../editor/codemirror.js";
 import {
   expandStoredTokens,
@@ -102,6 +103,7 @@ import {
 } from "../domain/folders.js";
 import {
   actionsMenu,
+  appFeedback,
   assetList,
   assetPreviewBody,
   assetPreviewOverlay,
@@ -137,10 +139,8 @@ import {
   newFolderButton,
   notesList,
   openGuideButton,
-  openFocusModeButton,
   openPreferencesButton,
   openSearchButton,
-  openThemeButton,
   openTemplatesButton,
   outlineList,
   personalNotice,
@@ -164,6 +164,9 @@ import {
   themeToggleButton,
   togglePresentationButton,
   toolbarButtons,
+  toolboxEmpty,
+  toolboxGroups,
+  toolboxSearch,
   unfoldAllSectionsButton,
   validationList,
   viewButtons,
@@ -177,10 +180,23 @@ import { documentTemplates } from "./templates.js";
 import { createPreviewRenderer } from "./preview-renderer.js";
 
 let feedbackTimer;
+let appFeedbackTimer;
 let saveTimer;
 let activeDocumentId;
 let editor;
 let previewRenderer;
+
+const showAppFeedback = ({ message, tone = "success" }) => {
+  clearTimeout(appFeedbackTimer);
+  appFeedback.textContent = message;
+  appFeedback.dataset.tone = tone;
+  appFeedback.hidden = false;
+  appFeedbackTimer = setTimeout(() => {
+    appFeedback.hidden = true;
+  }, 2400);
+};
+
+const toolboxFilter = bindToolboxFilter({ input: toolboxSearch, groups: toolboxGroups, emptyState: toolboxEmpty });
 let documentWorkflow;
 let editorCommands;
 let explorerEditState = null;
@@ -321,6 +337,12 @@ const renameImageAsset = (assetId) => {
 };
 
 const removeImageAsset = (assetId) => {
+  const references = countImageReferences(getMarkdown(), assetId);
+  const usageMessage = references
+    ? ` Se usa ${references} ${references === 1 ? "vez" : "veces"} en el documento actual.`
+    : "";
+  const confirmed = window.confirm(`Quitar este recurso?${usageMessage}`);
+  if (!confirmed) return;
   removeImageAssetEntity(assetId);
   renderAssets();
 };
@@ -749,9 +771,10 @@ const setPreferencesVisible = (visible) => {
 const applyTheme = (theme, { persist = true } = {}) => {
   workspace.dataset.theme = theme;
   themeToggleButton.textContent = theme === "dark" ? "Claro" : "Oscuro";
-  if (openThemeButton) {
-    openThemeButton.textContent = theme === "dark" ? "Cambiar a claro" : "Cambiar a oscuro";
-  }
+  themeToggleButton.setAttribute("aria-pressed", String(theme === "dark"));
+  const themeActionLabel = theme === "dark" ? "Cambiar a tema claro" : "Cambiar a tema oscuro";
+  themeToggleButton.setAttribute("aria-label", themeActionLabel);
+  themeToggleButton.title = themeActionLabel;
   if (persist) storageSet(themeKey, theme);
   if (editor) {
     editor.dispatch({
@@ -780,7 +803,7 @@ const setPresentationMode = (enabled) => {
     workspace.dataset.view = storageGet(previousViewKey) || "split";
   }
 
-  viewButtons.forEach((button) => button.classList.toggle("is-selected", button.dataset.view === workspace.dataset.view));
+  syncViewButtons();
   refreshEditorLayout();
 };
 
@@ -1212,6 +1235,7 @@ const setSidePanel = (panel) => {
 const setSidePanelVisible = (visible, { persist = !mobileViewMedia.matches } = {}) => {
   workspace.dataset.sideVisible = String(visible);
   workspace.dataset.insertVisible = String(visible);
+  hideSidePanelButton.setAttribute("aria-expanded", String(visible));
   hideSidePanelButton.setAttribute("aria-label", visible ? "Ocultar navegacion" : "Mostrar navegacion");
   hideSidePanelButton.setAttribute("title", visible ? "Ocultar navegacion" : "Mostrar navegacion");
   hideSidePanelButton.dataset.tooltip = visible ? "Ocultar navegacion" : "Mostrar navegacion";
@@ -1269,6 +1293,7 @@ const setInsertPanelVisible = (visible) => {
 
 insertPanel?.addEventListener("click", (event) => {
   if (event.target.closest("[data-format]")) {
+    toolboxFilter.reset();
     closeMobileSidePanel();
   }
 });
@@ -1280,16 +1305,21 @@ const refreshEditorLayout = () => {
   });
 };
 const syncViewButtons = () => {
-  viewButtons.forEach((button) => button.classList.toggle("is-selected", button.dataset.view === workspace.dataset.view));
+  viewButtons.forEach((button) => {
+    const selected = button.dataset.view === workspace.dataset.view;
+    button.classList.toggle("is-selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
 };
 const getDefaultWorkspaceView = () => (mobileViewMedia.matches ? "editor" : "split");
 
 const setFocusMode = (enabled) => {
   workspace.dataset.focus = String(enabled);
   focusModeButton.textContent = enabled ? "Salir foco" : "Foco";
-  if (openFocusModeButton) {
-    openFocusModeButton.textContent = enabled ? "Salir de foco" : "Modo foco";
-  }
+  focusModeButton.setAttribute("aria-pressed", String(enabled));
+  const focusActionLabel = enabled ? "Salir del modo foco" : "Activar modo foco";
+  focusModeButton.setAttribute("aria-label", focusActionLabel);
+  focusModeButton.title = focusActionLabel;
   storageSet(focusKey, String(enabled));
   closeSlashMenu();
   if (enabled) {
@@ -1301,6 +1331,7 @@ const setFocusMode = (enabled) => {
 
 const setInspectorVisible = (visible) => {
   workspace.dataset.inspectorVisible = String(visible);
+  inspectorToggleButton.setAttribute("aria-expanded", String(visible));
   storageSet(inspectorStorageKey, String(visible));
 };
 
@@ -1323,8 +1354,9 @@ bindFileActionButtons({
   getAssetEntries: getImageAssetExportEntries,
   expandMarkdownTokens: (markdown) => expandStoredTokens(markdown, readMarkdownToken),
   slugify,
-  onComplete: () => {
+  onComplete: (feedback) => {
     actionsMenu.open = false;
+    showAppFeedback(feedback);
   },
 });
 
@@ -1370,11 +1402,9 @@ bindWorkspaceEvents({
   preferenceThemeInput,
   preview,
   openGuideButton,
-  openFocusModeButton,
   closeGuideButton,
   closeHistoryButton,
   openSearchButton,
-  openThemeButton,
   foldAllSectionsButton,
   unfoldAllSectionsButton,
   slashMenu,

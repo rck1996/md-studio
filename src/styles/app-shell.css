@@ -124,6 +124,13 @@
   box-shadow: var(--shadow-sm);
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .view-switcher button:not(.is-selected):hover {
+    color: var(--text-strong);
+    background: var(--surface);
+  }
+}
+
 .document-actions {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -185,6 +192,11 @@
   background: var(--warning-soft);
 }
 
+.inspector-toggle[aria-expanded="true"] {
+  border-color: var(--border-strong);
+  box-shadow: inset 3px 0 0 var(--border-strong);
+}
+
 .button-cluster {
   display: flex;
   align-items: center;
@@ -203,6 +215,12 @@
 
 .actions-menu summary::-webkit-details-marker {
   display: none;
+}
+
+.actions-menu[open] summary {
+  color: var(--accent-contrast);
+  background: var(--accent);
+  box-shadow: none;
 }
 
 .actions-menu-content {
@@ -228,7 +246,7 @@
   font-size: 11px;
   font-weight: 850;
   letter-spacing: 0;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .actions-menu-content button {
@@ -246,6 +264,27 @@
 
 .actions-menu-content .danger-action {
   color: var(--danger);
+}
+
+.app-feedback {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 120;
+  max-width: min(360px, calc(100vw - 32px));
+  border: 2px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  color: var(--text-strong);
+  background: var(--success-soft);
+  box-shadow: var(--shadow-md);
+  font-size: 13px;
+  font-weight: 780;
+}
+
+.app-feedback[data-tone="error"] {
+  color: var(--danger);
+  background: var(--danger-soft);
 }
 
 .layout {

@@ -12,39 +12,37 @@
         <div class="personal-notice" id="personal-notice" role="note">
           <div class="personal-notice-copy">
             <strong>Herramienta personal</strong>
-            <span>Los documentos se guardan localmente en este navegador. No hay sync ni respaldo remoto.</span>
+            <span>Tus documentos se guardan solo en este navegador, sin cuenta ni sincronizacion.</span>
           </div>
-          <button class="panel-toggle" id="dismiss-notice" type="button">Ocultar</button>
+          <button class="panel-toggle" id="dismiss-notice" type="button" aria-label="Ocultar aviso" title="Ocultar aviso">Ocultar</button>
         </div>
         <header class="topbar">
           <div class="brand" aria-label="MarkEDdown">
-            <img class="brand-mark" src="/assets/logo/markeddown-icon.svg" alt="MarkEDdown" />
+            <img class="brand-mark" src="/assets/logo/markeddown-icon.svg" alt="MarkEDdown" width="42" height="42" />
             <div class="brand-copy">
               <p class="eyebrow">Editor Markdown</p>
               <h1>Mark<span>ED</span>down</h1>
             </div>
           </div>
           <div class="view-switcher" role="group" aria-label="Modo de vista">
-            <button class="is-selected" type="button" data-view="split">Dividido</button>
-            <button type="button" data-view="editor">Editor</button>
-            <button type="button" data-view="preview">Vista previa</button>
+            <button class="is-selected" type="button" data-view="split" aria-pressed="true">Dividido</button>
+            <button type="button" data-view="editor" aria-pressed="false">Editor</button>
+            <button type="button" data-view="preview" aria-pressed="false">Vista previa</button>
           </div>
           <div class="document-actions">
             <div class="status-cluster">
               <span id="document-stats">0 palabras</span>
-              <span class="save-status" id="save-status">Guardado</span>
-              <button class="inspector-toggle" id="inspector-toggle" type="button">Sin alertas</button>
+              <span class="save-status" id="save-status" role="status" aria-live="polite">Guardado</span>
+              <button class="inspector-toggle" id="inspector-toggle" type="button" aria-controls="inspector-panel" aria-expanded="false">Sin alertas</button>
             </div>
             <div class="button-cluster">
-              <button class="secondary-button" id="focus-mode" type="button">Foco</button>
-              <button class="secondary-button" id="theme-toggle" type="button">Oscuro</button>
+              <button class="secondary-button" id="focus-mode" type="button" aria-label="Activar modo foco" aria-pressed="false" title="Activar modo foco">Foco</button>
+              <button class="secondary-button" id="theme-toggle" type="button" aria-label="Cambiar a tema oscuro" aria-pressed="false" title="Cambiar a tema oscuro">Oscuro</button>
               <details class="actions-menu">
-                <summary class="secondary-button" aria-label="Mas acciones">Mas</summary>
+                <summary class="secondary-button" aria-label="Mas acciones" title="Mas acciones">Mas</summary>
                 <div class="actions-menu-content">
                   <span>Espacio</span>
                   <button class="quick-action" id="open-preferences" type="button">Preferencias</button>
-                  <button class="quick-action" id="theme-toggle-menu" type="button">Tema</button>
-                  <button class="quick-action" id="focus-mode-menu" type="button">Modo foco</button>
                   <span>Aprender</span>
                   <button id="open-guide" type="button">Atajos y ayuda</button>
                   <span>Editar</span>
@@ -84,7 +82,7 @@
                 <span class="nav-label">Indice</span>
               </button>
             </div>
-            <button class="side-hide" id="hide-side-panel" type="button" aria-label="Ocultar navegacion" data-tooltip="Ocultar navegacion" title="Ocultar navegacion">
+            <button class="side-hide" id="hide-side-panel" type="button" aria-label="Ocultar navegacion" aria-controls="documents-panel insert-panel outline-panel" aria-expanded="true" data-tooltip="Ocultar navegacion" title="Ocultar navegacion">
               <span class="nav-icon nav-icon-collapse" aria-hidden="true"></span>
               <span class="nav-label">Ocultar</span>
             </button>
@@ -94,16 +92,16 @@
             <div class="panel-header compact-header">
               <span>Explorador</span>
               <div class="document-header-actions">
-                <button class="panel-toggle" id="new-folder" type="button">Carpeta</button>
-                <button class="panel-toggle" id="new-document" type="button">Nuevo</button>
+                <button class="panel-toggle" id="new-folder" type="button" aria-label="Nueva carpeta" title="Nueva carpeta">Carpeta</button>
+                <button class="panel-toggle" id="new-document" type="button" aria-label="Nuevo documento" title="Nuevo documento">Nuevo</button>
               </div>
             </div>
             <div class="document-tools">
-              <input id="document-search" type="search" placeholder="Buscar" aria-label="Buscar documentos">
+              <input id="document-search" name="document-search" type="search" placeholder="Buscar" aria-label="Buscar documentos" autocomplete="off">
               <div class="document-filters" aria-label="Filtros del explorador">
-                <button class="is-selected" type="button" data-explorer-filter="all" aria-pressed="true">Todo</button>
-                <button type="button" data-explorer-filter="favorites" aria-pressed="false">Favoritos</button>
-                <button type="button" data-explorer-filter="recent" aria-pressed="false">Recientes</button>
+                <button class="is-selected" type="button" data-explorer-filter="all" aria-label="Todos los documentos" aria-pressed="true" title="Todos los documentos">Todo</button>
+                <button type="button" data-explorer-filter="favorites" aria-label="Documentos favoritos" aria-pressed="false" title="Documentos favoritos">Favoritos</button>
+                <button type="button" data-explorer-filter="recent" aria-label="Documentos recientes" aria-pressed="false" title="Documentos recientes">Recientes</button>
               </div>
             </div>
             <div class="document-list" id="document-list"></div>
@@ -114,6 +112,10 @@
               <span>Insertar</span>
               <span>Bloques listos con sintaxis y ejemplo</span>
             </div>
+            <label class="toolbox-search" for="toolbox-search">
+              <span>Buscar bloque</span>
+              <input id="toolbox-search" name="toolbox-search" type="search" placeholder="Titulo, lista, tabla" autocomplete="off">
+            </label>
             <section class="tool-group">
               <h2>Estructura</h2>
               <div class="tool-grid">
@@ -164,13 +166,14 @@
                 <button type="button" data-format="mermaid"><span class="tool-copy"><strong>Diagrama</strong><small>Genera un bloque Mermaid para flujos o mapas.</small></span><span class="tool-meta"><kbd>mer</kbd><span class="tool-preview tool-preview-flow"><span></span><span></span><span></span></span></span></button>
               </div>
             </section>
+            <p class="toolbox-empty" id="toolbox-empty" role="status" hidden>No hay bloques que coincidan.</p>
           </aside>
           <aside class="outline-panel" id="outline-panel" role="tabpanel" aria-labelledby="side-tab-outline">
             <div class="panel-header compact-header">
               <span>Indice</span>
               <div class="outline-actions">
-                <button class="panel-toggle" id="fold-all-sections" type="button">Plegar</button>
-                <button class="panel-toggle" id="unfold-all-sections" type="button">Abrir</button>
+                <button class="panel-toggle" id="fold-all-sections" type="button" aria-label="Plegar secciones" title="Plegar secciones">Plegar</button>
+                <button class="panel-toggle" id="unfold-all-sections" type="button" aria-label="Abrir secciones" title="Abrir secciones">Abrir</button>
               </div>
             </div>
             <div class="outline-list" id="outline-list"></div>
@@ -381,6 +384,7 @@ Escribe aqui tu contenido. Usa los botones de la izquierda si no recuerdas la si
             </div>
           </section>
         </div>
+        <div class="app-feedback" id="app-feedback" role="status" aria-live="polite" aria-atomic="true" hidden></div>
       </section>
     </main>
     <script type="module" src="/src/main.js"></script>

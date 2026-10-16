@@ -152,6 +152,11 @@
   overflow: hidden;
 }
 
+.inspector-panel {
+  height: auto;
+  max-height: none;
+}
+
 .workspace[data-side-panel="documents"] .toolbox,
 .workspace[data-side-panel="documents"] .outline-panel,
 .workspace[data-side-panel="insert"] .documents-panel,
@@ -172,6 +177,51 @@
   padding: 12px;
   color: var(--muted);
   background: color-mix(in srgb, var(--surface) 82%, var(--surface-soft));
+  font-size: 12px;
+}
+
+.toolbox-title {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: var(--surface);
+}
+
+.toolbox-search {
+  position: sticky;
+  top: 42px;
+  z-index: 2;
+  display: grid;
+  gap: 5px;
+  padding: 9px 10px 10px;
+  background: var(--surface);
+}
+
+.toolbox-search span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.toolbox-search input {
+  width: 100%;
+  min-height: 44px;
+  border: 2px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 0 10px;
+  color: var(--text);
+  background: var(--surface-soft);
+}
+
+.toolbox-empty {
+  margin: 10px;
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 18px 12px;
+  color: var(--muted-strong);
+  background: var(--surface-soft);
+  text-align: center;
   font-size: 12px;
 }
 
@@ -245,6 +295,7 @@
 .document-filters button.is-selected {
   color: var(--text-strong);
   background: var(--surface);
+  border-color: var(--border-strong);
   box-shadow: var(--shadow-sm);
 }
 
@@ -738,6 +789,10 @@
 .empty-state.success {
   color: var(--success);
   background: var(--success-soft);
+}
+
+.trash-actions .danger-action {
+  color: var(--danger);
 }
 
 /* Explorer refinement */

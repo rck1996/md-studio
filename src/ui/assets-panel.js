@@ -116,12 +116,14 @@ export const renderAssetsPanel = ({
     up.type = "button";
     up.textContent = "↑";
     up.title = "Mover arriba";
+    up.setAttribute("aria-label", "Mover arriba");
     up.addEventListener("click", () => onMove(id, -1));
 
     const down = document.createElement("button");
     down.type = "button";
     down.textContent = "↓";
     down.title = "Mover abajo";
+    down.setAttribute("aria-label", "Mover abajo");
     down.addEventListener("click", () => onMove(id, 1));
 
     const remove = document.createElement("button");

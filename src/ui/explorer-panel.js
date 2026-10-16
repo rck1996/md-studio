@@ -448,7 +448,10 @@ export const renderExplorerPanel = ({
       const purge = document.createElement("button");
       purge.type = "button";
       purge.textContent = "Borrar";
+      purge.className = "danger-action";
       purge.addEventListener("click", () => {
+        const confirmed = window.confirm(`Borrar definitivamente la carpeta "${folder.name}" y sus documentos?`);
+        if (!confirmed) return;
         onPurgeFolder(folder.id);
         onRender();
       });
@@ -475,7 +478,10 @@ export const renderExplorerPanel = ({
       const purge = document.createElement("button");
       purge.type = "button";
       purge.textContent = "Borrar";
+      purge.className = "danger-action";
       purge.addEventListener("click", () => {
+        const confirmed = window.confirm(`Borrar definitivamente el documento "${doc.title}"?`);
+        if (!confirmed) return;
         onPurgeDocument(doc.id);
         onRender();
       });

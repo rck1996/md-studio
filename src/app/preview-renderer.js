@@ -189,7 +189,9 @@ export const createPreviewRenderer = ({
     if (/!\[\s*]\([^)]+\)/.test(markdown)) issues.push("Hay imagenes sin texto alternativo.");
     if (/^\|.+\|$/m.test(markdown) && !/^\|\s*-+/.test(markdown)) issues.push("Puede haber una tabla sin fila separadora.");
 
-    inspectorToggleButton.textContent = issues.length ? `${issues.length} alertas` : "Sin alertas";
+    inspectorToggleButton.textContent = issues.length
+      ? `${issues.length} ${issues.length === 1 ? "alerta" : "alertas"}`
+      : "Sin alertas";
     inspectorToggleButton.classList.toggle("has-issues", issues.length > 0);
     validationList.innerHTML = issues.length ? "" : '<p class="empty-state success">Sin alertas.</p>';
     issues.forEach((issue) => {

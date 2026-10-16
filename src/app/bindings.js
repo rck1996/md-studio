@@ -10,8 +10,6 @@ export const bindWorkspaceEvents = ({
   closeInspectorButton,
   themeToggleButton,
   openPreferencesButton,
-  openThemeButton,
-  openFocusModeButton,
   closePreferencesButton,
   openTemplatesButton,
   closeTemplatesButton,
@@ -74,6 +72,8 @@ export const bindWorkspaceEvents = ({
   };
 
   clearButton.addEventListener("click", () => {
+    const confirmed = window.confirm("Limpiar todo el contenido del documento actual? Esta accion no se puede deshacer.");
+    if (!confirmed) return;
     setMarkdown("# Nuevo documento\n\nEmpieza a escribir aqui.");
     actionsMenu.open = false;
   });
@@ -115,17 +115,6 @@ export const bindWorkspaceEvents = ({
 
   openPreferencesButton.addEventListener("click", () => {
     setPreferencesVisible(true);
-  });
-
-  openThemeButton?.addEventListener("click", () => {
-    const next = workspace.dataset.theme === "dark" ? "light" : "dark";
-    applyTheme(next);
-    actionsMenu.open = false;
-  });
-
-  openFocusModeButton?.addEventListener("click", () => {
-    setFocusMode(workspace.dataset.focus !== "true");
-    actionsMenu.open = false;
   });
 
   closePreferencesButton.addEventListener("click", () => {
