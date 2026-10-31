@@ -731,7 +731,7 @@ const syncPreferenceInputs = (preferences = getPreferences()) => {
   preferenceDensityInput.value = preferences.density;
   preferenceTypographyInput.value = preferences.typography;
   preferenceWrapInput.value = preferences.wrap;
-  preferenceThemeInput.value = workspace.dataset.theme || storageGet(themeKey) || "light";
+  preferenceThemeInput.value = workspace.dataset.theme || storageGet(themeKey) || "dark";
 };
 
 const applyPreferences = (preferences, { persist = true } = {}) => {
@@ -1167,7 +1167,7 @@ const createEditor = (markdownText) => {
     parent: editorHost,
     themeCompartment,
     wrapCompartment,
-    initialThemeExtension: getThemeExtension(storageGet(themeKey) === "dark" ? "dark" : "light"),
+    initialThemeExtension: getThemeExtension(storageGet(themeKey) === "light" ? "light" : "dark"),
     initialWrapExtension: getWrapExtension(getPreferences().wrap),
     getHeadingFoldRange,
     getImageTokenLabel: getCompactImageTokenLabel,
@@ -1541,7 +1541,7 @@ setExplorerFilter(getExplorerFilter());
 setInspectorVisible(storageGet(inspectorStorageKey) === "true");
 applyPreferences(getPreferences(), { persist: false });
 setFocusMode(storageGet(focusKey) === "true");
-applyTheme(storageGet(themeKey) || "light", { persist: false });
+applyTheme(storageGet(themeKey) || "dark", { persist: false });
 setPresentationMode(storageGet(presentationKey) === "true");
 renderDocuments();
 renderMarkdown(getMarkdown());
