@@ -546,8 +546,9 @@ body {
   .workspace[data-view="editor"]:not([data-focus="true"]) .layout {
     grid-template-columns: minmax(235px,var(--side-width)) minmax(0,1fr);
   }
-  .workspace[data-view="preview"] .layout {
+  .workspace:not([data-focus="true"]):not([data-presentation="true"])[data-view="preview"] .layout {
     grid-template-columns: minmax(0,1fr);
+    grid-template-areas: "preview";
   }
   .workspace[data-side-visible="false"][data-view="split"] .layout {
     grid-template-columns: var(--side-rail-width) minmax(0,1fr) minmax(0,1fr);
@@ -573,6 +574,7 @@ body {
   .studio-quick-search {display:none}
 }
 @media (max-width: 900px) {
+  :root { --workspace-pad:8px; }
   .workspace { height: auto; min-height: 100dvh; overflow:visible; padding:8px; gap:8px; padding-bottom:calc(var(--mobile-nav-height) + var(--mobile-nav-bottom) + 18px); }
   .workspace::before {position:absolute}
   .topbar {
