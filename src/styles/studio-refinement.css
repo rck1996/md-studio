@@ -1,0 +1,454 @@
+/*
+ * Editorial refinement — RCK1996 Studio
+ *
+ * Keeps the shared theme tokens in studio-theme.css while correcting
+ * navigation density, source readability, document composition and breakpoints.
+ * State and document workflows remain in the existing JS modules.
+ */
+
+/* Header: controls have their own intrinsic column; status moves below on mobile. */
+:root {
+  --side-width: clamp(260px, 19vw, 324px);
+}
+.workspace .topbar {
+  display: grid;
+  grid-template-columns: minmax(205px, 1fr) minmax(232px, 312px) max-content;
+  grid-template-areas: "brand switcher actions";
+  align-items: center;
+  gap: clamp(9px, 1vw, 20px);
+  min-width: 0;
+  min-height: 76px;
+}
+.workspace .topbar > .brand {
+  grid-area: brand;
+  min-width: 0;
+}
+.workspace .topbar > .view-switcher {
+  grid-area: switcher;
+  justify-self: center;
+  min-width: 0;
+  width: 100%;
+}
+.workspace .topbar > .document-actions {
+  grid-area: actions;
+  display: block;
+  justify-self: end;
+  min-width: 0;
+  width: max-content;
+  max-width: 100%;
+}
+.workspace .topbar > .status-cluster {
+  grid-area: status;
+  display: none;
+}
+.workspace .button-cluster {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 6px;
+  min-width: 0;
+}
+.workspace .button-cluster > * {
+  flex: 0 0 auto;
+}
+.workspace .button-cluster > .inspector-toggle {
+  min-height: 41px;
+  min-width: 66px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface-soft);
+  color: var(--text-strong);
+  font: 500 14px/1 var(--type-label);
+  letter-spacing: .02em;
+  white-space: nowrap;
+  box-shadow: none;
+}
+.workspace .button-cluster > .inspector-toggle.has-issues {
+  border-color: color-mix(in srgb, var(--warning) 55%, var(--border));
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+.workspace .button-cluster > .inspector-toggle:hover,
+.workspace .button-cluster > .inspector-toggle:focus-visible {
+  border-color: var(--accent);
+}
+.workspace .button-cluster > .inspector-toggle[aria-expanded="true"] {
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+.workspace .studio-export {
+  padding-inline: 15px;
+}
+.workspace .brand-copy h1 {
+  overflow: visible;
+  white-space: nowrap;
+}
+.workspace .view-switcher button {
+  min-height: 39px;
+  font-size: 16px;
+}
+.workspace :is(button, summary, input, select, textarea):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Better rhythm in the explorer and document-level tools. */
+.workspace .panel-header {
+  min-width: 0;
+  gap: 8px;
+}
+.workspace .panel-header > span:last-child {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.workspace .document-tools {
+  padding: 11px;
+  gap: 9px;
+}
+.workspace #document-search {
+  min-height: 41px;
+  font-size: 13px;
+  padding-inline: 12px;
+}
+.workspace .document-filters button {
+  min-height: 34px;
+  font-size: 12px;
+}
+.workspace .document-list {
+  padding: 11px 9px 20px;
+  gap: 5px;
+}
+.workspace .document-item {
+  min-height: 39px;
+  font-size: 13px;
+}
+.workspace .folder-row {
+  min-height: 41px;
+}
+.workspace .folder-label {
+  min-height: 37px;
+  font-size: 13px;
+}
+.workspace .document-title-row .document-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+.workspace .document-row.is-active,
+.workspace .folder-group.is-active-folder .folder-row {
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+.workspace .side-tabs button {
+  min-height: 44px;
+}
+.workspace .panel-header > span:first-child {
+  font-size: 16px;
+}
+.workspace .editor-panel .panel-header,
+.workspace .preview-panel .panel-header {
+  min-height: 48px;
+}
+
+/* Writing should remain as legible as the rendered sheet. */
+.workspace .cm-scroller {
+  font-size: 14.5px;
+  line-height: 1.72 !important;
+  font-variant-ligatures: none;
+}
+.workspace .cm-content {
+  min-height: 100%;
+  padding: 27px clamp(18px, 2vw, 36px) 68px !important;
+}
+.workspace .cm-gutters {
+  font-size: 12px !important;
+}
+.workspace .cm-line {
+  padding-block: 1px;
+}
+.workspace .cm-activeLine,
+.workspace .cm-activeLineGutter {
+  background: color-mix(in srgb, var(--studio-secondary) 10%, transparent) !important;
+}
+.workspace .editor-panel,
+.workspace .preview-panel {
+  min-width: 0;
+}
+
+/* The preview is a paper document, not a second app background.
+ * Remove the decorative orange circle that was floating over document titles. */
+.workspace #markdown-preview {
+  background-color: #f5f1e7;
+  background-image: none;
+  box-shadow: 0 0 28px rgba(20, 15, 8, .06);
+  font-size: 16px;
+  line-height: 1.76;
+  padding-block: 48px 80px;
+  overflow-wrap: anywhere;
+}
+.workspace[data-view="split"] #markdown-preview {
+  width: 100%;
+  max-width: var(--reading-width);
+}
+.workspace #markdown-preview > h1:first-child {
+  padding-top: 6px;
+}
+.workspace #markdown-preview h1 {
+  font-size: clamp(2.4rem, 3.2vw, 3.6rem);
+  line-height: 1.03;
+}
+.workspace #markdown-preview h2 {
+  font-size: clamp(1.8rem, 2.2vw, 2.4rem);
+  line-height: 1.15;
+}
+.workspace #markdown-preview p,
+.workspace #markdown-preview li {
+  line-height: 1.78;
+}
+.workspace #markdown-preview table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.workspace #markdown-preview th,
+.workspace #markdown-preview td {
+  padding: 11px 12px;
+}
+.workspace #markdown-preview pre {
+  font-size: .88rem;
+  line-height: 1.55;
+}
+
+/* Single place for real saved/document stats on desktop.
+ * The small brand label remains independent from the save indicator. */
+.workspace .studio-statusbar {
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 2fr) 1fr;
+  align-items: center;
+  gap: 12px;
+  padding-inline: 15px;
+}
+.workspace .studio-statusbar .studio-status-center {
+  justify-self: center;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted-strong);
+  font-size: 11px;
+  letter-spacing: .04em;
+}
+.workspace .studio-statusbar > span:last-child {
+  text-align: right;
+}
+
+/* Keep the primary editor usable at notebook widths without overflowing. */
+@media (min-width: 901px) {
+  .workspace:not([data-focus="true"]):not([data-presentation="true"]) .layout {
+    grid-template-columns: minmax(244px, var(--side-width)) minmax(0, 1fr) minmax(0, 1fr);
+    min-width: 0;
+  }
+  .workspace[data-view="editor"]:not([data-focus="true"]) .layout {
+    grid-template-columns: minmax(244px, var(--side-width)) minmax(0, 1fr);
+  }
+  .workspace[data-view="preview"] .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workspace[data-side-visible="false"][data-view="split"] .layout {
+    grid-template-columns: var(--side-rail-width) minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .workspace[data-side-visible="false"][data-view="editor"] .layout {
+    grid-template-columns: var(--side-rail-width) minmax(0, 1fr);
+  }
+}
+
+/* A calm two-row topbar is preferable to clipped actions at medium widths. */
+@media (min-width: 901px) and (max-width: 1399px) {
+  .workspace .topbar {
+    grid-template-columns: minmax(185px, 1fr) max-content;
+    grid-template-areas: "brand actions" "switcher switcher";
+    gap: 8px 14px;
+    padding-block: 10px;
+  }
+  .workspace .topbar > .view-switcher {
+    justify-self: center;
+    width: min(100%, 330px);
+  }
+}
+@media (min-width: 901px) and (max-width: 1199px) {
+  .workspace .studio-quick-new,
+  .workspace .studio-quick-search {
+    display: none;
+  }
+  .workspace .brand-mark {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+/* On touch devices, stats occupy their own row, and icons stay operable.
+ * Reposition the inspector control instead of hiding its only entry point. */
+@media (max-width: 900px) {
+  .workspace .topbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "brand actions"
+      "switcher switcher"
+      "status status";
+    gap: 8px 10px;
+    align-items: center;
+    padding: 10px 12px;
+  }
+  .workspace .topbar > .document-actions {
+    display: block;
+    width: auto;
+    justify-self: end;
+  }
+  .workspace .topbar > .status-cluster {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border: 0;
+    border-top: 1px solid var(--border);
+    border-radius: 0;
+    padding: 7px 0 0;
+    background: transparent;
+  }
+  .workspace .status-cluster #document-stats {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    justify-content: flex-start;
+  }
+  .workspace .status-cluster .save-status {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+  .workspace .button-cluster {
+    gap: 5px;
+  }
+  .workspace .studio-quick-new,
+  .workspace .studio-quick-search {
+    display: none;
+  }
+  .workspace .button-cluster > .inspector-toggle {
+    position: relative;
+    min-width: 40px;
+    width: 40px;
+    height: 42px;
+    min-height: 42px;
+    padding: 0;
+    font-size: 0;
+  }
+  .workspace .button-cluster > .inspector-toggle::before {
+    content: "ⓘ";
+    font: 500 21px/1 var(--font-ui);
+  }
+  .workspace .button-cluster > .inspector-toggle.has-issues::after {
+    content: "";
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .workspace .button-cluster > .secondary-button,
+  .workspace .actions-menu summary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    min-width: 40px;
+    min-height: 42px;
+    height: 42px;
+    padding: 0;
+    font-size: 0;
+  }
+  .workspace .studio-export {
+    min-width: 89px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 9px !important;
+    font-size: 13px !important;
+  }
+  .workspace .topbar > .view-switcher {
+    width: 100%;
+  }
+  .workspace .studio-statusbar {
+    display: none;
+  }
+  .workspace .cm-scroller {
+    font-size: 15px;
+  }
+  .workspace .cm-content {
+    padding: 22px 17px 66px !important;
+  }
+  .workspace #markdown-preview {
+    padding: 36px 25px 70px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .workspace .topbar {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "brand" "actions" "switcher" "status";
+    gap: 9px;
+  }
+  .workspace .topbar > .document-actions {
+    justify-self: stretch;
+    width: 100%;
+  }
+  .workspace .button-cluster {
+    justify-content: flex-start;
+    gap: 7px;
+  }
+  .workspace .studio-export {
+    margin-left: auto;
+  }
+  .workspace .brand-mark {
+    width: 40px;
+    height: 40px;
+  }
+  .workspace .brand-copy h1 {
+    font-size: 27px;
+  }
+}
+@media (max-width: 380px) {
+  .workspace .topbar {
+    padding: 9px;
+  }
+  .workspace .button-cluster {
+    gap: 5px;
+  }
+  .workspace .button-cluster > .inspector-toggle,
+  .workspace .button-cluster > .secondary-button,
+  .workspace .actions-menu summary {
+    width: 38px;
+    min-width: 38px;
+  }
+  .workspace .studio-export {
+    min-width: 81px !important;
+  }
+  .workspace #markdown-preview {
+    padding: 28px 17px 64px;
+  }
+  .workspace #markdown-preview h1 {
+    font-size: 2.25rem;
+  }
+}
+/* Screens with higher contrast settings should retain recognizable boundaries. */
+@media (prefers-contrast: more) {
+  .workspace .topbar,
+  .workspace .layout,
+  .workspace .studio-statusbar,
+  .workspace .editor-panel,
+  .workspace .preview-panel {
+    border-color: var(--border-strong);
+  }
+}
