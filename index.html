@@ -39,7 +39,18 @@
               <button class="secondary-button studio-quick-search" id="studio-search" type="button" aria-label="Buscar en el documento" title="Buscar en el documento">⌕ Buscar</button>
               <button class="secondary-button" id="focus-mode" type="button" aria-label="Activar modo foco" aria-pressed="false" title="Activar modo foco">Foco</button>
               <button class="secondary-button" id="theme-toggle" type="button" aria-label="Cambiar a tema oscuro" aria-pressed="false" title="Cambiar a tema oscuro">Oscuro</button>
-              <button class="studio-export" id="studio-export" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="studio-actions-content">Exportar ↗</button>
+              <div class="studio-export-shell">
+                <button class="studio-export" id="studio-export" type="button" aria-expanded="false" aria-controls="studio-export-menu">Exportar ↗</button>
+                <div class="studio-export-menu" id="studio-export-menu" role="group" aria-label="Opciones de exportación" hidden>
+                  <span class="studio-export-caption">DESCARGAR</span>
+                  <button type="button" data-studio-export-action="download-markdown">Archivo Markdown <span>.md</span></button>
+                  <button type="button" data-studio-export-action="export-html">Documento HTML <span>.html</span></button>
+                  <button type="button" data-studio-export-action="export-assets">Imágenes y recursos <span>.zip</span></button>
+                  <span class="studio-export-caption">COPIAR</span>
+                  <button type="button" data-studio-export-action="copy-markdown">Copiar Markdown</button>
+                  <button type="button" data-studio-export-action="copy-html">Copiar HTML</button>
+                </div>
+              </div>
               <details class="actions-menu">
                 <summary class="secondary-button" aria-label="Mas acciones" title="Mas acciones">Mas</summary>
                 <div class="actions-menu-content" id="studio-actions-content">
