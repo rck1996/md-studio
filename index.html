@@ -33,17 +33,13 @@
             <button type="button" data-view="preview" aria-pressed="false">Vista previa</button>
           </div>
           <div class="document-actions">
-            <div class="status-cluster">
-              <span id="document-stats">0 palabras</span>
-              <span class="save-status" id="save-status" role="status" aria-live="polite">Guardado</span>
-              <button class="inspector-toggle" id="inspector-toggle" type="button" aria-controls="inspector-panel" aria-expanded="false">Sin alertas</button>
-            </div>
             <div class="button-cluster">
+              <button class="inspector-toggle" id="inspector-toggle" type="button" aria-controls="inspector-panel" aria-expanded="false" title="Abrir inspector">Sin alertas</button>
               <button class="secondary-button studio-quick-new" id="studio-new" type="button" aria-label="Crear documento" title="Crear documento">+ Nuevo</button>
               <button class="secondary-button studio-quick-search" id="studio-search" type="button" aria-label="Buscar en el documento" title="Buscar en el documento">⌕ Buscar</button>
               <button class="secondary-button" id="focus-mode" type="button" aria-label="Activar modo foco" aria-pressed="false" title="Activar modo foco">Foco</button>
               <button class="secondary-button" id="theme-toggle" type="button" aria-label="Cambiar a tema oscuro" aria-pressed="false" title="Cambiar a tema oscuro">Oscuro</button>
-              <button class="studio-export" id="studio-export" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="studio-actions-content">Exportar ↗</button>
+              <button class="studio-export" id="studio-export" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="studio-actions-content">Exportar ↗</button>
               <details class="actions-menu">
                 <summary class="secondary-button" aria-label="Mas acciones" title="Mas acciones">Mas</summary>
                 <div class="actions-menu-content" id="studio-actions-content">
@@ -68,6 +64,10 @@
                 </div>
               </details>
             </div>
+          </div>
+          <div class="status-cluster" aria-label="Estado del documento">
+            <span id="document-stats">0 palabras</span>
+            <span class="save-status" id="save-status" role="status" aria-live="polite">Guardado</span>
           </div>
         </header>
 
