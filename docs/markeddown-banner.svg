@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" role="img" aria-labelledby="title desc">
+<title id="title">markEDdown — RCK1996 Studio</title>
+<desc id="desc">Banner editorial azul nocturno, sol naranja, pluma grabada y diagramas astronómicos. Un espacio para escribir, organizar y crear.</desc>
+<defs>
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#9eb2ce" stroke-width=".5" opacity=".24"/></pattern>
+  <pattern id="dots" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r=".65" fill="#d2d7df" opacity=".36"/></pattern>
+  <clipPath id="clip"><rect width="1280" height="400" rx="12"/></clipPath>
+  <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071f3b"/><stop offset="1" stop-color="#020b1b"/></linearGradient>
+</defs>
+<g clip-path="url(#clip)">
+<rect width="1280" height="400" fill="url(#glow)"/>
+<rect width="1280" height="400" fill="url(#grid)"/>
+<g fill="none" stroke="#9eb2ce" opacity=".38">
+  <path d="M36 40H1244M36 358H1244M36 40V358M1244 40V358" stroke-width=".7"/>
+  <path d="M36 78H1244M910 40V358M1050 40V358" stroke-width=".6" stroke-dasharray="2 8"/>
+  <circle cx="1038" cy="170" r="147" stroke-width=".8"/>
+  <circle cx="1038" cy="170" r="116" stroke-dasharray="5 8" stroke-width=".8"/>
+  <circle cx="1038" cy="170" r="85" stroke-width=".8"/>
+  <circle cx="1038" cy="170" r="53" stroke-dasharray="2 6"/>
+  <path d="M836 171H1245M1038 24V347M934 65L1142 275M1142 65L934 275" stroke-width=".65"/>
+  <circle cx="1038" cy="170" r="12"/>
+</g>
+<circle cx="1072" cy="132" r="68" fill="#e34b12"/>
+<circle cx="1072" cy="132" r="80" fill="none" stroke="#f1eddf" stroke-width=".75" opacity=".7"/>
+<g fill="#f1eddf" opacity=".85">
+  <circle cx="1001" cy="95" r="1.6"/><circle cx="900" cy="214" r="1.2"/><circle cx="1169" cy="249" r="1.8"/><circle cx="1232" cy="150" r="1.1"/>
+</g>
+<g transform="translate(790,26) rotate(-15 180 160)">
+  <path d="M65 315C105 213 212 93 351 23c-14 120-69 201-159 240-42 19-83 34-127 52Z" fill="#f1eddf" stroke="#f1eddf" stroke-width="2"/>
+  <path d="M65 315c80-103 179-199 286-292" fill="none" stroke="#041126" stroke-width="7" stroke-linecap="round"/>
+  <g fill="none" stroke="#041126" stroke-linecap="round" stroke-width="2.2">
+  <path d="M112 251L107 199M139 219L149 166M177 180L201 128M221 141L249 91M272 102L300 66"/>
+  <path d="M122 239L187 266M171 184L237 214M225 141L280 164M279 95L318 112"/>
+  </g>
+  <g fill="none" stroke="#041126" stroke-width=".75" opacity=".7">
+    <path d="M93 281l83-85m-68 75 97-101m-72 100 103-110m-87 97 106-103m-83 88 115-105"/>
+  </g>
+</g>
+<rect x="0" y="0" width="1280" height="400" fill="url(#dots)" opacity=".2"/>
+<g font-family="Arial,Helvetica,sans-serif">
+  <text x="68" y="62" font-size="13" font-weight="700" letter-spacing="3.4" fill="#bac4d4">RCK1996 / WRITING STUDIO</text>
+  <text x="68" y="186" font-size="112" font-weight="700" letter-spacing="-7" fill="#f1eddf" font-family="Georgia,serif">mark</text>
+  <text x="333" y="186" font-size="112" font-weight="700" letter-spacing="-7" fill="#f26b39" font-family="Georgia,serif">ED</text>
+  <text x="486" y="186" font-size="112" font-weight="700" letter-spacing="-7" fill="#f1eddf" font-family="Georgia,serif">down</text>
+  <text x="68" y="238" font-size="22" letter-spacing=".2" fill="#bac4d4">Escribe. Organiza. Crea.</text>
+  <path d="M68 260H706" stroke="#4d7396" stroke-width="1"/>
+  <text x="68" y="302" font-size="13" letter-spacing="2.1" font-weight="700" fill="#f1eddf">LOCAL FIRST</text>
+  <text x="240" y="302" font-size="13" letter-spacing="2.1" font-weight="700" fill="#f1eddf">MARKDOWN + LIVE PREVIEW</text>
+  <text x="68" y="350" font-family="monospace" font-size="12" letter-spacing="1.6" fill="#8ea9c8">EDITOR / EXPLORER / VERSIONS / EXPORT</text>
+  <text x="1196" y="351" text-anchor="end" font-family="monospace" font-size="10" letter-spacing="2" fill="#bac4d4">ED.001</text>
+</g>
+<g stroke="#f1eddf" stroke-width="1.2" opacity=".9"><path d="M26 32H44M35 23V41M1236 368H1254M1245 359V377"/></g>
+</g>
+</svg>
