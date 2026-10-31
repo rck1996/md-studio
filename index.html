@@ -3,8 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MarkEDdown</title>
-    <link rel="icon" type="image/svg+xml" href="/assets/logo/favicon.svg" />
+    <title>markEDdown — RCK1996 Studio</title>
+    <meta name="description" content="markEDdown: editor Markdown local, vista previa en vivo y un espacio editorial para tus ideas." />
+    <meta name="theme-color" content="#020b1b" />
+    <link rel="icon" type="image/svg+xml" href="/assets/logo/markeddown-studio-icon.svg" />
   </head>
   <body>
     <main class="app">
@@ -18,10 +20,11 @@
         </div>
         <header class="topbar">
           <div class="brand" aria-label="MarkEDdown">
-            <img class="brand-mark" src="/assets/logo/markeddown-icon.svg" alt="MarkEDdown" width="42" height="42" />
+            <img class="brand-mark" src="/assets/logo/markeddown-studio-icon.svg" alt="" width="56" height="56" />
             <div class="brand-copy">
-              <p class="eyebrow">Editor Markdown</p>
-              <h1>Mark<span>ED</span>down</h1>
+              <p class="eyebrow">RCK1996 / Writing Studio</p>
+              <h1>mark<span>ED</span>down</h1>
+              <p class="brand-studio">Editor · escritura · exportación</p>
             </div>
           </div>
           <div class="view-switcher" role="group" aria-label="Modo de vista">
@@ -36,11 +39,14 @@
               <button class="inspector-toggle" id="inspector-toggle" type="button" aria-controls="inspector-panel" aria-expanded="false">Sin alertas</button>
             </div>
             <div class="button-cluster">
+              <button class="secondary-button studio-quick-new" id="studio-new" type="button" aria-label="Crear documento" title="Crear documento">+ Nuevo</button>
+              <button class="secondary-button studio-quick-search" id="studio-search" type="button" aria-label="Buscar en el documento" title="Buscar en el documento">⌕ Buscar</button>
               <button class="secondary-button" id="focus-mode" type="button" aria-label="Activar modo foco" aria-pressed="false" title="Activar modo foco">Foco</button>
               <button class="secondary-button" id="theme-toggle" type="button" aria-label="Cambiar a tema oscuro" aria-pressed="false" title="Cambiar a tema oscuro">Oscuro</button>
+              <button class="studio-export" id="studio-export" type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="studio-actions-content">Exportar ↗</button>
               <details class="actions-menu">
                 <summary class="secondary-button" aria-label="Mas acciones" title="Mas acciones">Mas</summary>
-                <div class="actions-menu-content">
+                <div class="actions-menu-content" id="studio-actions-content">
                   <span>Espacio</span>
                   <button class="quick-action" id="open-preferences" type="button">Preferencias</button>
                   <span>Aprender</span>
@@ -182,8 +188,8 @@
 
           <section class="editor-panel" aria-label="Editor">
             <div class="panel-header">
-              <span>Editor</span>
-              <span>Usa / para insertar bloques, pega imagenes o abre Atajos y ayuda</span>
+              <span>Source / Markdown</span>
+              <span>Escribe / para insertar bloques · UTF-8</span>
             </div>
             <textarea id="markdown-input" spellcheck="false"># Documento de ejemplo
 
@@ -212,8 +218,8 @@ Escribe aqui tu contenido. Usa los botones de la izquierda si no recuerdas la si
 
           <section class="preview-panel" aria-label="Vista previa">
             <div class="panel-header">
-              <span>Vista previa</span>
-              <span>El documento renderizado se actualiza al escribir</span>
+              <span>Vista previa / En vivo</span>
+              <span>Lectura editorial · Actualización automática</span>
             </div>
             <article id="markdown-preview"></article>
           </section>
@@ -237,6 +243,11 @@ Escribe aqui tu contenido. Usa los botones de la izquierda si no recuerdas la si
             </section>
           </aside>
         </div>
+        <footer class="studio-statusbar" aria-label="Estado del espacio de trabajo">
+          <span>MARKDOWN <span aria-hidden="true">/</span> UTF-8</span>
+          <span class="studio-status-center" id="studio-live-status">Listo para escribir</span>
+          <span>LOCAL FIRST <span aria-hidden="true">/</span> RCK1996 STUDIO</span>
+        </footer>
         <button class="focus-exit" id="focus-exit" type="button">Salir de foco</button>
         <button class="presentation-exit" id="presentation-exit" type="button">Salir de presentacion</button>
         <div class="history-overlay" id="history-overlay" hidden>
