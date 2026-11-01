@@ -168,7 +168,17 @@ export const createVisualComposer = ({ root, bridge, onOpenSource, onOpenPreview
     switch (button.dataset.composeFormat) {
       case "bold": insertion = "**" + selected + "**"; break;
       case "italic": insertion = "*" + selected + "*"; break;
-      case "link": insertion = "[" + selected + "](https://example.com)"; break;
+      case "link": {
+        const entered = window.prompt("Dirección del enlace (https:// o mailto:)", "https://");
+        if (entered === null) return;
+        const url = entered.trim();
+        if (!/^(https?:\/\/|mailto:)/i.test(url) || /[\r\n]/.test(url)) {
+          window.alert("Usa un enlace http, https o mailto válido.");
+          return;
+        }
+        insertion = "[" + selected + "](" + url.replace(/\(/g, "%28").replace(/\)/g, "%29").replace(/\s/g, "%20") + ")";
+        break;
+      }
       default: return;
     }
     const next = entry.descriptor.prefix + value.slice(0, from) + insertion + value.slice(to) + entry.descriptor.tail;
