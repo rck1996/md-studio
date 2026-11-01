@@ -99,6 +99,19 @@ try {
   await capture(mobile, "pocket-03-markdown-editor");
   await mobile.locator("#studio-v2-pocket-compose").click();
   await capture(mobile, "pocket-11-visual-composition");
+  await mobile.locator(".studio-compose-inline").first().focus();
+  await mobile.locator(".studio-compose-inline").first().evaluate((element) => {
+    const node = element.firstChild;
+    const range = document.createRange();
+    range.setStart(node, 0);
+    range.setEnd(node, Math.min(9, node.textContent.length));
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    document.dispatchEvent(new Event("selectionchange"));
+  });
+  await mobile.locator(".studio-compose-selection-tools").waitFor({ state: "visible" });
+  await capture(mobile, "pocket-14-text-selection");
   await mobile.locator("#studio-v2-pocket-compose").click();
 
   // A real editor mutation, not a mock screen. It must survive reload.
