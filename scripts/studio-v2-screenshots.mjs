@@ -82,6 +82,9 @@ try {
   });
   console.log("Pocket hero diagnostics", JSON.stringify(heroInfo));
   await capture(mobile, "pocket-01-home");
+  await mobile.locator("#studio-v2-pocket-search").click();
+  await capture(mobile, "pocket-10-global-search");
+  await mobile.keyboard.press("Escape");
 
   await mobile.locator('[data-studio-go="library"]').click();
   assert.equal(await mobile.locator(".workspace").getAttribute("data-studio-space"), "library");
@@ -108,6 +111,9 @@ try {
   await mobile.locator('[data-studio-go="tools"]').click();
   await mobile.locator('.studio-v2-tools-veil:not([hidden])').waitFor();
   await capture(mobile, "pocket-06-tools-sheet");
+  await mobile.locator('[data-studio-tool="export"]').click();
+  await capture(mobile, "pocket-09-export-options");
+  await mobile.locator("#studio-v2-tools-back").click();
   await mobile.locator('[data-studio-tool="outline"]').click();
   await capture(mobile, "pocket-07-outline");
 
