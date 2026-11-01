@@ -33,6 +33,27 @@ if (root) {
     '<button type="button" id="studio-v2-new" class="studio-v2-primary">+ Nuevo documento</button></div>';
   root.querySelector(".topbar")?.after(context);
 
+  const storageAlert = document.createElement("div");
+  storageAlert.className = "studio-v2-storage-alert";
+  storageAlert.setAttribute("role", "alert");
+  storageAlert.hidden = true;
+  storageAlert.innerHTML =
+    '<span><strong>Cambios sin guardar.</strong> El navegador no pudo almacenar todos los datos. No cierres la pestaña sin exportar una copia del documento.</span>' +
+    '<button type="button" id="studio-v2-emergency-export">Descargar .md</button>';
+  context.before(storageAlert);
+  const showStorageAlert = () => {
+    storageAlert.hidden = false;
+    root.dataset.studioStorageError = "true";
+    const status = byId("save-status");
+    if (status) {
+      status.textContent = "Sin guardar";
+      status.dataset.state = "error";
+    }
+  };
+  window.addEventListener("markeddown:storage-error", showStorageAlert);
+  byId("studio-v2-emergency-export")?.addEventListener("click", () => trigger("download-markdown"));
+  if (byId("save-status")?.dataset.state === "error") showStorageAlert();
+
   const home = byId("home-panel");
   if (home && !home.querySelector(".studio-v2-home-hero")) {
     const hero = document.createElement("section");
