@@ -615,3 +615,45 @@
     box-shadow: none !important;
   }
 }
+
+
+/* Always visible after a failed localStorage write, even in Focus/Pocket. */
+.workspace.studio-v2 .studio-v2-storage-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1px solid #c8583c;
+  border-left: 4px solid #c8583c;
+  padding: 10px 14px;
+  border-radius: 7px;
+  background: #fff1e7;
+  color: #65301e;
+  font: 500 12px/1.5 var(--font-ui);
+}
+.workspace.studio-v2 .studio-v2-storage-alert[hidden] { display: none !important; }
+.workspace.studio-v2 .studio-v2-storage-alert strong { font-weight: 700; }
+.workspace.studio-v2 .studio-v2-storage-alert button {
+  flex: 0 0 auto;
+  min-height: 36px;
+  border: 1px solid #b94f24;
+  border-radius: 5px;
+  padding: 0 12px;
+  color: #fff;
+  background: #b94f24;
+  font: 600 12px/1 var(--font-ui);
+}
+.workspace.studio-v2 .save-status[data-state="error"],
+.workspace.studio-v2 #studio-live-status[data-state="error"] { color: #c8583c; }
+@media (max-width: 900px) {
+  .workspace.studio-v2 .studio-v2-storage-alert {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 11px;
+  }
+}
+@media print {
+  .workspace.studio-v2 .studio-v2-storage-alert { display: none !important; }
+}
