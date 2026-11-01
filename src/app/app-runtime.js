@@ -1305,6 +1305,11 @@ const insertPastedImage = async (file) => {
     });
     editor.focus();
     renderAssets();
+    // Persist the Markdown reference together with the image immediately.
+    // A 250ms debounced autosave can otherwise lose the reference if the
+    // mobile browser suspends/reloads right after selecting a photo.
+    clearTimeout(saveTimer);
+    saveDocument();
   } catch {
     showAppFeedback({ message: "No se pudo leer o insertar la imagen.", tone: "error" });
   }
