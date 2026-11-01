@@ -40,6 +40,7 @@ import {
   themeKey,
 } from "./storage.js";
 import { bindFileActionButtons } from "./file-actions.js";
+import { sendToNexus } from "./nexus-handoff.js";
 import {
   buildImageMarkdown,
   countImageReferences,
@@ -1615,6 +1616,27 @@ bindFileActionButtons({
     actionsMenu.open = false;
     showAppFeedback(feedback);
   },
+});
+
+// MarkEDdown remains the source of truth; this creates a one-time copy via
+// the platform sharesheet. The recipient controls whether to save it.
+document.addEventListener("markeddown:send-to-nexus", () => {
+  const active = getDocuments(defaultMarkdown).find((doc) => doc.id === activeDocumentId);
+  const title = active?.title || getMarkdown().match(/^#\s+(.+)$/m)?.[1] || "Documento";
+  void sendToNexus({ markdown: getMarkdown(), title, readToken: readMarkdownToken, slugify })
+    .then(({ status, imagesOmitted }) => {
+      if (status === "canceled") return;
+      const suffix = imagesOmitted ? ` · ${imagesOmitted} imagen(es) locales no incluidas` : "";
+      showAppFeedback({
+        message: status === "shared" ? "Contenido enviado al menú Compartir" + suffix :
+          "Descargado como Markdown para importar en NEXUS OS" + suffix,
+        tone: imagesOmitted ? "warning" : "success",
+      });
+    })
+    .catch((error) => showAppFeedback({
+      message: error?.message === "No hay contenido para enviar." ? error.message : "No se pudo compartir el documento.",
+      tone: "error",
+    }));
 });
 
 const handleCreateFolder = () => {
