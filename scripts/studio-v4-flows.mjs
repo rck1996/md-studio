@@ -45,6 +45,20 @@ try {
     assert.equal(await space(), "preview");
     assert.equal(await page.locator(".preview-panel").isVisible(), true);
     assert.equal(await page.locator(".studio-v4-reader-toolbar").isVisible(), true);
+    const geometry = await page.evaluate(() => {
+      const get = (selector) => {
+        const el = document.querySelector(selector), rect = el?.getBoundingClientRect();
+        return {top:rect?.top, bottom:rect?.bottom, height:rect?.height,
+          display:el ? getComputedStyle(el).display : null,
+          scrollHeight:el?.scrollHeight, clientHeight:el?.clientHeight};
+      };
+      return {viewport:innerHeight,layout:get(".layout"),pane:get(".preview-panel"),
+        bar:get(".studio-v4-reader-toolbar"),paper:get("#markdown-preview"),
+        heading:get("#markdown-preview h1")};
+    });
+    console.log("READER GEOMETRY",JSON.stringify(geometry));
+    assert.ok(geometry.bar.top >= 0 && geometry.bar.bottom < geometry.viewport,JSON.stringify(geometry));
+    assert.ok(geometry.paper.top >= 0 && geometry.paper.top < geometry.viewport,JSON.stringify(geometry));
     assert.match(await page.locator("#studio-v4-reader-title").innerText(), /Sol|md/i);
     assert.match(await page.locator("#studio-v4-reader-meta").innerText(), /palabras/);
     assert.equal(await page.locator("#studio-v4-preview").getAttribute("aria-current"), "page");
