@@ -29,6 +29,8 @@ if (root) {
     '<div class="studio-v2-context-actions">' +
     '<button type="button" id="studio-v2-editor" title="Abrir editor">Editor</button>' +
     '<button type="button" id="studio-v2-library" title="Abrir biblioteca">Biblioteca</button>' +
+    '<button type="button" id="studio-v2-backup" title="Respaldo del espacio">Respaldo</button>' +
+    '<button type="button" data-studio-install hidden title="Instalar MarkEDdown">Instalar</button>' +
     '<button type="button" id="studio-v2-graph" title="Ver conexiones">Conexiones</button>' +
     '<button type="button" id="studio-v2-new" class="studio-v2-primary">+ Nuevo documento</button></div>';
   root.querySelector(".topbar")?.after(context);
@@ -113,6 +115,8 @@ if (root) {
     '<button type="button" data-studio-tool="history"><b>↶</b><strong>Historial</strong><small>Versiones anteriores</small></button>' +
     '<button type="button" data-studio-tool="templates"><b>▦</b><strong>Plantillas</strong><small>Documentos listos</small></button>' +
     '<button type="button" data-studio-tool="export"><b>↗</b><strong>Exportar</strong><small>MD, HTML y recursos</small></button>' +
+    '<button type="button" data-studio-tool="backup"><b>⇩</b><strong>Respaldo</strong><small>Guardar y restaurar el espacio</small></button>' +
+    '<button type="button" data-studio-install hidden><b>□</b><strong>Instalar</strong><small>Aplicación y acceso offline</small></button>' +
     '<button type="button" data-studio-tool="preferences"><b>⚙</b><strong>Preferencias</strong><small>Lectura y apariencia</small></button>' +
     '<button type="button" data-studio-tool="focus"><b>□</b><strong>Foco</strong><small>Sin distracciones</small></button>' +
     '</div><div class="studio-v2-export-options" hidden>' +
@@ -189,7 +193,12 @@ if (root) {
       if (space === "graph") trigger("side-tab-graph");
       if (space === "insert") trigger("side-tab-insert");
       if (space === "outline") trigger("side-tab-outline");
-      if (space === "editor") selectView(mobileQuery.matches ? "editor" : "split");
+      if (space === "editor") {
+        // The original graph panel is a persistent overlay. Exit it before
+        // opening the editor, otherwise its CSS keeps the editor obscured.
+        if (root.dataset.sidePanel === "graph") trigger("side-tab-documents");
+        selectView(mobileQuery.matches ? "editor" : "split");
+      }
       if (space === "preview") selectView("preview");
     }
     currentSpace = space;
@@ -220,6 +229,9 @@ if (root) {
   });
   byId("studio-v2-editor")?.addEventListener("click", () => setSpace("editor"));
   byId("studio-v2-library")?.addEventListener("click", () => setSpace("library"));
+  byId("studio-v2-backup")?.addEventListener("click", () =>
+    window.dispatchEvent(new Event("markeddown:open-backup"))
+  );
   byId("studio-v2-graph")?.addEventListener("click", () => setSpace("graph"));
   [byId("studio-v2-new"), byId("studio-v2-pocket-new"), byId("studio-v2-hero-create")].forEach((button) =>
     button?.addEventListener("click", () => { trigger("new-document"); setSpace("editor"); })
@@ -248,6 +260,10 @@ if (root) {
     const action = button.dataset.studioTool;
     if (["insert", "outline", "graph"].includes(action)) setSpace(action);
     else if (action === "export") showExportOptions();
+    else if (action === "backup") {
+      closeTools();
+      window.dispatchEvent(new Event("markeddown:open-backup"));
+    }
     else {
       closeTools();
       if (action === "focus") setSpace("editor");
