@@ -374,3 +374,23 @@
   padding: 0;
   font-size: 1.1rem;
 }
+
+/* Feedback when a local image reference no longer resolves in this browser. */
+#markdown-preview .mded-image-load-error {
+  display: block;
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px dashed var(--danger);
+  border-radius: 7px;
+  color: var(--danger);
+  background: var(--surface-soft);
+  font: 500 13px/1.5 var(--font-ui);
+}
+#markdown-preview .mded-local-image {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin: 14px 0;
+  object-fit: contain;
+}
