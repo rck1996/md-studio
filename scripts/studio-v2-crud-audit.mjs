@@ -76,7 +76,7 @@ try {
     assert.ok(await page.locator(".folder-label").filter({ hasText: "QA_Project_Audit" }).count() >= 1);
   });
   await run("Duplicar conserva documento y abre editor", async () => {
-    await page.locator('[data-explorer-filter="all"]').click();
+    await page.locator('#documents-panel [data-explorer-filter="all"]').first().click();
     const sourceRow = page.locator("#document-list .document-row").first();
     const original = await sourceRow.locator(".document-title").innerText();
     await doMenu(original, "Duplicar");
