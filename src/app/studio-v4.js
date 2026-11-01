@@ -30,8 +30,12 @@ if (root) {
     appendRoute("Escribir", "editor", "studio-v2-editor");
     appendRoute("Visual", "compose", "studio-v2-compose");
     appendRoute("Conexiones", "graph", "studio-v2-graph");
-    appendRoute("Lectura", "preview", null, () =>
-      root.querySelector('.workspace-controls [data-view="preview"]')?.click());
+    appendRoute("Lectura", "preview", null, () => {
+      // Graph is a persistent native side panel. Exit it before entering
+      // reading mode or the old graph workspace can hide the reading pane.
+      if (root.dataset.sidePanel === "graph") byId("side-tab-documents")?.click();
+      root.querySelector('.workspace-controls [data-view="preview"]')?.click();
+    });
     context.querySelector(".studio-v2-location")?.after(destinations);
 
     const inspectorButton = document.createElement("button");
