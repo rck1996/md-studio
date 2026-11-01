@@ -102,6 +102,7 @@ try {
       version: 1, keys: { "evil.script": "payload" } }));
     const buffer = await zip.generateAsync({ type: "nodebuffer" });
     await page.locator("#studio-backup-file").setInputFiles({ name:"invalido.zip",mimeType:"application/zip",buffer });
+    await page.waitForFunction(() => /no válido/i.test(document.getElementById("studio-backup-status")?.textContent || ""));
     assert.match(await page.locator("#studio-backup-status").innerText(), /no válido/i);
     assert.equal(await page.locator("#studio-backup-confirm").isVisible(), false);
     assert.match(await readMarkdown(), /^# Sol desde Pocket/m);
@@ -111,6 +112,7 @@ try {
     await page.locator("#studio-backup-file").setInputFiles({
       name:"espacio-copia.zip", mimeType:"application/zip", buffer:backupBuffer,
     });
+    await page.locator("#studio-backup-confirm").waitFor({ state: "visible" });
     assert.equal(await page.locator("#studio-backup-confirm").isVisible(), true);
     await page.locator("[data-backup-close]").click();
     await page.locator('[data-studio-go="editor"]').click();
@@ -122,6 +124,7 @@ try {
     await go("tools");
     await page.locator('[data-studio-tool="backup"]').click();
     await page.locator("#studio-backup-file").setInputFiles({ name:"espacio-copia.zip",mimeType:"application/zip",buffer:backupBuffer });
+    await page.locator("#studio-backup-confirm").waitFor({ state: "visible" });
     page.once("dialog", (dialog) => dialog.accept());
     await Promise.all([
       page.waitForEvent("load"),
