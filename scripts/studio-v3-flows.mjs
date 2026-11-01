@@ -180,6 +180,26 @@ try {
     await page.locator('[data-compose-action="source"]').click();
     assert.equal(await page.locator(".workspace").getAttribute("data-studio-space"), "editor");
   });
+
+  await check("Composer: enlace contextual solicita URL y conserva Markdown", async () => {
+    await page.locator("#studio-v2-compose").click();
+    const field = page.locator(".studio-compose-inline").first();
+    await field.focus();
+    await field.evaluate((element) => {
+      const node = element.firstChild;
+      const range = document.createRange();
+      range.setStart(node, 0);
+      range.setEnd(node, Math.min(node.length, 10));
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      document.dispatchEvent(new Event("selectionchange"));
+    });
+    await page.locator(".studio-compose-selection-tools").waitFor({ state: "visible" });
+    page.once("dialog", (dialog) => dialog.accept("https://example.org/reference"));
+    await page.locator('[data-compose-format="link"]').click();
+    assert.match(await readMarkdown(), /\[La primera\]\(https:\/\/example\.org\/reference\)/);
+  });
 } finally {
   await context.close();
   await browser.close();
