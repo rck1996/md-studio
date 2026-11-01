@@ -11,6 +11,8 @@ const context = await browser.newContext({
   deviceScaleFactor: 2, acceptDownloads: true,
 });
 const page = await context.newPage();
+page.setDefaultTimeout(7000); // Fail fast and report all broken journeys.
+page.setDefaultNavigationTimeout(15000);
 const errors = [];
 const failures = [];
 let passed = 0;
