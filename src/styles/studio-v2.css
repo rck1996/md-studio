@@ -245,6 +245,7 @@
 .workspace.studio-v2 .home-panel .workspace-panel-heading h2 { font-size: 27px; }
 .studio-v2-home-hero {
   display: grid;
+  flex: 0 0 auto;
   grid-template-columns: minmax(0,1.2fr) minmax(200px,.8fr);
   min-height: 260px;
   margin: 12px 28px 22px;
@@ -422,7 +423,7 @@
   .workspace.studio-v2 .home-panel .workspace-panel-heading { padding: 16px 20px 0; }
   .workspace.studio-v2 .home-panel .workspace-panel-heading h2 { font-size: 24px; }
   .workspace.studio-v2 .studio-v2-home-hero {
-    grid-template-columns: 1fr; min-height: auto; margin: 14px 16px;
+    display: grid !important; flex: 0 0 auto; grid-template-columns: 1fr; min-height: 245px; margin: 14px 16px;
   }
   .workspace.studio-v2 .studio-v2-hero-copy { padding: 22px; }
   .workspace.studio-v2 .studio-v2-home-hero h2 { font-size: 46px; }
