@@ -2,7 +2,6 @@
  * Studio 2.2 / unified desktop spaces, editorial reader and contextual outline.
  * Preserves Pocket, CodeMirror, existing themes and all document logic.
  */
-.workspace.studio-v2 .studio-v4-destinations,
 .workspace.studio-v2 .studio-v4-reader-toolbar[hidden],
 .workspace.studio-v2 .studio-v4-inspector[hidden] { display:none !important; }
 
