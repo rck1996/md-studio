@@ -537,7 +537,7 @@ const renderDocuments = () => {
   const deletedFolders = getDeletedFolders();
   const collapsedFolders = getCollapsedFolders();
   const documents = getVisibleDocuments(defaultMarkdown).sort(compareByOrder);
-  const openDocument = documents.find((doc) => doc.id === activeDocumentId);
+  const openDocument = getDocuments(defaultMarkdown).find((doc) => doc.id === activeDocumentId);
   const activeFileLabel = document.querySelector("#studio-active-file");
   if (activeFileLabel) {
     const title = openDocument?.title || "Documento activo";
