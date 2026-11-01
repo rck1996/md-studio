@@ -33,12 +33,13 @@ try {
   });
   await test("Grafo: búsqueda filtra mapa y lista",async()=>{
     const search=page.locator("#studio-graph-search");
-    await search.fill("QA Grafo 35");
-    const found = await page.locator("#graph-canvas .graph-node").count();
-    assert.ok(found >= 1 && found <= 3, "Expected a small searchable subset, found "+found);
-    assert.equal(await page.locator("#graph-document-list .graph-list-item").count(),found);
-    assert.ok(await page.locator("#graph-document-list .graph-list-item").filter({hasText:"QA Grafo 35"}).count()>=1);
-    await search.fill("");
+    try {
+      await search.fill("QA Grafo 35");
+      const found = await page.locator("#graph-canvas .graph-node").count();
+      assert.ok(found >= 1 && found <= 3, "Expected a small searchable subset, found "+found);
+      assert.equal(await page.locator("#graph-document-list .graph-list-item").count(),found);
+      assert.ok(await page.locator("#graph-document-list .graph-list-item").filter({hasText:"QA Grafo 35"}).count()>=1);
+    } finally { await search.fill(""); }
   });
   await test("Grafo: zoom accesible y restablecible",async()=>{
     await page.locator("#studio-graph-zoom-in").click();
@@ -47,6 +48,7 @@ try {
     assert.equal(await page.locator("#studio-graph-zoom-reset").innerText(),"100%");
   });
   await test("Grafo: filtra relaciones directas",async()=>{
+    await page.locator("#studio-graph-search").fill("");
     await page.locator("#studio-graph-focus").click();
     assert.equal(await page.locator("#studio-graph-focus").getAttribute("aria-pressed"),"true");
     const shown=await page.locator("#graph-canvas .graph-node").count();
