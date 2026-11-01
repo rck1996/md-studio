@@ -53,6 +53,8 @@ try {
   await check("Lectura: presentación y salida conservan documento", async () => {
     await page.locator('[data-reader-action="present"]').click();
     assert.equal(await page.locator(".workspace").getAttribute("data-presentation"), "true");
+    assert.equal(await page.locator(".studio-v4-reader-toolbar").isVisible(), false);
+    assert.equal(await page.locator(".studio-v4-destinations").isVisible(), false);
     await page.locator("#presentation-exit").click();
     assert.equal(await page.locator(".workspace").getAttribute("data-presentation"), "false");
     assert.equal(await space(), "preview");
