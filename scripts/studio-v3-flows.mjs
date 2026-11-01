@@ -157,6 +157,29 @@ try {
     await page.locator('[data-compose-action="source"]').click();
     assert.equal(await page.locator(".workspace").getAttribute("data-studio-space"), "editor");
   });
+
+  await check("Composer: selección contextual inserta Markdown sin HTML", async () => {
+    await page.locator("#studio-v2-compose").click();
+    const item = page.locator(".studio-compose-inline").first();
+    await item.focus();
+    await item.evaluate((element) => {
+      const text = element.firstChild;
+      const range = document.createRange();
+      range.setStart(text, 0);
+      range.setEnd(text, 3);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      document.dispatchEvent(new Event("selectionchange"));
+    });
+    await page.locator(".studio-compose-selection-tools").waitFor({ state: "visible" });
+    await page.locator('[data-compose-format="bold"]').click();
+    const markdown = await readMarkdown();
+    assert.match(markdown, /^# \*\*Sol\*\* desde Pocket/m);
+    assert.ok(!markdown.includes("<strong>"));
+    await page.locator('[data-compose-action="source"]').click();
+    assert.equal(await page.locator(".workspace").getAttribute("data-studio-space"), "editor");
+  });
 } finally {
   await context.close();
   await browser.close();
