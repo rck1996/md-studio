@@ -308,12 +308,15 @@ if (root) {
   });
   root.querySelectorAll(".workspace-controls [data-view]").forEach((button) =>
     button.addEventListener("click", () => {
-      if (currentSpace === "editor" || currentSpace === "preview") {
-        currentSpace = button.dataset.view === "preview" ? "preview" : "editor";
-        refresh();
-      }
+      currentSpace = button.dataset.view === "preview" ? "preview" : "editor";
+      refresh();
     })
   );
+  byId("new-folder")?.addEventListener("click", () => setSpace("library"));
+  byId("open-search")?.addEventListener("click", () => setSpace("editor"));
+  byId("focus-mode")?.addEventListener("click", () => {
+    if (root.dataset.focus === "true" && currentSpace !== "editor") setSpace("editor");
+  });
   const titleNode = byId("studio-active-file");
   if (titleNode && typeof MutationObserver !== "undefined") new MutationObserver(refresh).observe(titleNode, { childList: true, subtree: true });
 
