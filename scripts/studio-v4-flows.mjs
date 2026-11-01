@@ -116,8 +116,19 @@ try {
       el.dispatchEvent(new Event("scroll"));
     });
     await page.waitForTimeout(350);
-    const p = await page.locator("#markdown-preview").evaluate(el => el.scrollTop);
-    assert.ok(p > 50, "Preview should follow editor: " + p);
+    const metrics = await page.evaluate(() => {
+      const root = document.querySelector(".workspace");
+      const code = document.querySelector(".cm-scroller");
+      const preview = document.getElementById("markdown-preview");
+      return {
+        space:root.dataset.studioSpace, view:root.dataset.view,
+        sync:document.getElementById("studio-v4-scroll-sync")?.getAttribute("aria-pressed"),
+        editorScroll:code?.scrollTop,editorHeight:code?.scrollHeight,editorClient:code?.clientHeight,
+        previewScroll:preview?.scrollTop,previewHeight:preview?.scrollHeight,previewClient:preview?.clientHeight,
+      };
+    });
+    console.log("SPLIT DIAGNOSTICS",JSON.stringify(metrics));
+    assert.ok(metrics.previewScroll > 50, "Preview should follow editor: " + JSON.stringify(metrics));
     await toggle.click();
     const before = await page.locator("#markdown-preview").evaluate(el => el.scrollTop);
     await page.locator(".cm-scroller").evaluate(el => { el.scrollTop = 0; el.dispatchEvent(new Event("scroll")); });
