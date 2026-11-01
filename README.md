@@ -36,7 +36,7 @@ En escritorio, markEDdown presenta **Explorador · Editor · Vista previa**. En 
 | 🧭 Recorrer el texto | **Índice** | Encabezados, plegado y reordenación de secciones |
 | 🕘 Recuperar una versión | **Historial** | Instantáneas locales y restauración |
 | 🖼️ Gestionar recursos | **Assets / Inspector** | Imágenes, notas por bloque y avisos de validación |
-| 📤 Exportar | **Más / Exportar** | Descargar `.md`, HTML independiente, copiar formatos y ZIP de recursos |
+| 📤 Exportar | **Exportar** | Menú propio para `.md`, HTML, ZIP de recursos y copiar Markdown/HTML |
 
 <details>
 <summary><strong>🖥️ Cómo se organiza la interfaz</strong></summary>
@@ -86,7 +86,7 @@ El nombre de marca se escribe **markEDdown**, con **ED** destacado y **sin texto
 2. En **Explorador**, crea un documento o abre uno existente; también puedes comenzar con una plantilla desde **Más → Plantillas**.
 3. Escribe Markdown y observa la **Vista previa**.
 4. Pulsa `/` para insertar bloques desde la paleta de comandos o usa **Insertar**.
-5. Guarda tu trabajo fuera del navegador descargándolo con **Más → Exportar → Descargar .md**.
+5. Guarda tu trabajo fuera del navegador con **Exportar → Archivo Markdown (.md)** (en la rama editorial) o con **Más → Descargar .md** (versión publicada).
 
 No hay que crear una cuenta para las funciones locales. Los documentos se guardan en **ese navegador y ese origen**, sin sincronización automática entre dispositivos.
 
@@ -207,25 +207,27 @@ Los comandos de despliegue necesitan permisos de Cloudflare; **no son necesarios
 git fetch origin
 git switch design/editorial-markeddown-studio
 npm ci
+npm run test
 npm run dev
 ```
 
-Esta rama incorpora el nuevo icono, el sistema de color editorial, accesos reales en cabecera y la barra de estado. El trabajo se revisa en el [PR #3](https://github.com/rck1996/mded/pull/3), sin fusionarlo automáticamente a `main`.
+Esta rama incorpora el icono editorial, cabecera sin superposiciones, una exportación acotada que reutiliza los comandos existentes, mayor legibilidad, accesos reales y una barra de estado basada en datos del runtime. El trabajo se revisa en el [PR #3](https://github.com/rck1996/mded/pull/3), sin fusionarlo automáticamente a `main`.
 
 <a id="quality"></a>
 ## 🧪 Calidad: qué está probado
 
-El workflow [CI](.github/workflows/cloudflare-pages.yml) ejecuta `npm ci` y `npm run build` en pull requests y cambios a `main`.
+El workflow [CI](.github/workflows/cloudflare-pages.yml) ejecuta `npm ci`, `npm run test` y `npm run build` en pull requests y cambios a `main`. Los tests usan el runner integrado de Node.js y validan el flujo de la nueva cabecera.
 
 | Comprobación | Estado | Evidencia |
 | :--- | :--- | :--- |
-| Instalación y build de la rama editorial | ✅ Exitoso | [GitHub Actions](https://github.com/rck1996/mded/actions/runs/41253562253) |
-| Revisión estructural de imports e IDs nuevos | ✅ Comprobación estática | [Archivos del PR](https://github.com/rck1996/mded/pull/3/files) |
+| Instalación y compilación de la rama editorial | ✅ Exitoso | [GitHub Actions](https://github.com/rck1996/mded/actions/runs/41254761664) |
+| Accesos rápidos, delegación de exportaciones, Escape, tema y estado | ✅ Tests automatizados de módulo | [tests/studio-flow.test.cjs](tests/studio-flow.test.cjs) |
+| Estructura HTML e IDs de la cabecera | ✅ Comprobación automatizada | [tests/studio-flow.test.cjs](tests/studio-flow.test.cjs) |
 | Flujo visual e interactivo desktop/móvil | ⏳ Pendiente | [Matriz móvil](docs/MOBILE-UI-VERIFICATION.md) |
-| Pruebas E2E automatizadas | ⏳ No acreditadas | [Roadmap](docs/ROADMAP.md) |
+| Pruebas E2E en navegador real | ⏳ No acreditadas | [Roadmap](docs/ROADMAP.md) |
 | Respaldo integral y recuperación | 🛠 Pendiente | [Arquitectura](docs/ARCHITECTURE.md) |
 
-**Una compilación correcta no equivale a una aplicación completamente probada.** Antes de publicar el rediseño deben revisarse menús, teclado móvil, temas, navegación, inspector, historial, exportaciones y datos previamente almacenados.
+**Las pruebas de módulo y la compilación no sustituyen el QA visual.** Antes de publicar el rediseño deben revisarse en navegador los menús, teclado móvil, temas, navegación, inspector, historial, exportaciones y documentos previamente guardados. [Matriz de verificación detallada →](docs/MOBILE-UI-VERIFICATION.md)
 
 <a id="architecture"></a>
 ## 🧠 Arquitectura
@@ -257,7 +259,8 @@ mded/
 │   ├── domain/             Documentos, carpetas, Markdown, assets e índice
 │   ├── editor/             Integración CodeMirror
 │   ├── ui/                 Componentes y renderizadores
-│   └── styles/             Tokens, paneles, editor y responsive
+│   └── styles/             Tokens, tema editorial, refinamientos y responsive
+├── tests/                  Tests de accesos, exportación y estado de la UI
 ├── docs/                   Arquitectura, diseño, roadmap y QA
 └── .github/workflows/      CI
 ```
@@ -286,6 +289,7 @@ mded/
 | [Banner](docs/markeddown-banner.svg) | [Estructura del proyecto](docs/PROJECT-STRUCTURE.md) |
 | [Icono SVG](public/assets/logo/markeddown-studio-icon.svg) | [Verificación móvil](docs/MOBILE-UI-VERIFICATION.md) |
 | [PR del rediseño](https://github.com/rck1996/mded/pull/3) | [Roadmap](docs/ROADMAP.md) |
+| [Controles y contratos de UI](docs/EDITORIAL-IDENTITY.md#05--contrato-de-interacción) | [Tests del editor](tests/studio-flow.test.cjs) |
 
 ### Cloudflare Pages
 
