@@ -183,7 +183,8 @@ try {
 
   await check("Composer: enlace contextual solicita URL y conserva Markdown", async () => {
     await page.locator("#studio-v2-compose").click();
-    const field = page.locator(".studio-compose-inline").first();
+    const field = page.locator(".studio-compose-inline").filter({ hasText: "La primera canción" }).first();
+    await field.waitFor({ state: "visible" });
     await field.focus();
     await field.evaluate((element) => {
       const node = element.firstChild;
@@ -196,7 +197,10 @@ try {
       document.dispatchEvent(new Event("selectionchange"));
     });
     await page.locator(".studio-compose-selection-tools").waitFor({ state: "visible" });
-    page.once("dialog", (dialog) => dialog.accept("https://example.org/reference"));
+    page.once("dialog", (dialog) => {
+      console.log("Context link URL dialog:", dialog.message());
+      dialog.accept("https://example.org/reference");
+    });
     await page.locator('[data-compose-format="link"]').click();
     assert.match(await readMarkdown(), /\[La primera\]\(https:\/\/example\.org\/reference\)/);
   });
