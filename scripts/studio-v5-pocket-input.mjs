@@ -59,7 +59,29 @@ try {
   await chooser.setFiles({ name: "galeria.png", mimeType: "image/png", buffer: png });
   await waitForImages(initial + 1);
   assert.match(await page.locator("#markdown-input").inputValue(), /mded-image:/);
-  console.log("PASS Pocket gallery image inserts an actual local asset");
+  const inlinePhoto = page.locator(".cm-inline-image-preview img").first();
+  await inlinePhoto.waitFor({ state: "visible" });
+  const inlinePhotoDimensions = await inlinePhoto.evaluate(async (img) => {
+    await img.decode();
+    const rect = img.getBoundingClientRect();
+    return { width: img.naturalWidth, height: img.naturalHeight, renderedWidth: rect.width };
+  });
+  assert.ok(inlinePhotoDimensions.width > 0 && inlinePhotoDimensions.renderedWidth > 0,
+    JSON.stringify(inlinePhotoDimensions));
+  assert.equal(await page.locator(".cm-inline-token-image").count(), 0,
+    "A stored image must render as a thumbnail, not only a token label");
+  console.log("PASS Pocket gallery image displays a real preview in CodeMirror");
+
+  // Reader must show the same image at full width without altering the source.
+  await page.locator("#studio-v2-pocket-preview").click();
+  const readerPhoto = page.locator("#markdown-preview img").first();
+  await readerPhoto.waitFor({ state: "visible" });
+  assert.ok(await readerPhoto.evaluate(async (img) => {
+    await img.decode();
+    return img.naturalWidth > 0;
+  }), "Reader displays a decoded image");
+  await page.locator("#studio-v2-pocket-preview").click();
+  console.log("PASS Pocket reader renders the same stored image");
 
   // Android image clipboard can be read explicitly even if Gboard omits the paste event.
   await page.evaluate(() => {
