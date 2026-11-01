@@ -27,6 +27,7 @@ if (root) {
     '<div class="studio-v2-location"><span class="studio-v2-kicker">RCK1996 / WRITING STUDIO</span>' +
     '<strong id="studio-v2-location-title">Espacio de escritura</strong><small id="studio-v2-location-hint">Escribe · organiza · conecta · publica</small></div>' +
     '<div class="studio-v2-context-actions">' +
+    '<button type="button" id="studio-v2-editor" title="Abrir editor">Editor</button>' +
     '<button type="button" id="studio-v2-library" title="Abrir biblioteca">Biblioteca</button>' +
     '<button type="button" id="studio-v2-graph" title="Ver conexiones">Conexiones</button>' +
     '<button type="button" id="studio-v2-new" class="studio-v2-primary">+ Nuevo documento</button></div>';
@@ -164,6 +165,7 @@ if (root) {
     const button = event.target.closest("[data-studio-go]");
     if (button) setSpace(button.dataset.studioGo);
   });
+  byId("studio-v2-editor")?.addEventListener("click", () => setSpace("editor"));
   byId("studio-v2-library")?.addEventListener("click", () => setSpace("library"));
   byId("studio-v2-graph")?.addEventListener("click", () => setSpace("graph"));
   [byId("studio-v2-new"), byId("studio-v2-pocket-new"), byId("studio-v2-hero-create")].forEach((button) =>
