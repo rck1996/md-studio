@@ -404,3 +404,12 @@
   .workspace.studio-v2 .studio-compose-block-menu,
   .workspace.studio-v2 .studio-compose-add-last {display:none !important}
 }
+
+
+/* A presentation or focus session is truly free from Studio chrome. */
+.workspace.studio-v2:is([data-focus="true"],[data-presentation="true"]) :is(
+  .studio-v2-context,
+  .studio-v4-reader-toolbar,
+  .studio-v4-inspector,
+  .studio-v4-destinations
+) { display:none !important; }
