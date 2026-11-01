@@ -139,6 +139,12 @@ try {
   const persisted = await mobile.locator(".cm-content").innerText();
   assert.match(persisted, /Pocket QA/, "local document should persist after reload");
   console.log("PASS: Pocket edit and local persistence.");
+  await mobile.goto(base + "/?share_title=" + encodeURIComponent("Artículo compartido") +
+    "&share_text=" + encodeURIComponent("Una idea que quiero guardar y conectar en mi biblioteca.") +
+    "&share_url=" + encodeURIComponent("https://example.com/lectura"), { waitUntil: "domcontentloaded" });
+  await mobile.locator(".studio-share-overlay").waitFor({ state: "visible" });
+  await capture(mobile, "pocket-13-share-capture");
+  await mobile.locator("#studio-share-cancel").click();
   await mobileContext.close();
 } finally {
   await browser.close();
