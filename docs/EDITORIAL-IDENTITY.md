@@ -49,7 +49,7 @@ La vista previa es una página de **papel marfil** en ambos temas, no una zona d
 | `≤ 600px` | Marca, acciones, selector y estado en filas propias | Botones táctiles y paneles inferiores |
 | `≤ 380px` | Espacios compactos, sin solapamientos | Exportación e inspector todavía accesibles |
 
-En escritorio, la barra inferior muestra estadísticas y guardado **reales**, lejos de los botones de acción. En móvil el estado pasa a su propia fila bajo el selector. El inspector no desaparece por falta de espacio: se reduce a icono, con aviso visual si existen alertas.
+En escritorio, la barra inferior muestra estadísticas y guardado **reales**, lejos de los botones de acción. El encabezado de Source refleja el nombre del documento activo, incluso cuando un filtro del explorador oculta su fila. En móvil el estado pasa a su propia fila bajo el selector. El inspector no desaparece por falta de espacio: se reduce a icono, con aviso visual si existen alertas.
 
 Los documentos largos tienen scroll interno y el editor debe conservar fuente legible y padding adecuado. El modo dividido se ofrece solo cuando hay espacio.
 
