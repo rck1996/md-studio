@@ -1339,6 +1339,16 @@ const getCompactImageTokenLabel = (altText, source) => {
   return `Imagen: ${compactInlineText(altText || "referencia", 24)}`;
 };
 
+const getInlineImageTokenSource = (source) => {
+  const value = source.startsWith("mded-image:")
+    ? readStoredValue(imageStoreKey, source.slice("mded-image:".length))
+    : source;
+  // Never put arbitrary URLs into a privileged editor widget.
+  return typeof value === "string" && /^data:image\/(?:png|jpeg|jpg|gif|webp);base64,/i.test(value)
+    ? value
+    : null;
+};
+
 const getCompactLinkTokenLabel = (text, href) => {
   if (href.startsWith("mded-link:")) {
     const storedHref = readStoredValue(linkStoreKey, href.replace("mded-link:", "")) || href;
@@ -1382,6 +1392,7 @@ const createEditor = (markdownText) => {
     initialWrapExtension: getWrapExtension(getPreferences().wrap),
     getHeadingFoldRange,
     getImageTokenLabel: getCompactImageTokenLabel,
+    getImageTokenSource: getInlineImageTokenSource,
     getLinkTokenLabel: getCompactLinkTokenLabel,
     isModKey,
     runFormatShortcut,
