@@ -210,7 +210,10 @@ if (root) {
         if (root.dataset.sidePanel === "graph") trigger("side-tab-documents");
         selectView(mobileQuery.matches ? "editor" : "split");
       }
-      if (space === "preview") selectView("preview");
+      if (space === "preview") {
+        if (root.dataset.sidePanel === "graph") trigger("side-tab-documents");
+        selectView("preview");
+      }
     }
     currentSpace = space;
     refresh();
