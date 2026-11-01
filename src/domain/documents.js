@@ -154,9 +154,10 @@ Escribe aqui tu contenido. Usa los botones de la izquierda si no recuerdas la si
   return createInitial();
 };
 
-export const setDocuments = (documents) => {
-  storageSet(documentsKey, JSON.stringify(sortDocuments(documents).map((doc, index) => ({ ...doc, order: doc.order ?? index }))));
-};
+export const setDocuments = (documents) =>
+  storageSet(documentsKey, JSON.stringify(sortDocuments(documents).map((doc, index) => ({
+    ...doc, order: doc.order ?? index,
+  }))));
 
 export const createBlankDocument = (defaultMarkdown, folderId = getActiveFolderId()) => {
   const now = Date.now();

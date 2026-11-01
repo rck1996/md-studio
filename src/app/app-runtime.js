@@ -546,7 +546,7 @@ const updateActiveDocument = (markdown) => {
         }
       : doc,
   );
-  setDocuments(nextDocuments);
+  return setDocuments(nextDocuments);
 };
 
 const getMarkdown = () => editor.state.doc.toString();
@@ -833,17 +833,20 @@ const renderMarkdown = (markdown) => {
 
 const setSaveStatus = (value) => {
   saveStatus.textContent = value;
-  saveStatus.dataset.state = value === "Guardando" ? "saving" : "saved";
+  saveStatus.dataset.state = value === "Guardando" ? "saving" : value === "Sin guardar" ? "error" : "saved";
 };
 
 const saveDocument = () => {
   const markdown = getMarkdown();
   maybeCaptureSnapshot(activeDocumentId, markdown, defaultMarkdown, snapshotIntervalMs);
-  updateActiveDocument(markdown);
+  const persisted = updateActiveDocument(markdown);
   storageSet(storageKey, markdown);
-  renderDocuments();
+  // Autosave must not tear down an open document/folder action menu or an
+  // inline rename form. Their callbacks render the explorer after committing.
+  const explorerInteractionActive = Boolean(documentList.querySelector("details[open], .inline-rename"));
+  if (!explorerInteractionActive) renderDocuments();
   if (!historyOverlay.hidden && historyState.documentId === activeDocumentId) renderHistoryPanel();
-  setSaveStatus("Guardado");
+  setSaveStatus(persisted ? "Guardado" : "Sin guardar");
 };
 
 const scheduleSave = () => {
@@ -1790,3 +1793,42 @@ window.addEventListener("resize", () => {
   updateMobileViewportMetrics();
 });
 
+// CodeMirror is the only writable document model. Visual composition asks for
+// a guarded range adapter; no state is copied into a second editor store.
+document.addEventListener("markeddown:composer-request", (event) => {
+  if (typeof event.detail?.accept !== "function") return;
+  event.detail.accept({
+    readMarkdown: getMarkdown,
+    getDocumentId: () => activeDocumentId,
+    preprocess: (raw) => preprocessMarkdown(raw, readMarkdownToken),
+    replaceRange: (from, to, insert, expected) => {
+      const current = getMarkdown();
+      if (!Number.isInteger(from) || !Number.isInteger(to) || from < 0 || to > current.length ||
+          from > to || current.slice(from, to) !== expected) return false;
+      editor.dispatch({ changes: { from, to, insert } });
+      return true;
+    },
+    focusRange: (from, to) => {
+      const length = editor.state.doc.length;
+      const anchor = Math.max(0, Math.min(from, length));
+      const head = Math.max(anchor, Math.min(to, length));
+      editor.dispatch({ selection: { anchor, head }, scrollIntoView: true });
+      editor.focus();
+    },
+  });
+});
+
+
+// Share Target accepts user-reviewed content only. This handler reuses the
+// normal document workflow, so history and local persistence stay consistent.
+document.addEventListener("markeddown:create-shared-document", (event) => {
+  const markdown = String(event.detail?.markdown || "").slice(0, 18000);
+  if (!markdown.trim()) return;
+  const title = String(event.detail?.title || "Nota compartida").replace(/[\r\n]/g, " ").trim().slice(0, 180) || "Nota compartida";
+  const doc = createBlankDocument(defaultMarkdown, getActiveFolderId());
+  doc.title = title;
+  doc.titleManual = true;
+  doc.markdown = markdown;
+  setDocuments([...getDocuments(defaultMarkdown), doc]);
+  openDocumentInEditor(doc);
+});

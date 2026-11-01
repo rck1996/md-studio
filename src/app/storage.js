@@ -35,9 +35,18 @@ export const storageGet = (key) => {
 
 export const storageSet = (key, value) => {
   try {
-    window.localStorage?.setItem(key, value);
-  } catch {
-    // In restricted browser contexts, persistence may be unavailable.
+    if (!window.localStorage) throw new Error("Local storage unavailable");
+    window.localStorage.setItem(key, value);
+    return true;
+  } catch (error) {
+    // Never claim persistence when storage is blocked or its quota is exhausted.
+    // The editor still holds the unsaved content in memory for manual export.
+    if (typeof window.dispatchEvent === "function" && typeof CustomEvent === "function") {
+      window.dispatchEvent(new CustomEvent("markeddown:storage-error", {
+        detail: { key, reason: error?.name || "StorageError" },
+      }));
+    }
+    return false;
   }
 };
 
