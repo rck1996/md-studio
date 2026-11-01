@@ -5,6 +5,38 @@ import { renderOutlinePanel } from "../ui/outline-panel.js";
 import { getHeadingSectionKeys, getHeadingSections } from "../domain/outline.js";
 import { setSafeHtml } from "../domain/markdown.js";
 
+// Render local image references without feeding megabytes of data URLs through
+// Marked's Markdown parser or the HTML sanitizer. A tiny local placeholder is
+// replaced in the DOM with the saved image after sanitization.
+const assetMarker = "mded-image-asset:";
+const transparentPixel = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=";
+const safeImageDataUrl = /^data:image\/(?:png|jpe?g|gif|webp);base64,[a-z0-9+/=]+$/i;
+const preparePreviewImages = (markdown) =>
+  markdown.replace(/!\[([^\]]*)\]\(mded-image:([a-z0-9-]+)\)/g,
+    (_match, alt, id) => `![${alt}](${transparentPixel} "${assetMarker}${id}")`);
+const restorePreviewImages = (preview, readMarkdownToken) => {
+  preview.querySelectorAll('img[title^="mded-image-asset:"]').forEach((image) => {
+    const id = image.getAttribute("title").slice(assetMarker.length);
+    image.removeAttribute("title");
+    const dataUrl = readMarkdownToken("image", id);
+    if (typeof dataUrl === "string" && safeImageDataUrl.test(dataUrl)) {
+      image.src = dataUrl;
+      image.classList.add("mded-local-image");
+      image.addEventListener("error", () => {
+        image.replaceWith(Object.assign(document.createElement("span"), {
+          className: "mded-image-load-error",
+          textContent: "No se pudo mostrar esta imagen guardada.",
+        }));
+      }, { once: true });
+    } else {
+      image.replaceWith(Object.assign(document.createElement("span"), {
+        className: "mded-image-load-error",
+        textContent: "Esta imagen ya no está disponible en este navegador.",
+      }));
+    }
+  });
+};
+
 const applyHeadingAnchors = ({ preview, slugify }) => {
   const used = new Map();
   preview.querySelectorAll("h1, h2, h3, h4, h5, h6").forEach((heading) => {
@@ -211,7 +243,8 @@ export const createPreviewRenderer = ({
   };
 
   const renderMarkdown = ({ markdown, editorState }) => {
-    setSafeHtml(preview, marked.parse(preprocessMarkdown(markdown, readMarkdownToken)));
+    setSafeHtml(preview, marked.parse(preprocessMarkdown(preparePreviewImages(markdown), readMarkdownToken)));
+    restorePreviewImages(preview, readMarkdownToken);
     if (!markdown.trim()) {
       const emptyState = document.createElement("p");
       emptyState.className = "preview-empty-state";
