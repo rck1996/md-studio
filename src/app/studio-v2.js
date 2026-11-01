@@ -3,6 +3,7 @@
  * Presentation adapter only: delegates every mutation to the existing runtime.
  * No duplicate document store, Markdown parser, or export implementation.
  */
+import { createVisualComposer } from "./visual-composer.js";
 const root = document.querySelector(".workspace");
 const byId = (id) => document.getElementById(id);
 const mobileQuery = window.matchMedia("(max-width: 900px)");
@@ -28,6 +29,7 @@ if (root) {
     '<strong id="studio-v2-location-title">Espacio de escritura</strong><small id="studio-v2-location-hint">Escribe · organiza · conecta · publica</small></div>' +
     '<div class="studio-v2-context-actions">' +
     '<button type="button" id="studio-v2-editor" title="Abrir editor">Editor</button>' +
+    '<button type="button" id="studio-v2-compose" title="Editar visualmente">Edición visual</button>' +
     '<button type="button" id="studio-v2-library" title="Abrir biblioteca">Biblioteca</button>' +
     '<button type="button" id="studio-v2-backup" title="Respaldo del espacio">Respaldo</button>' +
     '<button type="button" data-studio-install hidden title="Instalar MarkEDdown">Instalar</button>' +
@@ -97,7 +99,8 @@ if (root) {
   mobileTitle.className = "studio-v2-pocket-header";
   mobileTitle.innerHTML =
     '<div><span class="studio-v2-kicker">MARKEDDOWN / POCKET</span><strong id="studio-v2-pocket-title">Cuaderno</strong></div>' +
-    '<div class="studio-v2-pocket-actions"><button type="button" id="studio-v2-pocket-search" aria-label="Buscar documentos y comandos" title="Buscar">⌕</button>' +
+    '<div class="studio-v2-pocket-actions"><button type="button" id="studio-v2-pocket-compose" aria-label="Cambiar a edición visual" title="Modo visual" aria-pressed="false">Aa</button>' +
+    '<button type="button" id="studio-v2-pocket-search" aria-label="Buscar documentos y comandos" title="Buscar">⌕</button>' +
     '<button type="button" id="studio-v2-pocket-preview" aria-label="Alternar lectura y escritura">Lectura</button>' +
     '<button type="button" id="studio-v2-pocket-new" aria-label="Nuevo documento">＋</button></div>';
   context.after(mobileTitle);
@@ -147,11 +150,13 @@ if (root) {
   };
 
   let currentSpace = mobileQuery.matches ? "home" : "editor";
+  let composer = null;
   let returnFocus = null;
   const labels = {
     home: ["Inicio", "Tus documentos, ideas y proyectos"],
     library: ["Biblioteca", "Explora y organiza tu espacio local"],
-    editor: ["Editor de Markdown", "Escritura y vista previa en vivo"],
+    editor: ["Editor de Markdown", "Edición del código fuente"],
+    compose: ["Escritura visual", "Edita bloques sin abandonar Markdown"],
     preview: ["Lectura", "El documento en papel editorial"],
     insert: ["Insertar bloques", "Formatos Markdown listos para usar"],
     outline: ["Índice", "Estructura y notas del documento"],
@@ -168,16 +173,22 @@ if (root) {
     const label = labels[currentSpace] || labels.editor;
     if (title) title.textContent = label[0];
     if (hint) hint.textContent = label[1];
-    if (pocketTitle) pocketTitle.textContent = currentSpace === "editor" || currentSpace === "preview"
+    if (pocketTitle) pocketTitle.textContent = ["editor", "preview", "compose"].includes(currentSpace)
       ? (byId("studio-active-file")?.textContent?.trim() || "Documento")
       : label[0];
     if (pocketPreview) {
       pocketPreview.textContent = currentSpace === "preview" ? "Código" : "Lectura";
-      pocketPreview.hidden = !["editor", "preview"].includes(currentSpace);
+      pocketPreview.hidden = !["editor", "preview", "compose"].includes(currentSpace);
     }
+    const composeButton = byId("studio-v2-pocket-compose");
+    if (composeButton) {
+      composeButton.setAttribute("aria-pressed", String(currentSpace === "compose"));
+      composeButton.classList.toggle("is-selected", currentSpace === "compose");
+    }
+    if (currentSpace === "compose") composer?.render();
     nav.querySelectorAll("[data-studio-go]").forEach((button) => {
       const target = button.dataset.studioGo;
-      const selected = target === currentSpace || (target === "editor" && currentSpace === "preview");
+      const selected = target === currentSpace || (target === "editor" && ["preview", "compose"].includes(currentSpace));
       button.classList.toggle("is-active", selected);
       if (selected) button.setAttribute("aria-current", "page");
       else button.removeAttribute("aria-current");
@@ -228,6 +239,10 @@ if (root) {
     if (button) setSpace(button.dataset.studioGo);
   });
   byId("studio-v2-editor")?.addEventListener("click", () => setSpace("editor"));
+  byId("studio-v2-compose")?.addEventListener("click", () => setSpace("compose"));
+  byId("studio-v2-pocket-compose")?.addEventListener("click", () =>
+    setSpace(currentSpace === "compose" ? "editor" : "compose")
+  );
   byId("studio-v2-library")?.addEventListener("click", () => setSpace("library"));
   byId("studio-v2-backup")?.addEventListener("click", () =>
     window.dispatchEvent(new Event("markeddown:open-backup"))
@@ -358,6 +373,16 @@ if (root) {
     else setSpace("editor");
     updateKeyboard();
   });
+
+  document.dispatchEvent(new CustomEvent("markeddown:composer-request", {
+    detail: { accept: (bridge) => {
+      composer = createVisualComposer({
+        root, bridge,
+        onOpenSource: () => setSpace("editor"),
+        onOpenPreview: () => setSpace("preview"),
+      });
+    } },
+  }));
 
   // Do not override stored documents or preferences. The new chrome is opt-in
   // by the presence of this module only.
