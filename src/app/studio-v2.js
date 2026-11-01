@@ -74,7 +74,8 @@ if (root) {
   mobileTitle.className = "studio-v2-pocket-header";
   mobileTitle.innerHTML =
     '<div><span class="studio-v2-kicker">MARKEDDOWN / POCKET</span><strong id="studio-v2-pocket-title">Cuaderno</strong></div>' +
-    '<div class="studio-v2-pocket-actions"><button type="button" id="studio-v2-pocket-preview" aria-label="Alternar lectura y escritura">Lectura</button>' +
+    '<div class="studio-v2-pocket-actions"><button type="button" id="studio-v2-pocket-search" aria-label="Buscar documentos y comandos" title="Buscar">⌕</button>' +
+    '<button type="button" id="studio-v2-pocket-preview" aria-label="Alternar lectura y escritura">Lectura</button>' +
     '<button type="button" id="studio-v2-pocket-new" aria-label="Nuevo documento">＋</button></div>';
   context.after(mobileTitle);
 
@@ -83,7 +84,7 @@ if (root) {
   veil.hidden = true;
   veil.innerHTML =
     '<section class="studio-v2-tools-sheet" role="dialog" aria-modal="true" aria-label="Herramientas y ajustes">' +
-    '<div class="studio-v2-sheet-head"><div><span class="studio-v2-kicker">MARKEDDOWN / TOOLS</span><h2>Herramientas</h2></div><button id="studio-v2-tools-close" type="button" aria-label="Cerrar">×</button></div>' +
+    '<div class="studio-v2-sheet-head"><button type="button" id="studio-v2-tools-back" aria-label="Volver a herramientas" hidden>←</button><div><span class="studio-v2-kicker">MARKEDDOWN / TOOLS</span><h2 id="studio-v2-sheet-title">Herramientas</h2></div><button id="studio-v2-tools-close" type="button" aria-label="Cerrar">×</button></div>' +
     '<div class="studio-v2-tools-grid">' +
     '<button type="button" data-studio-tool="insert"><b>＋</b><strong>Insertar</strong><small>Bloques de escritura</small></button>' +
     '<button type="button" data-studio-tool="outline"><b>☰</b><strong>Índice</strong><small>Secciones y notas</small></button>' +
@@ -93,8 +94,32 @@ if (root) {
     '<button type="button" data-studio-tool="export"><b>↗</b><strong>Exportar</strong><small>MD, HTML y recursos</small></button>' +
     '<button type="button" data-studio-tool="preferences"><b>⚙</b><strong>Preferencias</strong><small>Lectura y apariencia</small></button>' +
     '<button type="button" data-studio-tool="focus"><b>□</b><strong>Foco</strong><small>Sin distracciones</small></button>' +
+    '</div><div class="studio-v2-export-options" hidden>' +
+    '<button type="button" data-studio-pocket-export="download-markdown"><span>↓</span><strong>Descargar Markdown</strong><small>Archivo .md</small></button>' +
+    '<button type="button" data-studio-pocket-export="export-html"><span>⌘</span><strong>Exportar HTML</strong><small>Documento web</small></button>' +
+    '<button type="button" data-studio-pocket-export="print-pdf"><span>▤</span><strong>Imprimir / PDF</strong><small>Diálogo del navegador</small></button>' +
+    '<button type="button" data-studio-pocket-export="export-assets"><span>▧</span><strong>Recursos ZIP</strong><small>Imágenes del documento</small></button>' +
+    '<button type="button" data-studio-pocket-export="copy-markdown"><span>⧉</span><strong>Copiar Markdown</strong><small>Portapapeles</small></button>' +
+    '<button type="button" data-studio-pocket-export="copy-html"><span>⧉</span><strong>Copiar HTML</strong><small>Portapapeles</small></button>' +
     '</div></section>';
   root.append(veil);
+  const toolsGrid = veil.querySelector(".studio-v2-tools-grid");
+  const exportOptions = veil.querySelector(".studio-v2-export-options");
+  const toolsBack = byId("studio-v2-tools-back");
+  const sheetTitle = byId("studio-v2-sheet-title");
+  const resetToolsView = () => {
+    toolsGrid.hidden = false;
+    exportOptions.hidden = true;
+    toolsBack.hidden = true;
+    sheetTitle.textContent = "Herramientas";
+  };
+  const showExportOptions = () => {
+    toolsGrid.hidden = true;
+    exportOptions.hidden = false;
+    toolsBack.hidden = false;
+    sheetTitle.textContent = "Exportar documento";
+    toolsBack.focus();
+  };
 
   let currentSpace = mobileQuery.matches ? "home" : "editor";
   let returnFocus = null;
@@ -121,7 +146,10 @@ if (root) {
     if (pocketTitle) pocketTitle.textContent = currentSpace === "editor" || currentSpace === "preview"
       ? (byId("studio-active-file")?.textContent?.trim() || "Documento")
       : label[0];
-    if (pocketPreview) pocketPreview.textContent = currentSpace === "preview" ? "Código" : "Lectura";
+    if (pocketPreview) {
+      pocketPreview.textContent = currentSpace === "preview" ? "Código" : "Lectura";
+      pocketPreview.hidden = !["editor", "preview"].includes(currentSpace);
+    }
     nav.querySelectorAll("[data-studio-go]").forEach((button) => {
       const target = button.dataset.studioGo;
       const selected = target === currentSpace || (target === "editor" && currentSpace === "preview");
@@ -149,14 +177,18 @@ if (root) {
   };
   function openTools() {
     returnFocus = document.activeElement;
+    resetToolsView();
     veil.hidden = false;
+    nav.querySelector('[data-studio-go="tools"]')?.setAttribute("aria-expanded", "true");
     root.dataset.studioToolsOpen = "true";
     byId("studio-v2-tools-close")?.focus();
   }
   function closeTools() {
     if (veil.hidden) return;
     veil.hidden = true;
+    resetToolsView();
     root.dataset.studioToolsOpen = "false";
+    nav.querySelector('[data-studio-go="tools"]')?.setAttribute("aria-expanded", "false");
     returnFocus?.focus?.();
     returnFocus = null;
   }
@@ -172,6 +204,9 @@ if (root) {
     button?.addEventListener("click", () => { trigger("new-document"); setSpace("editor"); })
   );
   byId("studio-v2-pocket-preview")?.addEventListener("click", () => setSpace(currentSpace === "preview" ? "editor" : "preview"));
+  byId("studio-v2-pocket-search")?.addEventListener("click", () =>
+    document.dispatchEvent(new Event("markeddown:open-command-palette"))
+  );
   byId("studio-v2-insert")?.addEventListener("click", () => setSpace("insert"));
   keyboardBar.addEventListener("pointerdown", (event) => {
     if (event.target.closest("button")) event.preventDefault(); // preserve CodeMirror selection
@@ -181,20 +216,52 @@ if (root) {
     if (button) root.querySelector('[data-format="' + button.dataset.pocketFormat + '"]')?.click();
   });
   byId("studio-v2-tools-close")?.addEventListener("click", closeTools);
+  toolsBack.addEventListener("click", () => {
+    resetToolsView();
+    veil.querySelector('[data-studio-tool="export"]')?.focus();
+  });
   veil.addEventListener("pointerdown", (event) => { if (event.target === veil) closeTools(); });
   veil.addEventListener("click", (event) => {
     const button = event.target.closest("[data-studio-tool]");
     if (!button) return;
     const action = button.dataset.studioTool;
     if (["insert", "outline", "graph"].includes(action)) setSpace(action);
+    else if (action === "export") showExportOptions();
     else {
       closeTools();
-      const actions = { history: "nav-history", templates: "open-templates", export: "studio-export", preferences: "open-preferences", focus: "focus-mode" };
+      if (action === "focus") setSpace("editor");
+      const actions = { history: "nav-history", templates: "open-templates", preferences: "open-preferences", focus: "focus-mode" };
       trigger(actions[action]);
     }
   });
+  exportOptions.addEventListener("click", (event) => {
+    const item = event.target.closest("[data-studio-pocket-export]");
+    if (!item) return;
+    const action = item.dataset.studioPocketExport;
+    closeTools();
+    trigger(action);
+  });
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !veil.hidden) { event.preventDefault(); closeTools(); }
+    if (veil.hidden) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeTools();
+      return;
+    }
+    if (event.key !== "Tab") return;
+    const items = [...veil.querySelectorAll("button:not([hidden])")].filter(
+      (button) => button.getClientRects().length && !button.disabled
+    );
+    const first = items[0];
+    const last = items.at(-1);
+    if (!first || !last) return;
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   });
 
   const navIds = {
@@ -208,12 +275,21 @@ if (root) {
       refresh();
     });
   });
-  byId("document-list")?.addEventListener("click", (event) => {
-    if (event.target.closest(".document-item")) {
-      currentSpace = "editor";
-      refresh();
-    }
+  const linkDocumentToEditor = (container, selector) => {
+    container?.addEventListener("click", (event) => {
+      if (event.target.closest(selector)) setSpace("editor");
+    });
+  };
+  linkDocumentToEditor(byId("document-list"), ".document-item");
+  linkDocumentToEditor(byId("home-recent"), ".home-recent-item");
+  linkDocumentToEditor(byId("graph-panel"), ".graph-node, .graph-list-item");
+  linkDocumentToEditor(byId("template-grid"), ".template-card");
+  byId("insert-panel")?.addEventListener("click", (event) => {
+    if (event.target.closest("[data-format]")) setSpace("editor");
   });
+  byId("home-show-documents")?.addEventListener("click", () => setSpace("library"));
+  byId("home-new-project")?.addEventListener("click", () => setSpace("library"));
+  byId("close-graph")?.addEventListener("click", () => setSpace("library"));
   root.querySelectorAll(".workspace-controls [data-view]").forEach((button) =>
     button.addEventListener("click", () => {
       if (currentSpace === "editor" || currentSpace === "preview") {
