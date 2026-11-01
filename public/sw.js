@@ -1,10 +1,34 @@
 /* MarkEDdown offline app shell. User documents are NEVER written to the Cache API. */
-const CACHE_NAME = "markeddown-shell-v2-20261101";
+const CACHE_NAME = "markeddown-shell-v3-20261101";
 const CORE = ["/", "/manifest.webmanifest", "/assets/logo/markeddown-studio-icon.svg", "/icons/markeddown-192.png", "/icons/markeddown-512.png"];
 const sameOrigin = (url) => new URL(url, self.location.origin).origin === self.location.origin;
 const assetUrlsFromHtml = (html) => {
   const found = [...html.matchAll(/(?:src|href)="(\/assets\/[^"]+)"/g)].map((m) => m[1]);
   return [...new Set(found.filter((path) => !path.includes("..")))];
+};
+// Vite splits CodeMirror, Markdown and ZIP into separate ES modules. An app
+// shell with only index.js is NOT offline-capable: recursively cache imports.
+const precacheDependencyGraph = async (cache, roots) => {
+  const queued = [...roots];
+  const visited = new Set();
+  while (queued.length && visited.size < 120) {
+    const url = new URL(queued.shift(), self.location.origin);
+    if (url.origin !== self.location.origin || !url.pathname.startsWith("/assets/") || visited.has(url.pathname)) continue;
+    visited.add(url.pathname);
+    let response = await cache.match(url.pathname);
+    if (!response) {
+      response = await fetch(url.pathname, { cache: "reload" });
+      if (!response.ok) throw new Error("Offline dependency unavailable: " + url.pathname);
+      await cache.put(url.pathname, response.clone());
+    }
+    if (!url.pathname.endsWith(".js")) continue;
+    const source = await response.clone().text();
+    const specs = [...source.matchAll(/["']((?:\.\/|\/assets\/)[^"'?#]+\.(?:js|css|woff2|svg|png))["']/g)];
+    for (const match of specs) {
+      const dep = new URL(match[1], url.href);
+      if (dep.origin === self.location.origin && dep.pathname.startsWith("/assets/") && !visited.has(dep.pathname)) queued.push(dep.pathname);
+    }
+  }
 };
 self.addEventListener("install", (event) => {
   event.waitUntil((async () => {
@@ -20,6 +44,7 @@ self.addEventListener("install", (event) => {
     if (scriptPaths.length && scriptPaths.some((path) => !successes[entries.indexOf(path)] || successes[entries.indexOf(path)].status !== "fulfilled")) {
       throw new Error("Main app scripts could not be cached");
     }
+    await precacheDependencyGraph(cache, scriptPaths);
     await self.skipWaiting();
   })());
 });
