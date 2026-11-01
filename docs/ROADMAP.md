@@ -1,18 +1,18 @@
-# MarkEDdown Roadmap
+# markEDdown Roadmap
 
-## Revisión actual · Rediseño editorial (PR #3)
+## Rediseño editorial · integrado en `main`
 
-Esta rama contiene un rediseño funcional de markEDdown inspirado en RCK1996 Studio. **No está publicado ni fusionado a main**. El cierre del PR depende de pruebas reales, no solamente de un build exitoso.
+El rediseño funcional de markEDdown inspirado en RCK1996 Studio ya está integrado en `main`. La [galería](SCREENSHOTS.md) muestra capturas reales de las vistas principales; la comprobación visual responsive, accesibilidad y persistencia con perfiles de prueba sigue pendiente antes de declarar QA completo.
 
 | Prioridad | Trabajo | Estado |
 | :--- | :--- | :--- |
-| P0 | Evitar superposición de estadísticas, guardado, inspector y acciones | Implementado en CSS/HTML; pendiente captura final en navegador |
+| P0 | Evitar superposición de estadísticas, guardado, inspector y acciones | Implementado; captura real del workspace en [galería](SCREENSHOTS.md) |
 | P0 | Menú Exportar propio, sin opciones destructivas y con handlers originales | Implementado; con tests de delegación y teclado |
 | P0 | Preservar documentos, historial, assets y preferencias anteriores | Sin cambios de claves; pendiente QA con datos existentes |
 | P1 | Tipografía CodeMirror legible y página de lectura sin adornos superpuestos | Implementado; pendiente verificación visual en todos los tamaños |
 | P1 | Inspector y menú Exportar disponibles a 320–390px | Ajustes implementados; pendiente prueba táctil |
 | P1 | Contrastes claro/oscuro, foco de teclado y scroll correcto | Ajustes implementados; pendiente revisión de accesibilidad |
-| P2 | Capturas reales y recorrido visual para el README | Pendiente: usar capturas verificadas, no renders sintéticos |
+| P2 | Capturas reales y recorrido visual para el README | Capturas de escritorio integradas en README y [galería](SCREENSHOTS.md); falta QA responsive por tamaños |
 | P2 | Ilustraciones editoriales solo en estados vacíos o plantillas | Pendiente: recursos originales y control de legibilidad |
 | P2 | Importar y restaurar un workspace completo | Pendiente: diseño de formato, límites de almacenamiento y recuperación |
 
@@ -22,7 +22,7 @@ Esta rama contiene un rediseño funcional de markEDdown inspirado en RCK1996 Stu
 2. Checklist manual de [verificación responsive](MOBILE-UI-VERIFICATION.md) cubierto en claro y oscuro.
 3. Pruebas de creación, edición, búsqueda, descargas, restauración y persistencia, con datos de prueba y datos preexistentes.
 4. Confirmar que el diseño no agrega sincronización, navegación engañosa ni botones ficticios.
-5. Incorporar capturas reales al README solo después de la revisión visual.
+5. Mantener capturas reales del README y la [galería](SCREENSHOTS.md) sincronizadas con cambios importantes de interfaz.
 
 [Especificación visual](EDITORIAL-IDENTITY.md) · [PR de revisión](https://github.com/rck1996/mded/pull/3)
 

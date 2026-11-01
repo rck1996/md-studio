@@ -15,12 +15,12 @@ Pensado para escribir sin distracciones ni cuentas obligatorias.
 ![Vite](https://img.shields.io/badge/build-Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
 ![Local](https://img.shields.io/badge/datos-local--first-E34B12?style=flat-square)
 
-[**Abrir el editor ↗**](https://markeddown.rck1996.dev/) · [Recorrido](#tour) · [Empezar](#start) · [Desarrollo](#build) · [Calidad](#quality) · [Roadmap](#roadmap) · [Docs](#docs)
+[**Abrir el editor ↗**](https://markeddown.rck1996.dev/) · [Recorrido](#tour) · [Pantallas](docs/SCREENSHOTS.md) · [Empezar](#start) · [Desarrollo](#build) · [Calidad](#quality) · [Roadmap](#roadmap) · [Docs](#docs)
 
 </div>
 
 > [!IMPORTANT]
-> **Estado actual.** El editor publicado está en [markeddown.rck1996.dev](https://markeddown.rck1996.dev/). La nueva identidad editorial —pluma, sol, azul nocturno y papel marfil— se está revisando en el [PR #3](https://github.com/rck1996/mded/pull/3), y **todavía no se ha fusionado ni publicado allí**. El [build de CI](https://github.com/rck1996/mded/actions/runs/41253562253) pasó; falta verificación visual e interactiva completa. La versión `1.0.0` corresponde a `package.json`, no a una release pública certificada.
+> **Estado actual.** El rediseño editorial ya está integrado en `main`. El editor publicado está en [markeddown.rck1996.dev](https://markeddown.rck1996.dev/); la integración en `main` no confirma por sí sola que el despliegue haya terminado. Las capturas reales de sus vistas principales están en la [galería de pantallas](docs/SCREENSHOTS.md). La versión `1.0.0` corresponde a `package.json`, no a una release pública certificada.
 
 <a id="tour"></a>
 ## ✦ Conoce el espacio de trabajo
@@ -61,6 +61,12 @@ En escritorio, markEDdown presenta **Explorador · Editor · Vista previa**. En 
 En pantallas de **900 px o menos**, el modo dividido se sustituye por vistas individuales. Este esquema explica la estructura; **no es una captura real ni una prueba visual**.
 
 </details>
+
+## ✦ Pantallas reales
+
+![Editor dividido con documentos, Markdown y vista previa editorial](docs/screenshots/editor-split.png)
+
+[Abrir la galería completa de pantallas y características →](docs/SCREENSHOTS.md)
 
 ## ✧ Identidad: escritura × astronomía
 

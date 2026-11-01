@@ -11,6 +11,7 @@ mded/
   wrangler.toml
   README.md
   docs/
+    screenshots/
   public/
   src/
   tests/
@@ -43,7 +44,8 @@ Documentacion del proyecto.
 - `EDITORIAL-IDENTITY.md`: identidad visual, tokens y controles de revision.
 - `PROJECT-STRUCTURE.md`: esta guia.
 - `ROADMAP.md`: fases siguientes.
-- `EDITORIAL-IDENTITY.md`: identidad editorial, UI y criterios de aceptación.
+- `SCREENSHOTS.md`: galería de capturas reales de la interfaz.
+- `screenshots/`: imágenes usadas por la galería y el README.
 - `MOBILE-UI-VERIFICATION.md`: matriz de pruebas visuales y funcionales.
 - `markeddown-banner.svg`: portada del README.
 

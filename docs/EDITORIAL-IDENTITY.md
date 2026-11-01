@@ -1,6 +1,6 @@
 # markEDdown · Sistema editorial de interfaz
 
-> **Estado:** implementado en la rama de revisión [design/editorial-markeddown-studio](https://github.com/rck1996/mded/pull/3); no implica que esté publicada en el dominio.  
+> **Estado:** integrado en `main`; eso no confirma por sí solo que el despliegue en el dominio haya terminado. Consulta la [galería de capturas reales](SCREENSHOTS.md).
 > **Referencia:** [Style Guide de RCK1996 Studio](https://github.com/rck1996/profile-portfolio/blob/main/style-guide.html).
 
 ## 01 / Idea central
