@@ -546,3 +546,52 @@
 @media print {
   .workspace.studio-v2 .studio-share-overlay { display:none !important; }
 }
+
+
+/* Inline selection toolbar: selection drives formatting, CodeMirror stores it. */
+.workspace.studio-v2 .studio-compose-selection-tools:not([hidden]) {
+  display:flex;
+  flex:0 0 auto;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-height:50px;
+  padding:6px 14px;
+  border-bottom:1px solid var(--border);
+  background:var(--studio-v2-navy);
+  color:#f1e4cf;
+}
+.workspace.studio-v2 .studio-compose-selection-tools > span {
+  margin-right:4px;
+  color:#e8b29b;
+  font:600 10px/1.2 var(--font-code);
+  letter-spacing:.13em;
+}
+.workspace.studio-v2 .studio-compose-selection-tools button {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:42px;
+  min-height:36px;
+  padding:4px 12px;
+  border:1px solid #3b536c;
+  border-radius:6px;
+  background:#18314a;
+  color:#f1e4cf;
+  font:650 15px/1 var(--font-ui);
+}
+.workspace.studio-v2 .studio-compose-selection-tools button:hover,
+.workspace.studio-v2 .studio-compose-selection-tools button:focus-visible {
+  border-color:#f37a46;
+}
+@media(max-width:900px) {
+  .workspace.studio-v2 .studio-compose-selection-tools:not([hidden]) {
+    min-height:46px;gap:6px;
+    justify-content:space-between;
+    padding:5px 12px;
+  }
+  .workspace.studio-v2 .studio-compose-selection-tools button { flex:1; }
+}
+@media print {
+  .workspace.studio-v2 .studio-compose-selection-tools { display:none !important; }
+}
