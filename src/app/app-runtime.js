@@ -546,7 +546,7 @@ const updateActiveDocument = (markdown) => {
         }
       : doc,
   );
-  setDocuments(nextDocuments);
+  return setDocuments(nextDocuments);
 };
 
 const getMarkdown = () => editor.state.doc.toString();
@@ -833,17 +833,17 @@ const renderMarkdown = (markdown) => {
 
 const setSaveStatus = (value) => {
   saveStatus.textContent = value;
-  saveStatus.dataset.state = value === "Guardando" ? "saving" : "saved";
+  saveStatus.dataset.state = value === "Guardando" ? "saving" : value === "Sin guardar" ? "error" : "saved";
 };
 
 const saveDocument = () => {
   const markdown = getMarkdown();
   maybeCaptureSnapshot(activeDocumentId, markdown, defaultMarkdown, snapshotIntervalMs);
-  updateActiveDocument(markdown);
+  const persisted = updateActiveDocument(markdown);
   storageSet(storageKey, markdown);
   renderDocuments();
   if (!historyOverlay.hidden && historyState.documentId === activeDocumentId) renderHistoryPanel();
-  setSaveStatus("Guardado");
+  setSaveStatus(persisted ? "Guardado" : "Sin guardar");
 };
 
 const scheduleSave = () => {
