@@ -9,7 +9,7 @@ Estado: borrador, sin merge ni despliegue a producción.
 
 Revisión de navegación, edición, persistencia, creación de documentos, plantillas, índice, grafo, historial, favoritos, archivo, papelera, exportaciones y estados móviles. Pruebas con Chromium real desde Vite: escritorio 1440x900, Pocket táctil 390x844, ancho mínimo 320px, impresión simulada. Los datos de pruebas se aíslan en contextos nuevos; no se usan documentos del usuario.
 
-Las suites reproducibles están en scripts/studio-v2-flows.mjs (23 pruebas), scripts/studio-v2-crud-audit.mjs (15 pruebas) y scripts/studio-v2-screenshots.mjs (capturas de navegador). El workflow .github/workflows/studio-v2-visual.yml las ejecuta después de los tests unitarios y la compilación.
+Las suites reproducibles están en scripts/studio-v2-flows.mjs (23 pruebas), scripts/studio-v2-crud-audit.mjs (16 pruebas) y scripts/studio-v2-screenshots.mjs (capturas de navegador). El workflow .github/workflows/studio-v2-visual.yml las ejecuta después de los tests unitarios y la compilación.
 
 ## Fallos detectados y correcciones
 
@@ -23,6 +23,7 @@ Las suites reproducibles están en scripts/studio-v2-flows.mjs (23 pruebas), scr
 | F-06 | Crítica | localStorage podía fallar mientras el indicador decía Guardado | storageSet devuelve éxito/fallo, saveDocument muestra Sin guardar y ofrece descarga Markdown de emergencia |
 | F-07 | Media | Impresión móvil dependía de la vista activa | Reglas @media print que fuerzan el documento renderizado |
 | F-08 | Media | Accesibilidad limitada del menú de herramientas | Escape, retorno de foco, Tab, Volver y aria-expanded |
+| F-09 | Alta | Autosave podía reconstruir el explorador y cerrar menús o formularios abiertos | Guardado omite el rerender visual durante una interacción activa; test de regresión de menú abierto |
 
 ## Matriz de verificación
 
@@ -48,7 +49,7 @@ Las suites reproducibles están en scripts/studio-v2-flows.mjs (23 pruebas), scr
 
 ## Criterios de aceptación
 
-- 23 verificaciones principales + 15 verificaciones CRUD exitosas.
+- 23 verificaciones principales + 16 verificaciones CRUD/menú exitosas.
 - npm test y npm run build sin errores.
 - Capturas reales revisadas antes de desplegar.
 - No tocar main ni publicar producción sin aprobación.
