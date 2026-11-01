@@ -41,6 +41,8 @@ jobs:
           done
           cat /tmp/mded-vite.log
           exit 1
+      - name: Full desktop and Pocket flow audit
+        run: node scripts/studio-v2-flows.mjs
       - name: Real browser screenshots and interaction checks
         run: node scripts/studio-v2-screenshots.mjs
       - name: Upload Studio and Pocket screenshots
