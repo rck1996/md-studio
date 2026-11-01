@@ -33,6 +33,10 @@ try {
   attachErrorCapture(desktop, "desktop");
   await waitForApp(desktop);
   assert.equal(await desktop.locator(".workspace").getAttribute("data-studio-space"), "editor");
+  await desktop.evaluate(() => {
+    if (document.querySelector(".workspace")?.dataset.theme !== "light") document.getElementById("theme-toggle")?.click();
+  });
+  assert.equal(await desktop.locator(".workspace").getAttribute("data-theme"), "light");
   await capture(desktop, "desktop-01-editor-light");
 
   await desktop.locator("#side-tab-home").click();
@@ -48,7 +52,10 @@ try {
   await capture(desktop, "desktop-04-graph");
 
   await desktop.locator("#studio-v2-editor").click();
-  await desktop.evaluate(() => document.getElementById("theme-toggle")?.click());
+  await desktop.evaluate(() => {
+    if (document.querySelector(".workspace")?.dataset.theme !== "dark") document.getElementById("theme-toggle")?.click();
+  });
+  assert.equal(await desktop.locator(".workspace").getAttribute("data-theme"), "dark");
   await capture(desktop, "desktop-05-editor-dark");
   await desktopContext.close();
 
@@ -63,6 +70,17 @@ try {
   attachErrorCapture(mobile, "mobile");
   await waitForApp(mobile);
   assert.equal(await mobile.locator(".workspace").getAttribute("data-studio-space"), "home");
+  await mobile.evaluate(() => {
+    if (document.querySelector(".workspace")?.dataset.theme !== "light") document.getElementById("theme-toggle")?.click();
+  });
+  const heroInfo = await mobile.evaluate(() => {
+    const hero = document.querySelector(".studio-v2-home-hero");
+    const parent = hero?.parentElement;
+    return { exists: Boolean(hero), display: hero ? getComputedStyle(hero).display : null,
+      rectHeight: hero?.getBoundingClientRect().height || 0, parentHeight: parent?.getBoundingClientRect().height || 0,
+      parentScrollTop: parent?.scrollTop || 0, parentScrollHeight: parent?.scrollHeight || 0 };
+  });
+  console.log("Pocket hero diagnostics", JSON.stringify(heroInfo));
   await capture(mobile, "pocket-01-home");
 
   await mobile.locator('[data-studio-go="library"]').click();
@@ -92,6 +110,12 @@ try {
   await capture(mobile, "pocket-06-tools-sheet");
   await mobile.locator('[data-studio-tool="outline"]').click();
   await capture(mobile, "pocket-07-outline");
+
+  await mobile.evaluate(() => {
+    if (document.querySelector(".workspace")?.dataset.theme !== "dark") document.getElementById("theme-toggle")?.click();
+  });
+  await mobile.locator('[data-studio-go="home"]').click();
+  await capture(mobile, "pocket-08-home-dark");
 
   await mobile.reload({ waitUntil: "domcontentloaded" });
   await mobile.locator("#editor-host .cm-editor").waitFor({ state: "attached" });
