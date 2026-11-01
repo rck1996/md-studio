@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-MarkEDdown es una SPA local-first para escribir, organizar y exportar Markdown sin backend.
+markEDdown es una SPA local-first para escribir, organizar y exportar Markdown sin backend.
 El objetivo de la arquitectura es mantener tres cosas bajo control:
 
 - flujo de edicion rapido;
@@ -20,7 +20,7 @@ La estructura actual se divide en capas claras:
 
 - `index.html`: shell semantico del workspace.
 - `src/main.js`: entrypoint minimo.
-- `src/app/`: runtime, wiring y coordinacion.
+- `src/app/`: runtime, wiring, coordinacion y adaptadores del tema editorial.
 - `src/domain/`: reglas de negocio y transformaciones del documento.
 - `src/editor/`: integracion con CodeMirror.
 - `src/ui/`: render de paneles y piezas visuales complejas.
@@ -37,7 +37,9 @@ La estructura actual se divide en capas claras:
 - paneles de documentos, insert y outline;
 - editor;
 - preview;
-- overlays.
+- overlays;
+- cabecera con estado del documento y opciones de exportacion;
+- barra inferior de guardado/estadisticas.
 
 La logica no deberia vivir aqui.
 
@@ -54,7 +56,7 @@ Coordina:
 - overlays;
 - estados visuales del workspace.
 
-El runtime ya no concentra toda la UI como antes, pero sigue siendo el mayor punto de composicion.
+El runtime ya no concentra toda la UI como antes, pero sigue siendo el mayor punto de composicion. `studio-flow.js` es un adaptador ligero para los accesos Nuevo/Buscar/Exportar y el estado de la cabecera: delega en los controles existentes y no implementa un motor documental paralelo.
 
 ### Domain
 
@@ -111,8 +113,12 @@ Orden actual:
 - `editor-preview.css`: CodeMirror, preview y modos de lectura.
 - `overlays.css`: menus, overlays y dialogs.
 - `responsive.css`: tablet, mobile y reduced motion.
+- `studio-theme.css`: identidad editorial de RCK1996, colores nocturno/marfil y tipografia.
+- `studio-refinement.css`: cabecera sin colisiones, menus, legibilidad, papel y breakpoints.
 
-El lenguaje visual neobrutalista se define principalmente mediante tokens. Los componentes consumen esos tokens y no deben introducir variantes aisladas de bordes, radios o sombras sin una necesidad funcional.
+El orden de los `@import` es deliberado: la capa editorial se agrega al final sin sustituir las reglas funcionales de la aplicacion. El estilo anterior se conserva en las hojas base para no introducir regresiones de comportamiento en paneles y estados. Evitar nuevos overrides dispersos: consolidar mejoras donde corresponda.
+
+[Especificacion del sistema editorial](EDITORIAL-IDENTITY.md).
 
 ## Flujo principal
 
@@ -122,6 +128,15 @@ El lenguaje visual neobrutalista se define principalmente mediante tokens. Los c
 4. `preview-renderer.js` transforma Markdown a HTML seguro y actualiza preview, outline, notas, assets y validacion.
 5. `bindings.js` conecta shortcuts, overlays y acciones globales.
 6. `ui/` renderiza paneles especializados.
+7. `studio-flow.js` delega los accesos de cabecera a los handlers existentes; observa el estado real de guardado y el tema sin acceder al almacenamiento.
+
+En escritorio el estado de lectura y guardado se muestra en la barra inferior; en movil ocupa una fila independiente de la cabecera para no colisionar con las acciones.
+
+## Verificacion automatizada
+
+La rama editorial agrega `tests/studio-flow.test.cjs`, ejecutado con `npm run test` usando el runner nativo de Node.js. Comprueba delegacion de acciones, menu Exportar, cierre con Escape/clic exterior, reflejo del estado y estructura HTML. El CI ejecuta primero los tests y despues `npm run build`.
+
+**Limite:** son pruebas de comportamiento aislado y compilacion, no tests E2E ni capturas reales. La regresion visual y los flujos de datos antiguos requieren la [matriz manual](MOBILE-UI-VERIFICATION.md).
 
 ## Estado actual
 
