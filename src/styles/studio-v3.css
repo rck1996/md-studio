@@ -422,3 +422,37 @@
     padding: 10px 13px 100px;
   }
 }
+
+
+/* Pocket composition should read like a document, not two stacked editors. */
+@media (max-width: 900px) {
+  .workspace.studio-v2 .studio-compose-header {
+    min-height: 46px;
+    padding: 6px 14px;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .workspace.studio-v2 .studio-compose-header > div:first-child { display: none; }
+  .workspace.studio-v2 .studio-compose-header::before {
+    content: "TOCA EL TEXTO PARA EDITAR";
+    color: var(--muted-strong);
+    font: 600 9px/1.2 var(--font-code);
+    letter-spacing: .065em;
+  }
+  .workspace.studio-v2 .studio-compose-actions { margin-left: auto; gap: 6px; }
+  .workspace.studio-v2 .studio-compose-actions button { min-height: 34px; padding-inline: 10px; }
+  .workspace.studio-v2 .studio-compose-scroll { padding-top: 9px; }
+  .workspace.studio-v2 .studio-compose-paper { padding-top: 22px; }
+  .workspace.studio-v2 .studio-compose-block-actions {
+    opacity: .54; justify-content: flex-start;
+  }
+  .workspace.studio-v2 .studio-compose-block-actions button {
+    background: transparent;
+    border-color: transparent;
+    color: #b85b32;
+  }
+  .workspace.studio-v2 .studio-compose-block:focus-within .studio-compose-block-actions button {
+    border-color: #d3b6a4;
+    background: #fff9ed;
+  }
+}
