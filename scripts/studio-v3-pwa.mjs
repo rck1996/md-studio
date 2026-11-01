@@ -21,7 +21,7 @@ try {
   await page.waitForFunction(() => Boolean(navigator.serviceWorker?.controller), null, { timeout: 25000 });
   await page.waitForFunction(async () => {
     const keys = await caches.keys();
-    if (!keys.some((key) => key.startsWith("markeddown-shell-v3-"))) return false;
+    if (!keys.some((key) => key.startsWith("markeddown-shell-v4-"))) return false;
     const cached = await caches.match("/");
     if (!cached) return false;
     const html = await cached.clone().text();
