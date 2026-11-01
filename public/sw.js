@@ -1,5 +1,5 @@
 /* MarkEDdown offline app shell. User documents are NEVER written to the Cache API. */
-const CACHE_NAME = "markeddown-shell-v4-20261101-inline-images";
+const CACHE_NAME = "markeddown-shell-v4-20261101-preview-ime";
 const CORE = ["/", "/manifest.webmanifest", "/assets/logo/markeddown-studio-icon.svg", "/icons/markeddown-192.png", "/icons/markeddown-512.png"];
 const sameOrigin = (url) => new URL(url, self.location.origin).origin === self.location.origin;
 const assetUrlsFromHtml = (html) => {
