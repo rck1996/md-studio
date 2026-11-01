@@ -1,64 +1,103 @@
-# markEDdown — Editorial Workspace (2026)
+# markEDdown · Sistema editorial de interfaz
 
-## Design intent
+> **Estado:** implementado en la rama de revisión [design/editorial-markeddown-studio](https://github.com/rck1996/mded/pull/3); no implica que esté publicada en el dominio.  
+> **Referencia:** [Style Guide de RCK1996 Studio](https://github.com/rck1996/profile-portfolio/blob/main/style-guide.html).
 
-markEDdown is a **working Markdown editor**, not a promotional landing page. Its visual identity belongs to the RCK1996 Studio family: technical editorial typography, celestial drafting geometry, warm paper, original engraved-feather motif, and restrained ink/orange accents. No Japanese text or katakana appears in the app branding.
+## 01 / Idea central
 
-The art direction references the [RCK1996 Studio Style Guide](https://github.com/rck1996/profile-portfolio/blob/main/style-guide.html). Desktop follows a split workspace with explorer, source editor, and rendered document; mobile shows one writing surface at a time.
+**Un editor antes que una ilustración.** markEDdown lleva la estética de un atlas editorial —pluma grabada, cuadrículas técnicas, tipografía con carácter y contraste de tinta— a una herramienta real para escribir y organizar documentos.
 
-## Real application flow
+El arte se concentra en el logotipo, detalles de navegación y materiales de presentación. CodeMirror queda limpio: no colocar imágenes bajo el texto ni animaciones de scroll que distraigan.
 
-1. **Create or select** a folder or document from Explorer. Both original handlers remain unchanged.
-2. **Write** in CodeMirror. Markdown shortcuts, slash commands, images, drag-and-drop, and history continue to use the existing runtime.
-3. **Review** using Split, Editor, or Vista previa. Split is only offered on large screens; mobile has Editor/Vista previa and keeps the original bottom navigation.
-4. **Inspect** validation, assets, and notes via the existing Inspector control.
-5. **Export** with the new *Exportar ↗* button. It opens the existing full actions menu, with working Markdown, HTML, assets ZIP, copy, and presentation commands. No new export engine or duplicate storage is introduced.
-6. **Search** with the top-bar shortcut; the existing editor search implementation is used.
-7. **Change theme** via the original theme action. The workspace is midnight by default for new users; existing preference is honored.
+Principios: **lectura primero**, acciones verdaderas, controles accesibles, una familia visual con RCK1996 y separación entre preferencias y documentos existentes.
 
-The bottom status strip mirrors the actual save indicator and document statistics; it is not a fabricated saved/sync indicator.
+## 02 / Identidad
 
-## Visual tokens
+**Nombre:** `markEDdown` con `ED` destacado, sin japonés ni katakana. **Símbolo:** pluma grabada sobre una carta astronómica con sol naranja y marcas de registro.
 
-The original styles remain modular. `src/styles/studio-theme.css` is the final cascade layer imported after `responsive.css`. It maps the original semantic variables to the studio palette without overriding application data or persisted keys.
+| Recurso | Archivo | Uso |
+| :--- | :--- | :--- |
+| Icono | `public/assets/logo/markeddown-studio-icon.svg` | Cabecera y favicon |
+| Logotipo horizontal | `public/assets/logo/markeddown-studio-wordmark.svg` | Presentación de marca |
+| Portada documental | `docs/markeddown-banner.svg` | README |
+| Tema editorial | `src/styles/studio-theme.css` | Tokens y composición |
+| Refinamiento | `src/styles/studio-refinement.css` | Responsivo, controles y legibilidad |
 
-| Surface | Dark | Light |
-| --- | --- | --- |
-| Workspace bg | `#020b1b` | `#e9e4da` |
-| Panel | `#041126` | `#f5f1e7` |
-| Primary text | `#f1eddf` | `#171919` |
-| Active accent | `#ef6330` | `#e34b12` |
-| Code and drafting detail | `#5e9eff` (secondary) | `#de4a17` |
-| Preview paper | `#f5f1e7` | `#f5f1e7` |
+No incorporar imágenes de terceros sin aclarar sus derechos.
 
-Preview remains paper-toned in both themes for readability. The interface, editor gutters, menus, and surrounding panels change theme.
+## 03 / Color, tipografía y material
 
-- Wordmark: `markEDdown`, with **ED** highlighted.
-- Display: Cormorant Garamond / Georgia; utility headings: Barlow Condensed; body: DM Sans; code: JetBrains Mono fallback.
-- Brand icon: `public/assets/logo/markeddown-studio-icon.svg`, an original feather, solar disk, and technical grid.
-- Full vector lockup: `public/assets/logo/markeddown-studio-wordmark.svg`.
+| Token | Oscuro | Claro |
+| :--- | :--- | :--- |
+| `--bg` | `#020B1B` azul nocturno | `#E9E4DA` marfil |
+| `--surface` | `#041126` azul tinta | `#F5F1E7` papel |
+| `--text-strong` | `#F1EDDF` | `#171919` |
+| `--accent` | `#EF6330` | `#E34B12` |
+| `--studio-secondary` | `#5E9EFF` | `#DE4A17` |
 
-## Implementation boundaries
+Tipografía: **Cormorant Garamond** (títulos editoriales), **Barlow Condensed** (controles), **DM Sans** (UI) y **JetBrains Mono** (editor). Hay fuentes de reserva si las webfonts no cargan.
 
-- `src/app/studio-flow.js` wires *New*, *Search*, and *Export* to existing application actions. It updates the visual status strip and browser theme color.
-- No storage schema, document IDs, history, serialization, export internals, or Markdown rendering logic is changed by this design pass.
-- The only application runtime change is a **dark default for new visitors**. Existing saved `themeKey` values have priority.
-- Do not add externally sourced manga artwork as a production asset without verified permission.
-- Avoid decorative animation in CodeMirror or over the paper view.
+La vista previa es una página de **papel marfil** en ambos temas, no una zona de dibujo; se elimina el círculo naranja flotante que competía con los títulos. El naranja es un acento, no un fondo general.
 
-## QA checklist before merge
+## 04 / Pantallas y puntos de corte
 
-- [ ] `npm ci` and `npm run build` succeed.
-- [ ] Dark and light themes switch correctly and survive reload.
-- [ ] Previously saved documents, folders, assets, preferences, and history still load.
-- [ ] Creating documents via Explorer and the new top-bar shortcut works.
-- [ ] Search opens the existing CodeMirror search interface.
-- [ ] Exportar opens the existing menu; download .md, HTML, assets ZIP, and copy options work.
-- [ ] Split, Editor, and Vista previa show the expected panels at widths 1440, 1024, 900, 390, and 320 px.
-- [ ] Mobile bottom navigation, inspector, slash commands, focus mode, and on-screen keyboard remain usable.
-- [ ] Keyboard focus, contrast, reduced-motion behavior, and responsive overflow are checked.
-- [ ] No Japanese-language decorative text is present in UI or assets.
+| Tamaño | Cabecera | Flujo |
+| :--- | :--- | :--- |
+| `≥ 1400px` | Marca · selector · acciones, una fila | Explorador + Editor + Vista previa |
+| `901–1399px` | Marca/acciones + selector debajo | Tres columnas con anchuras flexibles; stats en barra inferior |
+| `601–900px` | Marca/acciones, selector y estado separados | Editor o Vista previa, navegación inferior |
+| `≤ 600px` | Marca, acciones, selector y estado en filas propias | Botones táctiles y paneles inferiores |
+| `≤ 380px` | Espacios compactos, sin solapamientos | Exportación e inspector todavía accesibles |
 
-## Deployment
+En escritorio, la barra inferior muestra estadísticas y guardado **reales**, lejos de los botones de acción. En móvil el estado pasa a su propia fila bajo el selector. El inspector no desaparece por falta de espacio: se reduce a icono, con aviso visual si existen alertas.
 
-This change is intended for review as a pull request. Do not deploy to production until the branch build and manual workflow checks are complete.
+Los documentos largos tienen scroll interno y el editor debe conservar fuente legible y padding adecuado. El modo dividido se ofrece solo cuando hay espacio.
+
+## 05 / Contrato de interacción
+
+| Control | Acción |
+| :--- | :--- |
+| **+ Nuevo** | Delegar en `#new-document` |
+| **Buscar** | Delegar en `#open-search` / búsqueda CodeMirror |
+| **Exportar** | Popover propio: `.md`, HTML, ZIP de recursos, copiar Markdown/HTML |
+| **Más** | Preferencias, ayuda, plantillas, presentación y acciones sobre el documento |
+| **Inspector** | Assets, notas y validaciones; conserva las alertas del runtime |
+| **Editor / Vista previa / Dividido** | Usa `data-view` existente |
+| **Tema** | Respeta `mded.theme`; oscuro solo por defecto en perfiles nuevos |
+
+Exportar utiliza los botones y manejadores de descarga/copia originales; **no** incluye operaciones destructivas como «Limpiar contenido». Cierra con Escape, clic fuera o apertura de Más. Escape devuelve el foco al activador. Las acciones mantienen confirmaciones y feedback existentes.
+
+El comportamiento de explorador, archivos, historial, imágenes y atajos no se sustituye por simulaciones visuales.
+
+## 06 / Arquitectura del estilo
+
+Orden de importación en `src/styles/index.css`:
+
+1. `tokens.css` y `base.css`.
+2. `app-shell.css`, `panels.css`, `editor-preview.css`, `overlays.css` y `responsive.css`.
+3. `studio-theme.css`: identidad visual base.
+4. `studio-refinement.css`: composición, controles, edición, papel y breakpoints.
+
+`src/app/studio-flow.js` conecta accesos nuevos y refleja el estado de guardado y el color del navegador. **No** crea documentos, implementa otra exportación ni cambia el almacenamiento.
+
+Evitar modificar las claves de `src/app/storage.js` sin una migración explícita. Los documentos antiguos deben seguir abriéndose.
+
+## 07 / Calidad y definición de terminado
+
+`npm run test` verifica los accesos rápidos, opciones de exportación, Escape, clic externo, estado, tema e identificadores HTML. `npm run build` comprueba compilación. Ninguno demuestra fidelidad visual por sí mismo.
+
+Revisar [MOBILE-UI-VERIFICATION.md](MOBILE-UI-VERIFICATION.md) en **320, 360, 390, 768, 1024, 1366, 1440 y 1920px** en ambos temas.
+
+- [ ] Sin estadísticas sobre botones ni desbordes horizontales.
+- [ ] Inspector accesible en todas las resoluciones.
+- [ ] Exportar abre, descarga, copia y se cierra correctamente.
+- [ ] Documentos, carpetas, historial y assets previos siguen presentes.
+- [ ] CodeMirror, paleta `/`, búsqueda, imágenes y vista previa funcionan.
+- [ ] No se abren paneles inesperados al cambiar de vista.
+- [ ] Tema, foco, preferencia de lectura y navegación persisten correctamente.
+- [ ] Teclado, `Escape`, foco visible, interacción táctil y movimiento reducido funcionan.
+- [ ] No hay errores de consola ni promesas de funcionalidades no implementadas.
+
+**No fusionar solo porque CI esté en verde:** validar manualmente los flujos de escritura, exportación y recuperación.
+
+[README](../README.md) · [Roadmap](ROADMAP.md)
