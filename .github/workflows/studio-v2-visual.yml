@@ -1,0 +1,53 @@
+name: Studio 2 · visual QA
+
+on:
+  push:
+    branches:
+      - feat/studio-2-desktop-pocket
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  visual-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Unit tests
+        run: npm test
+      - name: Production build
+        run: npm run build
+      - name: Install browser runner
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Start local Vite instance
+        run: |
+          npm run dev -- --host 127.0.0.1 > /tmp/mded-vite.log 2>&1 &
+          echo $! > /tmp/mded-vite.pid
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:5173/ > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/mded-vite.log
+          exit 1
+      - name: Real browser screenshots and interaction checks
+        run: node scripts/studio-v2-screenshots.mjs
+      - name: Upload Studio and Pocket screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: markeddown-studio-2-screenshots
+          path: artifacts/studio-v2/*.png
+          retention-days: 30
+          if-no-files-found: warn
