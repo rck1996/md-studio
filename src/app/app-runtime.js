@@ -1818,3 +1818,17 @@ document.addEventListener("markeddown:composer-request", (event) => {
   });
 });
 
+
+// Share Target accepts user-reviewed content only. This handler reuses the
+// normal document workflow, so history and local persistence stay consistent.
+document.addEventListener("markeddown:create-shared-document", (event) => {
+  const markdown = String(event.detail?.markdown || "").slice(0, 18000);
+  if (!markdown.trim()) return;
+  const title = String(event.detail?.title || "Nota compartida").replace(/[\r\n]/g, " ").trim().slice(0, 180) || "Nota compartida";
+  const doc = createBlankDocument(defaultMarkdown, getActiveFolderId());
+  doc.title = title;
+  doc.titleManual = true;
+  doc.markdown = markdown;
+  setDocuments([...getDocuments(defaultMarkdown), doc]);
+  openDocumentInEditor(doc);
+});
