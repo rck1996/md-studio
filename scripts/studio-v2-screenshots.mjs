@@ -51,6 +51,14 @@ try {
   assert.equal(await desktop.locator(".workspace").getAttribute("data-studio-space"), "graph");
   await capture(desktop, "desktop-04-graph");
 
+  await desktop.locator("#studio-v4-preview").click();
+  assert.equal(await desktop.locator(".workspace").getAttribute("data-studio-space"), "preview");
+  await capture(desktop, "desktop-08-editorial-reading");
+  await desktop.locator("#studio-v4-inspector-toggle").click();
+  await desktop.locator("#studio-v4-inspector").waitFor({ state: "visible" });
+  await capture(desktop, "desktop-09-document-inspector");
+  await desktop.locator("#studio-v4-inspector-close").click();
+
   await desktop.locator("#studio-v2-editor").click();
   await desktop.evaluate(() => {
     if (document.querySelector(".workspace")?.dataset.theme !== "dark") document.getElementById("theme-toggle")?.click();
