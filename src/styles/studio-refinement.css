@@ -149,6 +149,17 @@
 .workspace .preview-panel .panel-header {
   min-height: 48px;
 }
+.workspace .editor-panel .panel-header .studio-active-file {
+  min-width: 0;
+  max-width: 57%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--muted-strong);
+  font: 500 13px/1.3 var(--font-ui);
+  letter-spacing: 0;
+  text-transform: none;
+}
 
 /* Writing should remain as legible as the rendered sheet. */
 .workspace .cm-scroller {
