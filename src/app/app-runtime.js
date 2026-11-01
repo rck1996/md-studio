@@ -1793,3 +1793,28 @@ window.addEventListener("resize", () => {
   updateMobileViewportMetrics();
 });
 
+// CodeMirror is the only writable document model. Visual composition asks for
+// a guarded range adapter; no state is copied into a second editor store.
+document.addEventListener("markeddown:composer-request", (event) => {
+  if (typeof event.detail?.accept !== "function") return;
+  event.detail.accept({
+    readMarkdown: getMarkdown,
+    getDocumentId: () => activeDocumentId,
+    preprocess: (raw) => preprocessMarkdown(raw, readMarkdownToken),
+    replaceRange: (from, to, insert, expected) => {
+      const current = getMarkdown();
+      if (!Number.isInteger(from) || !Number.isInteger(to) || from < 0 || to > current.length ||
+          from > to || current.slice(from, to) !== expected) return false;
+      editor.dispatch({ changes: { from, to, insert } });
+      return true;
+    },
+    focusRange: (from, to) => {
+      const length = editor.state.doc.length;
+      const anchor = Math.max(0, Math.min(from, length));
+      const head = Math.max(anchor, Math.min(to, length));
+      editor.dispatch({ selection: { anchor, head }, scrollIntoView: true });
+      editor.focus();
+    },
+  });
+});
+
