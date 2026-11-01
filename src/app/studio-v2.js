@@ -409,7 +409,7 @@ if (root) {
     const focused = document.activeElement;
     const isSource = currentSpace === "editor" && focused?.closest?.(".cm-editor");
     const bottomLimit = Math.min(visibleBottom,
-      isSource ? keyboardBar.getBoundingClientRect().top : visibleBottom) - 14;
+      isSource && keyboardBar.getClientRects().length ? keyboardBar.getBoundingClientRect().top : visibleBottom) - 14;
     if (isSource) {
       const scroller = root.querySelector(".cm-scroller");
       const cursor = root.querySelector(".cm-cursor-primary");
