@@ -47,6 +47,12 @@ export const createDocumentWorkflow = ({
     setActiveFolderId(getDocumentFolderId(doc));
     setMarkdown(doc.markdown);
     renderDocuments();
+    // Navigation adapters can react to every document-open source (search,
+    // recent items, grafo, tabs, duplicate, archive) without duplicating
+    // document state or patching individual UI components.
+    if (typeof window !== "undefined" && typeof window.dispatchEvent === "function" && typeof CustomEvent === "function") {
+      window.dispatchEvent(new CustomEvent("markeddown:document-opened", { detail: { documentId: doc.id } }));
+    }
   };
 
   const ensureActiveDocument = () => {
