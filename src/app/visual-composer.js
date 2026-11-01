@@ -26,6 +26,18 @@ export const createVisualComposer = ({ root, bridge, onOpenSource, onOpenPreview
   root.querySelector(".layout")?.append(panel);
   const container = panel.querySelector("#studio-compose-blocks");
   const title = panel.querySelector("#studio-compose-title");
+  const selectionTools = document.createElement("div");
+  selectionTools.className = "studio-compose-selection-tools";
+  selectionTools.hidden = true;
+  selectionTools.setAttribute("role", "toolbar");
+  selectionTools.setAttribute("aria-label", "Formato del texto seleccionado");
+  selectionTools.innerHTML =
+    '<span>SELECCIÓN</span><button type="button" data-compose-format="bold" aria-label="Negrita"><strong>B</strong></button>' +
+    '<button type="button" data-compose-format="italic" aria-label="Cursiva"><em>I</em></button>' +
+    '<button type="button" data-compose-format="link" aria-label="Insertar enlace">↗ Enlace</button>';
+  panel.querySelector(".studio-compose-header").after(selectionTools);
+  const editableStates = new WeakMap();
+  let selectionContext = null;
   let currentDocument = "";
   let activeEditor = null;
   let blocks = [];
@@ -83,6 +95,7 @@ export const createVisualComposer = ({ root, bridge, onOpenSource, onOpenPreview
     field.setAttribute("aria-label", descriptor.heading ? "Editar título" : "Editar párrafo");
     field.textContent = descriptor.value;
     const state = { from: block.start, to: block.end, raw: block.raw };
+    editableStates.set(field, { state, descriptor });
     const commit = () => {
       let value = field.innerText.replace(/\r/g, "").replace(/\n+$/g, "");
       if (descriptor.heading) value = value.replace(/\n/g, " ");
@@ -107,6 +120,8 @@ export const createVisualComposer = ({ root, bridge, onOpenSource, onOpenPreview
     field.addEventListener("input", commit);
     field.addEventListener("blur", () => {
       activeEditor = null;
+      selectionContext = null;
+      selectionTools.hidden = true;
       commit();
       // Defer replacing the DOM until the click on another block/action lands.
       window.requestAnimationFrame(() => { if (!activeEditor) render(); });
@@ -114,6 +129,63 @@ export const createVisualComposer = ({ root, bridge, onOpenSource, onOpenPreview
     field.addEventListener("focus", () => { activeEditor = field; body.classList.add("is-editing"); });
     return field;
   };
+
+  const textOffset = (field, containerNode, offset) => {
+    const range = document.createRange();
+    range.selectNodeContents(field);
+    range.setEnd(containerNode, offset);
+    return range.toString().length;
+  };
+  const updateSelectionTools = () => {
+    selectionTools.hidden = true;
+    selectionContext = null;
+    if (!activeEditor || root.dataset.studioSpace !== "compose") return;
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount < 1 || selection.isCollapsed ||
+        !activeEditor.contains(selection.anchorNode) ||
+        !activeEditor.contains(selection.focusNode)) return;
+    const a = textOffset(activeEditor, selection.anchorNode, selection.anchorOffset);
+    const b = textOffset(activeEditor, selection.focusNode, selection.focusOffset);
+    const from = Math.min(a, b), to = Math.max(a, b);
+    if (to <= from || !editableStates.has(activeEditor)) return;
+    selectionContext = { field: activeEditor, from, to };
+    selectionTools.hidden = false;
+  };
+  // Prevent text selection from collapsing when pressing a format control.
+  selectionTools.addEventListener("pointerdown", (event) => {
+    if (event.target.closest("button")) event.preventDefault();
+  });
+  selectionTools.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-compose-format]");
+    if (!button || !selectionContext) return;
+    const { field, from, to } = selectionContext;
+    const entry = editableStates.get(field);
+    if (!entry || !field.isConnected) return;
+    const value = field.textContent || "";
+    const selected = value.slice(from, to);
+    if (!selected) return;
+    let insertion;
+    switch (button.dataset.composeFormat) {
+      case "bold": insertion = "**" + selected + "**"; break;
+      case "italic": insertion = "*" + selected + "*"; break;
+      case "link": insertion = "[" + selected + "](https://example.com)"; break;
+      default: return;
+    }
+    const next = entry.descriptor.prefix + value.slice(0, from) + insertion + value.slice(to) + entry.descriptor.tail;
+    if (!bridge.replaceRange(entry.state.from, entry.state.to, next, entry.state.raw)) {
+      selectionContext = null;
+      selectionTools.hidden = true;
+      field.blur();
+      render();
+      return;
+    }
+    selectionContext = null;
+    selectionTools.hidden = true;
+    activeEditor = null;
+    field.blur();
+    render();
+  });
+  document.addEventListener("selectionchange", updateSelectionTools);
 
   const makeToken = (token, start) => ({
     type: token.type,
@@ -125,6 +197,8 @@ export const createVisualComposer = ({ root, bridge, onOpenSource, onOpenPreview
   const render = () => {
     if (activeEditor) return; // Never replace focused contenteditable nodes.
     const markdown = bridge.readMarkdown();
+    selectionContext = null;
+    selectionTools.hidden = true;
     currentDocument = bridge.getDocumentId();
     title.textContent = document.getElementById("studio-active-file")?.textContent?.trim() || "Documento";
     const tokens = marked.lexer(markdown);
