@@ -311,7 +311,7 @@
 @media (max-width: 900px) {
   .workspace.studio-v2 {
     --workspace-pad: 0px; --panel-gap: 0px;
-    display: flex; min-height: 100dvh; height: 100dvh;
+    display: flex; min-height: 0; height: var(--studio-visible-height, 100dvh);
     gap: 0; overflow: hidden; padding: 0 0 calc(68px + env(safe-area-inset-bottom,0px));
     background: var(--surface-elevated);
   }
@@ -467,8 +467,17 @@
   .studio-v2-keyboard-bar button { flex: 1; min-width: 0; min-height: 36px; border: 0; border-radius: 5px; color: var(--text-strong); background: transparent; font: 600 16px var(--font-ui); }
   .studio-v2-keyboard-bar button:active { background: var(--accent-soft); }
   .studio-v2-keyboard-bar .studio-v2-toolbar-plus { background: var(--accent-soft); color: var(--accent-strong); font-size: 22px; }
+  /* Reduce the app's actual editor viewport to the space above the Android IME. */
+  .workspace.studio-v2[data-studio-keyboard="true"] { padding-bottom: 0; }
   .workspace.studio-v2[data-studio-keyboard="true"] .studio-v2-mobile-nav { display: none; }
   .workspace.studio-v2[data-studio-keyboard="true"] .studio-v2-keyboard-bar { bottom: var(--studio-keyboard-gap,0px); }
+  .workspace.studio-v2[data-studio-keyboard="true"] .cm-content {
+    padding-bottom: calc(145px + env(safe-area-inset-bottom,0px)) !important;
+  }
+  .workspace.studio-v2[data-studio-keyboard="true"] .cm-scroller {
+    overscroll-behavior-y: contain;
+    scroll-padding-bottom: 72px;
+  }
   .workspace.studio-v2:is([data-focus="true"],[data-presentation="true"]) :is(.studio-v2-mobile-nav,.studio-v2-keyboard-bar,.studio-v2-pocket-header) { display: none !important; }
 
   /* A real modal sheet for secondary tools. */

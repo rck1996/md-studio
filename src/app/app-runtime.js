@@ -1245,16 +1245,74 @@ const executeSlashCommand = (selectedCommand) => {
   slashState = slashMenuController?.getState() || slashState;
 };
 
-const insertPastedImage = (file) => {
+const readImageAsDataUrl = (file) => new Promise((resolve, reject) => {
   const reader = new FileReader();
-  reader.addEventListener("load", () => {
-    const name = file.name ? file.name.replace(/\.[^.]+$/, "") : "imagen pegada";
-    const id = storeValue(imageStoreKey, reader.result, { name, type: file.type, order: getSortedImageEntries().length });
-    insertAtCursor(`![${name}](mded-image:${id})`);
-    renderAssets();
-  });
+  reader.addEventListener("load", () => resolve(reader.result));
+  reader.addEventListener("error", () => reject(reader.error || new Error("No se pudo leer la imagen")));
   reader.readAsDataURL(file);
+});
+
+const prepareImageDataUrl = async (file) => {
+  // Mobile photos are often larger than localStorage's entire quota.
+  // Resize supported still images before storing them locally.
+  if (typeof createImageBitmap !== "function" || file.type === "image/gif" || file.type === "image/svg+xml") {
+    return readImageAsDataUrl(file);
+  }
+  let bitmap;
+  try {
+    bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, 1600 / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    const webp = canvas.toDataURL("image/webp", 0.82);
+    return webp.startsWith("data:image/webp;") ? webp : canvas.toDataURL("image/jpeg", 0.82);
+  } catch {
+    return readImageAsDataUrl(file);
+  } finally {
+    bitmap?.close?.();
+  }
 };
+
+const insertPastedImage = async (file) => {
+  if (!file?.type?.startsWith("image/")) return;
+  const documentId = activeDocumentId;
+  const startSelection = editor.state.selection.main;
+  const selection = { from: startSelection.from, to: startSelection.to };
+  try {
+    const dataUrl = await prepareImageDataUrl(file);
+    if (documentId !== activeDocumentId) {
+      showAppFeedback({ message: "Vuelve al documento original antes de insertar la imagen.", tone: "error" });
+      return;
+    }
+    const name = (file.name ? file.name.replace(/\.[^.]+$/, "") : "imagen pegada")
+      .replace(/[\[\]\\\r\n]/g, " ").trim() || "imagen";
+    const type = dataUrl.match(/^data:([^;]+);/)?.[1] || file.type;
+    const id = storeValue(imageStoreKey, dataUrl, { name, type, order: getSortedImageEntries().length });
+    if (!getStoredValue(imageStoreKey, id)) {
+      window.dispatchEvent(new Event("markeddown:storage-error"));
+      showAppFeedback({ message: "No hay espacio local para guardar la imagen.", tone: "error" });
+      return;
+    }
+    const markdown = `![${name}](mded-image:${id})`;
+    const from = Math.min(selection.from, editor.state.doc.length);
+    const to = Math.min(Math.max(selection.to, from), editor.state.doc.length);
+    editor.dispatch({
+      changes: { from, to, insert: markdown },
+      selection: { anchor: from + markdown.length },
+      scrollIntoView: true,
+    });
+    editor.focus();
+    renderAssets();
+  } catch {
+    showAppFeedback({ message: "No se pudo leer o insertar la imagen.", tone: "error" });
+  }
+};
+
+document.addEventListener("markeddown:insert-image-file", (event) => {
+  if (event.detail?.file) void insertPastedImage(event.detail.file);
+});
 
 const insertPastedLink = (url) => {
   const selection = editor.state.selection.main;

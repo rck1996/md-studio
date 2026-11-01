@@ -184,13 +184,19 @@ const createEditorListeners = ({
       if (!["ArrowDown", "ArrowUp", "Enter", "Escape"].includes(event.key)) updateSlashMenu();
     },
     paste(event) {
-      const image = [...event.clipboardData.files].find((file) => file.type.startsWith("image/"));
+      // Android clipboard providers may expose images only in DataTransfer.items.
+      const clipboard = event.clipboardData;
+      const image = [...(clipboard?.files || [])].find((file) => file.type.startsWith("image/")) ||
+        [...(clipboard?.items || [])]
+          .filter((item) => item.kind === "file" && item.type.startsWith("image/"))
+          .map((item) => item.getAsFile())
+          .find(Boolean);
       if (image) {
         event.preventDefault();
-        insertPastedImage(image);
+        void insertPastedImage(image);
         return true;
       }
-      const text = event.clipboardData.getData("text/plain").trim();
+      const text = clipboard?.getData("text/plain")?.trim() || "";
       if (/^https?:\/\/\S+$/i.test(text)) {
         event.preventDefault();
         insertPastedLink(text);
