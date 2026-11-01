@@ -202,7 +202,9 @@ try {
       dialog.accept("https://example.org/reference");
     });
     await page.locator('[data-compose-format="link"]').click();
-    assert.match(await readMarkdown(), /## \[Idea líric\]\(https:\/\/example\.org\/reference\)a/m);
+    // CodeMirror's rich link decoration displays "Enlace: ...", hiding the
+    // literal URL in innerText. Assert the raw Markdown source, not its DOM.
+    assert.match(await page.locator("#markdown-input").inputValue(), /## \[Idea líric\]\(https:\/\/example\.org\/reference\)a/m);
   });
 } finally {
   await context.close();
