@@ -865,8 +865,16 @@ const syncDocument = () => {
 
 // Mobile browsers may suspend a PWA or reload a tab before the normal 250ms
 // debounce expires. Flush the actual CodeMirror document before page exit.
+let restoredWorkspacePendingReload = false;
+window.addEventListener("markeddown:restore-committed", () => {
+  // The restored snapshot is now authoritative. The old CodeMirror buffer
+  // must never overwrite it during pagehide when the restore reloads the app.
+  restoredWorkspacePendingReload = true;
+  clearTimeout(saveTimer);
+  saveTimer = null;
+});
 const flushPendingSave = () => {
-  if (!saveTimer || !editor) return;
+  if (restoredWorkspacePendingReload || !saveTimer || !editor) return;
   clearTimeout(saveTimer);
   saveTimer = null;
   saveDocument();
