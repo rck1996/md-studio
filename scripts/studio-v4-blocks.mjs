@@ -85,8 +85,10 @@ try {
     await page.locator("#studio-v2-pocket-compose").click();
     await block("Primer párrafo.").locator(".studio-compose-more").click();
     assert.equal(await page.locator(".studio-compose-block-menu").isVisible(),true);
-    const width=await page.evaluate(()=>document.documentElement.scrollWidth);
-    assert.ok(width<=window.innerWidth+2,"Horizontal overflow "+width);
+    const sizes=await page.evaluate(()=>({
+      width:document.documentElement.scrollWidth, viewport:window.innerWidth,
+    }));
+    assert.ok(sizes.width<=sizes.viewport+2,"Horizontal overflow "+JSON.stringify(sizes));
   });
 } finally {
   await context.close();
