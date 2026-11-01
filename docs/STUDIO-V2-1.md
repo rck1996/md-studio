@@ -16,6 +16,7 @@ An editorial writing studio with two cohesive interfaces backed by the **same lo
 ### Visual composition
 
 - Tap a plain heading or paragraph to edit **directly in the rendered sheet**.
+- Select text to open a contextual **Bold / Italic / Link** toolbar. Formatting writes native Markdown; links require a user-supplied valid URL.
 - Toggle task list checkboxes in a read/edit hybrid view.
 - Advanced blocks (code, tables, enriched inline formatting and wiki-link structures) are rendered safely and expose a **source edit** control.
 - CodeMirror stays the source of truth, mutations are guarded by matching expected Markdown ranges. No irreversible HTML-to-Markdown round-trip.
@@ -62,10 +63,10 @@ GitHub Actions workflow `.github/workflows/studio-v2-visual.yml` runs:
 1. `npm test`, `npm run build`.
 2. `scripts/studio-v2-flows.mjs` — 23 core user journeys.
 3. `scripts/studio-v2-crud-audit.mjs` — 16 document lifecycle flows.
-4. `scripts/studio-v3-flows.mjs` — 11 visual writing/backup/restore flows.
+4. `scripts/studio-v3-flows.mjs` — 13 visual writing/backup/restore/formatting flows.
 5. `scripts/studio-v3-graph.mjs` — 5 graph scaling/search flows.
 6. `scripts/studio-v3-share.mjs` — 6 Android share flow scenarios.
-7. `scripts/studio-v2-screenshots.mjs` — 19 desktop + mobile real screenshots.
+7. `scripts/studio-v2-screenshots.mjs` — 21 desktop + mobile real screenshots.
 8. `scripts/studio-v3-pwa.mjs` — offline built-app launch and editing test.
 
 Before considering a production merge, require a **successful run on the current head SHA**, the 19 captures inspected on both themes, and manual device checks.
