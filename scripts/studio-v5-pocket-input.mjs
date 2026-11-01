@@ -74,7 +74,7 @@ try {
 
   // Reader must show the same image at full width without altering the source.
   await page.locator("#studio-v2-pocket-preview").click();
-  const readerPhoto = page.locator("#markdown-preview img").first();
+  const readerPhoto = page.locator("#markdown-preview img.mded-local-image").first();
   await readerPhoto.waitFor({ state: "visible" });
   const readerImage = await readerPhoto.evaluate(async (img) => {
     await img.decode();
