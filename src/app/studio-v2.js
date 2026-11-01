@@ -89,11 +89,46 @@ if (root) {
     '<button type="button" data-pocket-format="bold" aria-label="Negrita"><strong>B</strong></button>' +
     '<button type="button" data-pocket-format="italic" aria-label="Cursiva"><em>I</em></button>' +
     '<button type="button" data-pocket-format="link" aria-label="Enlace">↗</button>' +
-    '<button type="button" data-pocket-format="image" aria-label="Imagen">▧</button>' +
+    '<button type="button" data-pocket-image="gallery" aria-label="Elegir imagen del dispositivo" title="Elegir imagen">▧</button>' +
+    '<button type="button" data-pocket-image="clipboard" aria-label="Pegar imagen del portapapeles" title="Pegar imagen">⧉</button>' +
     '<button type="button" data-pocket-format="table" aria-label="Tabla">▦</button>' +
     '<button type="button" data-pocket-format="codeBlock" aria-label="Bloque de código">⌘</button>' +
     '<button type="button" id="studio-v2-insert" class="studio-v2-toolbar-plus" aria-label="Más bloques">＋</button>';
   root.append(keyboardBar);
+
+  // Android keyboards do not always expose images to the DOM paste event.
+  // Keep an explicit gallery picker alongside native clipboard paste support.
+  const imagePicker = document.createElement("input");
+  imagePicker.id = "studio-v2-image-picker";
+  imagePicker.type = "file";
+  imagePicker.accept = "image/*";
+  imagePicker.hidden = true;
+  root.append(imagePicker);
+  imagePicker.addEventListener("change", () => {
+    const file = imagePicker.files?.[0];
+    if (file) document.dispatchEvent(new CustomEvent("markeddown:insert-image-file", { detail: { file } }));
+    imagePicker.value = ""; // selecting the same photo twice must work
+  });
+  const pasteClipboardImage = async () => {
+    if (!navigator.clipboard?.read) {
+      window.alert("Este navegador no permite leer imágenes del portapapeles. Usa el botón de galería.");
+      return;
+    }
+    try {
+      const items = await navigator.clipboard.read();
+      for (const item of items) {
+        const imageType = item.types.find((type) => type.startsWith("image/"));
+        if (!imageType) continue;
+        const blob = await item.getType(imageType);
+        const file = new File([blob], "imagen-portapapeles." + (imageType.split("/")[1] || "png"), { type: imageType });
+        document.dispatchEvent(new CustomEvent("markeddown:insert-image-file", { detail: { file } }));
+        return;
+      }
+      window.alert("No hay ninguna imagen en el portapapeles. Puedes elegir una foto de la galería.");
+    } catch {
+      window.alert("No se pudo acceder al portapapeles. Permite el acceso o usa la galería.");
+    }
+  };
 
   const mobileTitle = document.createElement("div");
   mobileTitle.className = "studio-v2-pocket-header";
@@ -113,6 +148,8 @@ if (root) {
     '<div class="studio-v2-sheet-head"><button type="button" id="studio-v2-tools-back" aria-label="Volver a herramientas" hidden>←</button><div><span class="studio-v2-kicker">MARKEDDOWN / TOOLS</span><h2 id="studio-v2-sheet-title">Herramientas</h2></div><button id="studio-v2-tools-close" type="button" aria-label="Cerrar">×</button></div>' +
     '<div class="studio-v2-tools-grid">' +
     '<button type="button" data-studio-tool="insert"><b>＋</b><strong>Insertar</strong><small>Bloques de escritura</small></button>' +
+    '<button type="button" data-studio-tool="gallery-image"><b>▧</b><strong>Foto / Imagen</strong><small>Elegir del dispositivo</small></button>' +
+    '<button type="button" data-studio-tool="clipboard-image"><b>⧉</b><strong>Pegar imagen</strong><small>Desde el portapapeles</small></button>' +
     '<button type="button" data-studio-tool="outline"><b>☰</b><strong>Índice</strong><small>Secciones y notas</small></button>' +
     '<button type="button" data-studio-tool="graph"><b>◇</b><strong>Conexiones</strong><small>Grafo de documentos</small></button>' +
     '<button type="button" data-studio-tool="history"><b>↶</b><strong>Historial</strong><small>Versiones anteriores</small></button>' +
@@ -263,6 +300,9 @@ if (root) {
     if (event.target.closest("button")) event.preventDefault(); // preserve CodeMirror selection
   });
   keyboardBar.addEventListener("click", (event) => {
+    const imageButton = event.target.closest("[data-pocket-image]");
+    if (imageButton?.dataset.pocketImage === "gallery") return imagePicker.click();
+    if (imageButton?.dataset.pocketImage === "clipboard") return void pasteClipboardImage();
     const button = event.target.closest("[data-pocket-format]");
     if (button) root.querySelector('[data-format="' + button.dataset.pocketFormat + '"]')?.click();
   });
@@ -277,6 +317,12 @@ if (root) {
     if (!button) return;
     const action = button.dataset.studioTool;
     if (["insert", "outline", "graph"].includes(action)) setSpace(action);
+    else if (action === "gallery-image" || action === "clipboard-image") {
+      closeTools();
+      setSpace("editor");
+      if (action === "gallery-image") imagePicker.click();
+      else void pasteClipboardImage();
+    }
     else if (action === "export") showExportOptions();
     else if (action === "backup") {
       closeTools();
@@ -354,21 +400,64 @@ if (root) {
   const titleNode = byId("studio-active-file");
   if (titleNode && typeof MutationObserver !== "undefined") new MutationObserver(refresh).observe(titleNode, { childList: true, subtree: true });
 
+  let keyboardBaselineHeight = window.visualViewport?.height || window.innerHeight;
+  let pendingCaretFrame = 0;
+  const keepCaretVisible = () => {
+    if (!mobileQuery.matches || root.dataset.studioKeyboard !== "true") return;
+    const viewport = window.visualViewport;
+    const visibleBottom = viewport ? viewport.height + viewport.offsetTop : window.innerHeight;
+    const focused = document.activeElement;
+    const isSource = currentSpace === "editor" && focused?.closest?.(".cm-editor");
+    const bottomLimit = Math.min(visibleBottom,
+      isSource ? keyboardBar.getBoundingClientRect().top : visibleBottom) - 14;
+    if (isSource) {
+      const scroller = root.querySelector(".cm-scroller");
+      const cursor = root.querySelector(".cm-cursor-primary");
+      if (!scroller || !cursor) return;
+      const caret = cursor.getBoundingClientRect();
+      const topLimit = scroller.getBoundingClientRect().top + 12;
+      if (caret.bottom > bottomLimit) scroller.scrollTop += caret.bottom - bottomLimit + 12;
+      else if (caret.top < topLimit) scroller.scrollTop -= topLimit - caret.top;
+    } else if (focused?.matches?.(".studio-compose-inline")) {
+      const scroll = focused.closest(".studio-compose-scroll");
+      const rect = focused.getBoundingClientRect();
+      if (scroll && rect.bottom > bottomLimit) scroll.scrollTop += rect.bottom - bottomLimit + 12;
+    }
+  };
+  const scheduleCaretVisibility = () => {
+    if (pendingCaretFrame) cancelAnimationFrame(pendingCaretFrame);
+    pendingCaretFrame = requestAnimationFrame(() => {
+      pendingCaretFrame = 0;
+      keepCaretVisible();
+    });
+  };
   const updateKeyboard = () => {
     if (!mobileQuery.matches) {
       root.dataset.studioKeyboard = "false";
       root.style.removeProperty("--studio-keyboard-gap");
+      root.style.removeProperty("--studio-visible-height");
       return;
     }
     const focused = document.activeElement;
     const inEditor = Boolean(focused?.closest?.(".cm-editor, .studio-compose-inline"));
     const viewport = window.visualViewport;
-    const offset = viewport ? Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop) : 0;
+    const visibleBottom = viewport ? viewport.height + viewport.offsetTop : window.innerHeight;
+    const offset = viewport ? Math.max(0, window.innerHeight - visibleBottom) : 0;
+    if (!inEditor && offset < 110) keyboardBaselineHeight = visibleBottom;
+    const resizedLayout = keyboardBaselineHeight - visibleBottom > 110;
+    root.style.setProperty("--studio-visible-height", Math.round(visibleBottom) + "px");
     root.style.setProperty("--studio-keyboard-gap", Math.round(offset) + "px");
-    root.dataset.studioKeyboard = String(inEditor && offset > 110);
+    root.dataset.studioKeyboard = String(inEditor && (offset > 110 || resizedLayout));
+    scheduleCaretVisibility();
   };
   document.addEventListener("focusin", updateKeyboard);
   document.addEventListener("focusout", () => window.requestAnimationFrame(updateKeyboard));
+  root.addEventListener("input", (event) => {
+    if (event.target.closest?.(".cm-editor, .studio-compose-inline")) scheduleCaretVisibility();
+  });
+  document.addEventListener("selectionchange", () => {
+    if (document.activeElement?.closest?.(".cm-editor, .studio-compose-inline")) scheduleCaretVisibility();
+  });
   window.visualViewport?.addEventListener("resize", updateKeyboard);
   window.visualViewport?.addEventListener("scroll", updateKeyboard);
   mobileQuery.addEventListener("change", () => {
