@@ -537,6 +537,13 @@ const renderDocuments = () => {
   const deletedFolders = getDeletedFolders();
   const collapsedFolders = getCollapsedFolders();
   const documents = getVisibleDocuments(defaultMarkdown).sort(compareByOrder);
+  const openDocument = documents.find((doc) => doc.id === activeDocumentId);
+  const activeFileLabel = document.querySelector("#studio-active-file");
+  if (activeFileLabel) {
+    const title = openDocument?.title || "Documento activo";
+    if (activeFileLabel.textContent !== title) activeFileLabel.textContent = title;
+    activeFileLabel.title = title;
+  }
   const archivedDocuments = getArchivedDocuments(defaultMarkdown).sort((a, b) => (b.archivedAt || 0) - (a.archivedAt || 0));
   const deletedDocuments = getDeletedDocuments(defaultMarkdown).sort((a, b) => (b.deletedAt || 0) - (a.deletedAt || 0));
   const baseDocuments = documents.filter((doc) => getDocumentSearchText(doc, foldersById).includes(query));
