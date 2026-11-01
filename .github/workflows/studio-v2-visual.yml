@@ -53,6 +53,8 @@ jobs:
         run: node scripts/studio-v3-share.mjs
       - name: Editorial desktop reader and navigation audit
         run: node scripts/studio-v4-flows.mjs
+      - name: Markdown block operations audit
+        run: node scripts/studio-v4-blocks.mjs
       - name: Real browser screenshots and interaction checks
         run: node scripts/studio-v2-screenshots.mjs
       - name: Start production preview for offline PWA QA
