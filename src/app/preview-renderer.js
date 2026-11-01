@@ -212,6 +212,12 @@ export const createPreviewRenderer = ({
 
   const renderMarkdown = ({ markdown, editorState }) => {
     setSafeHtml(preview, marked.parse(preprocessMarkdown(markdown, readMarkdownToken)));
+    if (!markdown.trim()) {
+      const emptyState = document.createElement("p");
+      emptyState.className = "preview-empty-state";
+      emptyState.textContent = "La vista previa de tu documento aparecerá aquí cuando empieces a escribir.";
+      preview.appendChild(emptyState);
+    }
     applyHeadingAnchors({ preview, slugify });
     renderFootnotes({ markdown, preview, slugify });
     renderOutline(markdown, editorState);

@@ -4,7 +4,7 @@ import { markdown } from "@codemirror/lang-markdown";
 import { codeFolding, defaultHighlightStyle, foldGutter, foldKeymap, foldService, syntaxHighlighting } from "@codemirror/language";
 import { search, searchKeymap } from "@codemirror/search";
 import { EditorState, Prec } from "@codemirror/state";
-import { Decoration, ViewPlugin, WidgetType, keymap } from "@codemirror/view";
+import { Decoration, ViewPlugin, WidgetType, keymap, placeholder } from "@codemirror/view";
 
 class InlineTokenWidget extends WidgetType {
   constructor(kind, label) {
@@ -246,6 +246,7 @@ export const createCodeMirrorEditor = ({
         basicSetup,
         history(),
         markdown(),
+        placeholder("Empieza a escribir Markdown…"),
         search({ top: true }),
         syntaxHighlighting(defaultHighlightStyle),
         codeFolding({ placeholderText: "…" }),
