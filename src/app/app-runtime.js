@@ -40,6 +40,7 @@ import {
   themeKey,
 } from "./storage.js";
 import { bindFileActionButtons } from "./file-actions.js";
+import { sendToNexus } from "./nexus-handoff.js";
 import {
   buildImageMarkdown,
   countImageReferences,
@@ -862,6 +863,27 @@ const syncDocument = () => {
   scheduleSave();
 };
 
+// Mobile browsers may suspend a PWA or reload a tab before the normal 250ms
+// debounce expires. Flush the actual CodeMirror document before page exit.
+let restoredWorkspacePendingReload = false;
+window.addEventListener("markeddown:restore-committed", () => {
+  // The restored snapshot is now authoritative. The old CodeMirror buffer
+  // must never overwrite it during pagehide when the restore reloads the app.
+  restoredWorkspacePendingReload = true;
+  clearTimeout(saveTimer);
+  saveTimer = null;
+});
+const flushPendingSave = () => {
+  if (restoredWorkspacePendingReload || !saveTimer || !editor) return;
+  clearTimeout(saveTimer);
+  saveTimer = null;
+  saveDocument();
+};
+window.addEventListener("pagehide", flushPendingSave);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") flushPendingSave();
+});
+
 const insertAtCursor = (...args) => editorCommands.insertAtCursor(...args);
 const wrapSelection = (...args) => editorCommands.wrapSelection(...args);
 
@@ -1615,6 +1637,27 @@ bindFileActionButtons({
     actionsMenu.open = false;
     showAppFeedback(feedback);
   },
+});
+
+// MarkEDdown remains the source of truth; this creates a one-time copy via
+// the platform sharesheet. The recipient controls whether to save it.
+document.addEventListener("markeddown:send-to-nexus", () => {
+  const active = getDocuments(defaultMarkdown).find((doc) => doc.id === activeDocumentId);
+  const title = active?.title || getMarkdown().match(/^#\s+(.+)$/m)?.[1] || "Documento";
+  void sendToNexus({ markdown: getMarkdown(), title, readToken: readMarkdownToken, slugify })
+    .then(({ status, imagesOmitted }) => {
+      if (status === "canceled") return;
+      const suffix = imagesOmitted ? ` · ${imagesOmitted} imagen(es) locales no incluidas` : "";
+      showAppFeedback({
+        message: status === "shared" ? "Contenido enviado al menú Compartir" + suffix :
+          "Descargado como Markdown para importar en NEXUS OS" + suffix,
+        tone: imagesOmitted ? "warning" : "success",
+      });
+    })
+    .catch((error) => showAppFeedback({
+      message: error?.message === "No hay contenido para enviar." ? error.message : "No se pudo compartir el documento.",
+      tone: "error",
+    }));
 });
 
 const handleCreateFolder = () => {

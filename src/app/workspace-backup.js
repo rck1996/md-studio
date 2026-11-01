@@ -186,6 +186,7 @@ if (root) {
     if (!window.confirm("¿Reemplazar los documentos actuales por el contenido del ZIP? Guarda una copia antes de continuar.")) return;
     try {
       restoreWorkspaceBackup(pending);
+      window.dispatchEvent(new Event("markeddown:restore-committed"));
       report("Restaurado correctamente. Recargando…", "success");
       window.location.reload();
     } catch (error) { report(error.message, "error"); }

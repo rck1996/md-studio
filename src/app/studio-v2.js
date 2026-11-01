@@ -32,6 +32,7 @@ if (root) {
     '<button type="button" id="studio-v2-compose" title="Editar visualmente">Edición visual</button>' +
     '<button type="button" id="studio-v2-library" title="Abrir biblioteca">Biblioteca</button>' +
     '<button type="button" id="studio-v2-backup" title="Respaldo del espacio">Respaldo</button>' +
+    '<button type="button" id="studio-v2-send-nexus" title="Compartir la nota con NEXUS OS">NEXUS OS ↗</button>' +
     '<button type="button" data-studio-install hidden title="Instalar MarkEDdown">Instalar</button>' +
     '<button type="button" id="studio-v2-graph" title="Ver conexiones">Conexiones</button>' +
     '<button type="button" id="studio-v2-new" class="studio-v2-primary">+ Nuevo documento</button></div>';
@@ -160,6 +161,7 @@ if (root) {
     '<button type="button" data-studio-tool="preferences"><b>⚙</b><strong>Preferencias</strong><small>Lectura y apariencia</small></button>' +
     '<button type="button" data-studio-tool="focus"><b>□</b><strong>Foco</strong><small>Sin distracciones</small></button>' +
     '</div><div class="studio-v2-export-options" hidden>' +
+    '<button type="button" data-studio-pocket-export="send-to-nexus"><span>↗</span><strong>Enviar a NEXUS OS</strong><small>Compartir Markdown como nueva nota · sin imágenes</small></button>' +
     '<button type="button" data-studio-pocket-export="download-markdown"><span>↓</span><strong>Descargar Markdown</strong><small>Archivo .md</small></button>' +
     '<button type="button" data-studio-pocket-export="export-html"><span>⌘</span><strong>Exportar HTML</strong><small>Documento web</small></button>' +
     '<button type="button" data-studio-pocket-export="print-pdf"><span>▤</span><strong>Imprimir / PDF</strong><small>Diálogo del navegador</small></button>' +
@@ -287,6 +289,9 @@ if (root) {
   byId("studio-v2-backup")?.addEventListener("click", () =>
     window.dispatchEvent(new Event("markeddown:open-backup"))
   );
+  byId("studio-v2-send-nexus")?.addEventListener("click", () =>
+    document.dispatchEvent(new Event("markeddown:send-to-nexus"))
+  );
   byId("studio-v2-graph")?.addEventListener("click", () => setSpace("graph"));
   [byId("studio-v2-new"), byId("studio-v2-pocket-new"), byId("studio-v2-hero-create")].forEach((button) =>
     button?.addEventListener("click", () => { trigger("new-document"); setSpace("editor"); })
@@ -340,7 +345,8 @@ if (root) {
     if (!item) return;
     const action = item.dataset.studioPocketExport;
     closeTools();
-    trigger(action);
+    if (action === "send-to-nexus") document.dispatchEvent(new Event("markeddown:send-to-nexus"));
+    else trigger(action);
   });
   document.addEventListener("keydown", (event) => {
     if (veil.hidden) return;
