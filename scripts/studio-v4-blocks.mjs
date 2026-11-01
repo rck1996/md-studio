@@ -49,7 +49,7 @@ try {
     assert.equal(await page.locator(".studio-compose-block-menu").count(),0);
   });
   await test("Visual: insertar tabla luego de un encabezado",async()=>{
-    await block("# A").locator(".studio-compose-more").click();
+    await page.locator(".studio-compose-block").first().locator(".studio-compose-more").click();
     await page.locator(".studio-compose-block-menu").getByText("Insertar debajo").click();
     assert.equal(await page.locator(".studio-compose-insert-tray").isVisible(),true);
     await page.locator('[data-compose-template="table"]').click();
