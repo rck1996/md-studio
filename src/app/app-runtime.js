@@ -863,6 +863,19 @@ const syncDocument = () => {
   scheduleSave();
 };
 
+// Mobile browsers may suspend a PWA or reload a tab before the normal 250ms
+// debounce expires. Flush the actual CodeMirror document before page exit.
+const flushPendingSave = () => {
+  if (!saveTimer || !editor) return;
+  clearTimeout(saveTimer);
+  saveTimer = null;
+  saveDocument();
+};
+window.addEventListener("pagehide", flushPendingSave);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") flushPendingSave();
+});
+
 const insertAtCursor = (...args) => editorCommands.insertAtCursor(...args);
 const wrapSelection = (...args) => editorCommands.wrapSelection(...args);
 
