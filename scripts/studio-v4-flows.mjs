@@ -41,6 +41,9 @@ try {
   });
 
   await check("Lectura: espacio editorial con metadatos reales", async () => {
+    // Reproduce the real route used by the screenshot run: graph -> reader.
+    await page.locator("#studio-v2-graph").click();
+    assert.equal(await space(), "graph");
     await page.locator("#studio-v4-preview").click();
     assert.equal(await space(), "preview");
     assert.equal(await page.locator(".preview-panel").isVisible(), true);
