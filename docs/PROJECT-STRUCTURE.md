@@ -3,7 +3,7 @@
 ## Vista rapida
 
 ```text
-mdv-simple/
+mded/
   index.html
   package.json
   package-lock.json
@@ -13,6 +13,7 @@ mdv-simple/
   docs/
   public/
   src/
+  tests/
 ```
 
 ## Raiz
@@ -41,6 +42,9 @@ Documentacion del proyecto.
 - `ARCHITECTURE.md`: limites tecnicos y capas.
 - `PROJECT-STRUCTURE.md`: esta guia.
 - `ROADMAP.md`: fases siguientes.
+- `EDITORIAL-IDENTITY.md`: identidad editorial, UI y criterios de aceptación.
+- `MOBILE-UI-VERIFICATION.md`: matriz de pruebas visuales y funcionales.
+- `markeddown-banner.svg`: portada del README.
 
 ### `public/`
 
@@ -63,7 +67,7 @@ src/
 ### `src/main.js`
 
 Entry point minimo.
-Solo conecta estilos y runtime.
+Conecta estilos, runtime y adaptador de controles editoriales.
 
 ### `src/app/`
 
@@ -79,6 +83,7 @@ Orquestacion y wiring de la app.
 - `preview-renderer.js`: render de preview, outline, notas, assets y validacion.
 - `storage.js`: claves y helpers de persistencia.
 - `templates.js`: plantillas base.
+- `studio-flow.js`: acciones de cabecera, popover Exportar y estado real; sin lógica documental nueva.
 
 ### `src/domain/`
 
@@ -119,6 +124,12 @@ Sistema CSS por capas.
 - `editor-preview.css`: editor, preview y modos de lectura.
 - `overlays.css`: overlays y dialogs.
 - `responsive.css`: tablet, mobile y reduced motion.
+- `studio-theme.css`: identidad editorial RCK1996, tipografía y paleta.
+- `studio-refinement.css`: correcciones de cabecera, tamaño de texto, popover y breakpoints.
+
+## `tests/`
+
+- `studio-flow.test.cjs`: pruebas con el runner de Node.js para delegación de acciones, exportación, foco, estado e IDs. Se ejecutan con `npm run test` y antes del build en CI. **No sustituyen QA visual de navegador**.
 
 ## Como leer el proyecto
 
