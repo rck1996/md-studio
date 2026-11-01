@@ -48,6 +48,7 @@ try {
     assert.equal(await space(), "preview");
     assert.equal(await page.locator(".preview-panel").isVisible(), true);
     assert.equal(await page.locator(".studio-v4-reader-toolbar").isVisible(), true);
+    assert.equal(await page.locator(".workspace-toolbar").isVisible(), false);
     const geometry = await page.evaluate(() => {
       const get = (selector) => {
         const el = document.querySelector(selector), rect = el?.getBoundingClientRect();
