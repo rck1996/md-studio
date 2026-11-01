@@ -49,6 +49,8 @@ jobs:
         run: node scripts/studio-v3-flows.mjs
       - name: Graph search, focus and zoom audit
         run: node scripts/studio-v3-graph.mjs
+      - name: Android Share Target audit
+        run: node scripts/studio-v3-share.mjs
       - name: Real browser screenshots and interaction checks
         run: node scripts/studio-v2-screenshots.mjs
       - name: Start production preview for offline PWA QA
