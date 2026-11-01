@@ -55,6 +55,8 @@ jobs:
         run: node scripts/studio-v4-flows.mjs
       - name: Markdown block operations audit
         run: node scripts/studio-v4-blocks.mjs
+      - name: Pocket keyboard and image import regressions
+        run: node scripts/studio-v5-pocket-input.mjs
       - name: Real browser screenshots and interaction checks
         run: node scripts/studio-v2-screenshots.mjs
       - name: Start production preview for offline PWA QA
