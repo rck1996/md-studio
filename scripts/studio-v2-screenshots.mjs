@@ -1,0 +1,110 @@
+import { chromium } from "playwright";
+import { mkdir } from "node:fs/promises";
+import assert from "node:assert/strict";
+
+const base = process.env.STUDIO_BASE_URL || "http://127.0.0.1:5173";
+const destination = "artifacts/studio-v2";
+await mkdir(destination, { recursive: true });
+
+const browser = await chromium.launch({ headless: true });
+const errors = [];
+const attachErrorCapture = (page, label) =>
+  page.on("pageerror", (error) => errors.push(label + ": " + error.message));
+
+const waitForApp = async (page) => {
+  await page.goto(base, { waitUntil: "domcontentloaded" });
+  await page.locator("#editor-host .cm-editor").waitFor({ state: "attached", timeout: 20000 });
+  await page.locator(".workspace.studio-v2").waitFor({ state: "attached" });
+};
+
+const capture = async (page, name) => {
+  await page.waitForTimeout(350);
+  await page.screenshot({ path: destination + "/" + name + ".png", animations: "disabled" });
+  console.log("Captured " + name);
+};
+
+try {
+  const desktopContext = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    deviceScaleFactor: 1,
+    colorScheme: "light"
+  });
+  const desktop = await desktopContext.newPage();
+  attachErrorCapture(desktop, "desktop");
+  await waitForApp(desktop);
+  assert.equal(await desktop.locator(".workspace").getAttribute("data-studio-space"), "editor");
+  await capture(desktop, "desktop-01-editor-light");
+
+  await desktop.locator("#side-tab-home").click();
+  assert.equal(await desktop.locator(".workspace").getAttribute("data-studio-space"), "home");
+  await capture(desktop, "desktop-02-dashboard");
+
+  await desktop.locator("#studio-v2-library").click();
+  assert.equal(await desktop.locator(".workspace").getAttribute("data-studio-space"), "library");
+  await capture(desktop, "desktop-03-library");
+
+  await desktop.locator("#studio-v2-graph").click();
+  assert.equal(await desktop.locator(".workspace").getAttribute("data-studio-space"), "graph");
+  await capture(desktop, "desktop-04-graph");
+
+  await desktop.locator("#studio-v2-editor").click();
+  await desktop.evaluate(() => document.getElementById("theme-toggle")?.click());
+  await capture(desktop, "desktop-05-editor-dark");
+  await desktopContext.close();
+
+  const mobileContext = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    deviceScaleFactor: 2,
+    isMobile: true,
+    hasTouch: true,
+    colorScheme: "light"
+  });
+  const mobile = await mobileContext.newPage();
+  attachErrorCapture(mobile, "mobile");
+  await waitForApp(mobile);
+  assert.equal(await mobile.locator(".workspace").getAttribute("data-studio-space"), "home");
+  await capture(mobile, "pocket-01-home");
+
+  await mobile.locator('[data-studio-go="library"]').click();
+  assert.equal(await mobile.locator(".workspace").getAttribute("data-studio-space"), "library");
+  await capture(mobile, "pocket-02-documents");
+
+  await mobile.locator('[data-studio-go="editor"]').click();
+  assert.equal(await mobile.locator(".workspace").getAttribute("data-studio-space"), "editor");
+  await capture(mobile, "pocket-03-markdown-editor");
+
+  // A real editor mutation, not a mock screen. It must survive reload.
+  const cm = mobile.locator(".cm-content").first();
+  await cm.click();
+  await mobile.keyboard.press("ControlOrMeta+End");
+  await mobile.keyboard.insertText("\n\n## Pocket QA\n\nEdición desde el navegador móvil.");
+  await mobile.waitForTimeout(700);
+  assert.match(await mobile.locator(".cm-content").innerText(), /Pocket QA/);
+  await capture(mobile, "pocket-04-editor-changed");
+
+  await mobile.locator("#studio-v2-pocket-preview").click();
+  assert.equal(await mobile.locator(".workspace").getAttribute("data-studio-space"), "preview");
+  await mobile.locator("#markdown-preview").getByText("Pocket QA").waitFor();
+  await capture(mobile, "pocket-05-reading-preview");
+
+  await mobile.locator('[data-studio-go="tools"]').click();
+  await mobile.locator('.studio-v2-tools-veil:not([hidden])').waitFor();
+  await capture(mobile, "pocket-06-tools-sheet");
+  await mobile.locator('[data-studio-tool="outline"]').click();
+  await capture(mobile, "pocket-07-outline");
+
+  await mobile.reload({ waitUntil: "domcontentloaded" });
+  await mobile.locator("#editor-host .cm-editor").waitFor({ state: "attached" });
+  const persisted = await mobile.locator(".cm-content").innerText();
+  assert.match(persisted, /Pocket QA/, "local document should persist after reload");
+  console.log("PASS: Pocket edit and local persistence.");
+  await mobileContext.close();
+} finally {
+  await browser.close();
+}
+if (errors.length) {
+  console.error("Browser errors:\n" + errors.join("\n"));
+  process.exitCode = 1;
+} else {
+  console.log("PASS: No uncaught browser exceptions.");
+}
