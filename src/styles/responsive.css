@@ -503,6 +503,16 @@
 }
 
 @media (max-width: 600px) {
+  .command-palette-overlay {
+    align-items: start;
+    padding: max(24px, 8vh) max(10px, env(safe-area-inset-right, 0px)) 12px max(10px, env(safe-area-inset-left, 0px));
+  }
+
+  .command-palette { max-height: 82dvh; }
+  .command-palette-search { min-height: 56px; padding-inline: 12px; }
+  .command-palette-search input { height: 52px; font-size: 14px; }
+  .command-palette footer { gap: 9px; padding: 9px 10px; }
+
   .personal-notice {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 36px;

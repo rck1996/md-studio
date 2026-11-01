@@ -258,11 +258,12 @@ export const renderExplorerPanel = ({
     return row;
   };
 
-  folders.forEach((folder) => {
+  if (explorerFilter !== "trash") folders.forEach((folder) => {
     const folderDocuments = visibleDocuments
       .filter((doc) => getDocumentFolderId(doc) === folder.id)
       .sort(explorerFilter === "recent" ? (a, b) => (b.updatedAt || 0) - (a.updatedAt || 0) : compareByOrder);
     const hasDocuments = folderDocuments.length > 0;
+    if (folder.id === defaultFolderId && !hasDocuments) return;
     if (query && !hasDocuments) return;
     if (explorerFilter === "favorites" && !hasDocuments) return;
     if (explorerFilter === "recent" && !hasDocuments) return;
@@ -399,14 +400,14 @@ export const renderExplorerPanel = ({
     container.appendChild(group);
   });
 
-  if (!visibleDocuments.length && !folders.length) {
+  if (explorerFilter !== "trash" && !visibleDocuments.length && !folders.length) {
     const empty = document.createElement("p");
     empty.className = "empty-state";
     empty.textContent = query
       ? "No encontre documentos con esa busqueda. Prueba otro nombre o cambia el filtro."
       : "Todavia no tienes documentos. Crea uno nuevo o usa una plantilla para empezar.";
     container.appendChild(empty);
-  } else if (!visibleDocuments.length) {
+  } else if (explorerFilter !== "trash" && !visibleDocuments.length) {
     const empty = document.createElement("p");
     empty.className = "empty-state";
     empty.textContent =
@@ -533,5 +534,12 @@ export const renderExplorerPanel = ({
     });
 
     container.appendChild(archiveGroup);
+  }
+
+  if (explorerFilter === "trash" && !deletedDocuments.length && !deletedFolders.length && !archivedDocuments.length) {
+    const empty = document.createElement("p");
+    empty.className = "empty-state";
+    empty.textContent = "La papelera está vacía.";
+    container.appendChild(empty);
   }
 };

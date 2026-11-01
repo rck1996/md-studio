@@ -20,6 +20,8 @@ Principios: **lectura primero**, acciones verdaderas, controles accesibles, una 
 | Icono | `public/assets/logo/markeddown-studio-icon.svg` | Cabecera y favicon |
 | Logotipo horizontal | `public/assets/logo/markeddown-studio-wordmark.svg` | Presentación de marca |
 | Portada documental | `docs/markeddown-banner.svg` | README |
+| Ilustracion editorial | `public/assets/editorial-cover.png` | Portada opcional por documento |
+| Textura de papel | `public/assets/paper-grain.svg` | Grano y fibras repetibles del preview |
 | Tema editorial | `src/styles/studio-theme.css` | Tokens y composición |
 | Refinamiento | `src/styles/studio-refinement.css` | Responsivo, controles y legibilidad |
 
@@ -34,10 +36,17 @@ No incorporar imágenes de terceros sin aclarar sus derechos.
 | `--text-strong` | `#F1EDDF` | `#171919` |
 | `--accent` | `#EF6330` | `#E34B12` |
 | `--studio-secondary` | `#5E9EFF` | `#DE4A17` |
+| Papel del preview | `#F1E4CF` | `#F1E4CF` |
 
 Tipografía: **Cormorant Garamond** (títulos editoriales), **Barlow Condensed** (controles), **DM Sans** (UI) y **JetBrains Mono** (editor). Hay fuentes de reserva si las webfonts no cargan.
 
-La vista previa es una página de **papel marfil** en ambos temas, no una zona de dibujo; se elimina el círculo naranja flotante que competía con los títulos. El naranja es un acento, no un fondo general.
+La vista previa es una página de **papel cálido** en ambos temas, no una zona de dibujo; se elimina el círculo naranja flotante que competía con los títulos. El naranja es un acento, no un fondo general. Una textura SVG de grano fino y fibras cortas queda bajo el contenido.
+
+### Portada por documento
+
+![Ilustración editorial integrada al papel del preview](../public/assets/editorial-cover.png)
+
+La ilustración comparte la base `#F1E4CF` y se mezcla con `mix-blend-mode: darken` para fundir su fondo crema con la hoja. El grano de papel también se aplica bajo la imagen. La portada aparece solo si los metadatos del documento contienen `cover: "editorial"`; en el espacio inicial, únicamente `01_Sol.md` tiene esa marca. Las demás notas permanecen sin portada hasta que se active expresamente para ellas.
 
 ## 04 / Pantallas y puntos de corte
 
@@ -78,13 +87,16 @@ Orden de importación en `src/styles/index.css`:
 3. `studio-theme.css`: identidad visual base.
 4. `studio-refinement.css`: composición, controles, edición, papel y breakpoints.
 
-`src/app/studio-flow.js` conecta accesos nuevos y refleja el estado de guardado y el color del navegador. **No** crea documentos, implementa otra exportación ni cambia el almacenamiento.
+`src/app/studio-flow.js` conecta accesos nuevos y refleja el estado de guardado y el color del navegador. `src/app/command-palette.js` busca documentos locales y ofrece acciones existentes. `src/domain/starter-workspace.js` define documentos de muestra y sus metadatos de portada. **No** se agrega servicio remoto para la imagen ni para la textura.
 
 Evitar modificar las claves de `src/app/storage.js` sin una migración explícita. Los documentos antiguos deben seguir abriéndose.
 
 ## 07 / Calidad y definición de terminado
 
-`npm run test` verifica los accesos rápidos, opciones de exportación, Escape, clic externo, estado, tema e identificadores HTML. `npm run build` comprueba compilación. Ninguno demuestra fidelidad visual por sí mismo.
+`npm run test` verifica los accesos rápidos, opciones de exportación, Escape, clic externo, estado, tema e identificadores HTML. `npm run build` comprueba compilación. Ambos pasan actualmente. Ninguno demuestra fidelidad visual por sí mismo.
+
+- [x] Revisión visual de escritorio: Dividido, Editor, Vista previa, Foco y Presentación.
+- [x] La ilustración se integra con el papel en Dividido y Vista previa.
 
 Revisar [MOBILE-UI-VERIFICATION.md](MOBILE-UI-VERIFICATION.md) en **320, 360, 390, 768, 1024, 1366, 1440 y 1920px** en ambos temas.
 

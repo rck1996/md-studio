@@ -29,7 +29,7 @@ function setExportOpen(open) {
 }
 
 newButton?.addEventListener("click", () => activateExistingAction("new-document"));
-searchButton?.addEventListener("click", () => activateExistingAction("open-search"));
+searchButton?.addEventListener("click", () => document.dispatchEvent(new Event("markeddown:open-command-palette")));
 
 exportButton?.addEventListener("click", (event) => {
   event.stopPropagation();

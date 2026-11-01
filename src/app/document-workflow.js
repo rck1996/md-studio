@@ -22,6 +22,7 @@ export const createDocumentWorkflow = ({
   setMarkdown,
   renderDocuments,
   onActiveDocumentChange,
+  onBeforeActiveDocumentChange,
 }) => {
   const getTemplateById = (templateId) => documentTemplates.find((template) => template.id === templateId) || documentTemplates[0];
 
@@ -40,6 +41,7 @@ export const createDocumentWorkflow = ({
   };
 
   const openDocumentInEditor = (doc) => {
+    if (doc.id !== getActiveDocument(defaultMarkdown)?.id) onBeforeActiveDocumentChange?.();
     onActiveDocumentChange(doc.id);
     storageSet(activeDocumentKey, doc.id);
     setActiveFolderId(getDocumentFolderId(doc));

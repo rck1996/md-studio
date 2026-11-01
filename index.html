@@ -27,24 +27,25 @@
               <p class="brand-studio">Editor · escritura · exportación</p>
             </div>
           </div>
-          <div class="view-switcher" role="group" aria-label="Modo de vista">
-            <button class="is-selected" type="button" data-view="split" aria-pressed="true">Dividido</button>
-            <button type="button" data-view="editor" aria-pressed="false">Editor</button>
-            <button type="button" data-view="preview" aria-pressed="false">Vista previa</button>
+          <div class="brand-context">
+            <strong>Editor de Markdown</strong>
+            <span>Escritura / Organización / Exportación</span>
           </div>
+          <button class="studio-search-field" id="studio-search" type="button" aria-label="Buscar documentos o ejecutar un comando" title="Buscar documentos o ejecutar un comando">
+            <span aria-hidden="true">⌕</span><span class="studio-search-placeholder">Buscar o ejecutar comando…</span><kbd>Ctrl/Cmd K</kbd>
+          </button>
           <div class="document-actions">
             <div class="button-cluster">
               <button class="inspector-toggle" id="inspector-toggle" type="button" aria-controls="inspector-panel" aria-expanded="false" title="Abrir inspector">Sin alertas</button>
-              <button class="secondary-button studio-quick-new" id="studio-new" type="button" aria-label="Crear documento" title="Crear documento">+ Nuevo</button>
-              <button class="secondary-button studio-quick-search" id="studio-search" type="button" aria-label="Buscar en el documento" title="Buscar en el documento">⌕ Buscar</button>
-              <button class="secondary-button" id="focus-mode" type="button" aria-label="Activar modo foco" aria-pressed="false" title="Activar modo foco">Foco</button>
-              <button class="secondary-button" id="theme-toggle" type="button" aria-label="Cambiar a tema oscuro" aria-pressed="false" title="Cambiar a tema oscuro">Oscuro</button>
+              <button class="secondary-button header-icon-button" id="open-guide" type="button" aria-label="Atajos y ayuda" title="Atajos y ayuda">⌘</button>
+              <button class="secondary-button header-icon-button" id="open-preferences" type="button" aria-label="Preferencias" title="Preferencias">⚙</button>
               <div class="studio-export-shell">
                 <button class="studio-export" id="studio-export" type="button" aria-expanded="false" aria-controls="studio-export-menu">Exportar ↗</button>
                 <div class="studio-export-menu" id="studio-export-menu" role="group" aria-label="Opciones de exportación" hidden>
                   <span class="studio-export-caption">DESCARGAR</span>
                   <button type="button" data-studio-export-action="download-markdown">Archivo Markdown <span>.md</span></button>
                   <button type="button" data-studio-export-action="export-html">Documento HTML <span>.html</span></button>
+                  <button type="button" data-studio-export-action="print-pdf">Imprimir / guardar como PDF <span>.pdf</span></button>
                   <button type="button" data-studio-export-action="export-assets">Imágenes y recursos <span>.zip</span></button>
                   <span class="studio-export-caption">COPIAR</span>
                   <button type="button" data-studio-export-action="copy-markdown">Copiar Markdown</button>
@@ -55,9 +56,9 @@
                 <summary class="secondary-button" aria-label="Mas acciones" title="Mas acciones">Mas</summary>
                 <div class="actions-menu-content" id="studio-actions-content">
                   <span>Espacio</span>
-                  <button class="quick-action" id="open-preferences" type="button">Preferencias</button>
+                  <button id="show-personal-notice" type="button">Privacidad y almacenamiento</button>
+                  <button class="quick-action" id="theme-toggle" type="button" aria-label="Cambiar tema" aria-pressed="false">Cambiar tema</button>
                   <span>Aprender</span>
-                  <button id="open-guide" type="button">Atajos y ayuda</button>
                   <span>Editar</span>
                   <button id="open-search" type="button">Buscar y reemplazar</button>
                   <button id="open-templates" type="button">Plantillas</button>
@@ -86,6 +87,9 @@
           <div class="side-panel-shell">
           <div class="side-tabs" aria-label="Navegacion lateral">
             <div class="side-tablist" role="tablist" aria-label="Navegacion lateral">
+              <button id="side-tab-home" type="button" role="tab" aria-selected="false" aria-controls="home-panel" data-side-panel="home" aria-label="Inicio" data-tooltip="Inicio" title="Inicio">
+                <span class="nav-icon nav-icon-home" aria-hidden="true"></span><span class="nav-label">Inicio</span>
+              </button>
               <button class="is-selected" id="side-tab-documents" type="button" role="tab" aria-selected="true" aria-controls="documents-panel" data-side-panel="documents" aria-label="Explorador" data-tooltip="Explorador" title="Explorador">
                 <span class="nav-icon nav-icon-folder" aria-hidden="true"></span>
                 <span class="nav-label">Explorador</span>
@@ -98,8 +102,26 @@
                 <span class="nav-icon nav-icon-outline" aria-hidden="true"></span>
                 <span class="nav-label">Indice</span>
               </button>
+              <button id="side-tab-graph" type="button" role="tab" aria-selected="false" aria-controls="graph-panel" data-side-panel="graph" aria-label="Grafo de documentos" data-tooltip="Grafo" title="Grafo de documentos">
+                <span class="nav-icon nav-icon-graph" aria-hidden="true"></span><span class="nav-label">Grafo</span>
+              </button>
+              <button id="nav-history" type="button" data-studio-action="history" aria-label="Historial de versiones" data-tooltip="Historial" title="Historial de versiones">
+                <span class="nav-icon nav-icon-history" aria-hidden="true"></span><span class="nav-label">Historial</span>
+              </button>
+              <button id="nav-templates" type="button" data-studio-action="templates" aria-label="Plantillas" data-tooltip="Plantillas" title="Plantillas">
+                <span class="nav-icon nav-icon-templates" aria-hidden="true"></span><span class="nav-label">Plantillas</span>
+              </button>
+              <button id="nav-favorites" type="button" data-studio-action="favorites" aria-label="Favoritos" data-tooltip="Favoritos" title="Favoritos">
+                <span class="nav-icon nav-icon-favorites" aria-hidden="true"></span><span class="nav-label">Favoritos</span>
+              </button>
+              <button id="nav-recent" type="button" data-studio-action="recent" aria-label="Recientes" data-tooltip="Recientes" title="Recientes">
+                <span class="nav-icon nav-icon-recent" aria-hidden="true"></span><span class="nav-label">Recientes</span>
+              </button>
+              <button id="nav-trash" type="button" data-studio-action="trash" aria-label="Papelera" data-tooltip="Papelera" title="Papelera">
+                <span class="nav-icon nav-icon-trash" aria-hidden="true"></span><span class="nav-label">Papelera</span>
+              </button>
             </div>
-            <button class="side-hide" id="hide-side-panel" type="button" aria-label="Ocultar navegacion" aria-controls="documents-panel insert-panel outline-panel" aria-expanded="true" data-tooltip="Ocultar navegacion" title="Ocultar navegacion">
+            <button class="side-hide" id="hide-side-panel" type="button" aria-label="Ocultar navegacion" aria-controls="home-panel documents-panel insert-panel outline-panel graph-panel" aria-expanded="true" data-tooltip="Ocultar navegacion" title="Ocultar navegacion">
               <span class="nav-icon nav-icon-collapse" aria-hidden="true"></span>
               <span class="nav-label">Ocultar</span>
             </button>
@@ -109,8 +131,8 @@
             <div class="panel-header compact-header">
               <span>Explorador</span>
               <div class="document-header-actions">
-                <button class="panel-toggle" id="new-folder" type="button" aria-label="Nueva carpeta" title="Nueva carpeta">Carpeta</button>
-                <button class="panel-toggle" id="new-document" type="button" aria-label="Nuevo documento" title="Nuevo documento">Nuevo</button>
+                <button class="panel-toggle" id="new-folder" type="button" aria-label="Nueva carpeta" title="Nueva carpeta">▱</button>
+                <button class="panel-toggle" id="new-document" type="button" aria-label="Nuevo documento" title="Nuevo documento">+</button>
               </div>
             </div>
             <div class="document-tools">
@@ -122,6 +144,28 @@
               </div>
             </div>
             <div class="document-list" id="document-list"></div>
+            <section class="tag-shelf" aria-label="Etiquetas del espacio">
+              <div class="tag-shelf-heading"><strong>Etiquetas</strong><span id="tag-count">0</span></div>
+              <div class="tag-shelf-list" id="tag-list"></div>
+            </section>
+          </aside>
+
+          <aside class="home-panel" id="home-panel" data-studio-panel role="tabpanel" aria-labelledby="side-tab-home">
+            <div class="workspace-panel-heading"><span class="workspace-kicker">RCK1996 / STUDIO</span><h2>Tu espacio de trabajo</h2><p>Ideas, proyectos y documentos en un solo lugar.</p></div>
+            <div class="home-actions">
+              <button type="button" id="home-new-document"><span>＋</span><strong>Nuevo documento</strong><small>Empieza desde cero o usa una plantilla</small></button>
+              <button type="button" id="home-open-templates"><span>▤</span><strong>Explorar plantillas</strong><small>Notas, proyectos y escritura</small></button>
+              <button type="button" id="home-new-project"><span>▱</span><strong>Nuevo proyecto</strong><small>Organiza documentos en una carpeta</small></button>
+            </div>
+            <section class="home-section"><div class="workspace-section-heading"><h3>Recientes</h3><button type="button" id="home-show-documents">Ver documentos ↗</button></div><div id="home-recent" class="home-recent-list"></div></section>
+            <section class="home-section"><div class="workspace-section-heading"><h3>Espacio local</h3></div><div class="home-feature-list"><span>◈ Proyectos</span><span>⌘ Historial local</span><span>↗ Exportación</span><span>◇ Escritura enfocada</span></div></section>
+          </aside>
+
+          <aside class="graph-panel" id="graph-panel" data-studio-panel role="tabpanel" aria-labelledby="side-tab-graph">
+            <div class="workspace-panel-heading"><button class="graph-close" id="close-graph" type="button" aria-label="Cerrar grafo" title="Cerrar grafo">×</button><span class="workspace-kicker">DOCUMENTOS / CONEXIONES</span><h2>Grafo de notas</h2><p>Enlaza documentos con la sintaxis <code>[[Nombre del documento]]</code>.</p></div>
+            <div class="graph-canvas" id="graph-canvas" aria-label="Mapa de documentos conectados"></div>
+            <div class="workspace-section-heading"><h3>Conexiones</h3><span id="graph-count">0 documentos</span></div>
+            <div class="graph-document-list" id="graph-document-list"></div>
           </aside>
 
           <aside class="toolbox" id="insert-panel" role="tabpanel" aria-labelledby="side-tab-insert">
@@ -197,29 +241,51 @@
           </aside>
           </div>
 
+          <section class="workspace-toolbar" aria-label="Pestañas y controles del documento">
+            <div class="document-tabstrip">
+              <div class="document-tabs" id="document-tabs" role="tablist" aria-label="Documentos abiertos"></div>
+              <button class="document-tab-new" id="studio-new" type="button" aria-label="Crear documento" title="Crear documento">+</button>
+            </div>
+            <div class="workspace-controls">
+              <div class="view-switcher" role="group" aria-label="Modo de vista">
+                <button class="is-selected" type="button" data-view="split" aria-pressed="true">Dividido</button>
+                <button type="button" data-view="editor" aria-pressed="false">Editor</button>
+                <button type="button" data-view="preview" aria-pressed="false">Vista previa</button>
+              </div>
+              <div class="workspace-quick-controls">
+                <div class="format-toolbar" role="toolbar" aria-label="Formato Markdown">
+                  <button type="button" data-format="bold" aria-label="Negrita" title="Negrita">B</button>
+                  <button type="button" data-format="italic" aria-label="Cursiva" title="Cursiva"><em>I</em></button>
+                  <button type="button" data-format="link" aria-label="Insertar enlace" title="Insertar enlace">↗</button>
+                  <button type="button" data-format="image" aria-label="Insertar imagen" title="Insertar imagen">▧</button>
+                  <button type="button" data-format="table" aria-label="Insertar tabla" title="Insertar tabla">▦</button>
+                  <button type="button" data-format="codeBlock" aria-label="Insertar bloque de código" title="Insertar bloque de código">&lt;/&gt;</button>
+                </div>
+                <button class="workspace-focus-button" id="focus-mode" type="button" aria-label="Activar modo foco" aria-pressed="false" title="Activar modo foco">⛶ <span>Modo foco</span></button>
+                <span class="workspace-control-hint">Editor <span aria-hidden="true">/</span> Vista previa</span>
+              </div>
+            </div>
+          </section>
+
           <section class="editor-panel" aria-label="Editor">
             <div class="panel-header">
               <span>Source / Markdown</span>
               <span class="studio-active-file" id="studio-active-file" title="Documento activo">Documento activo</span>
             </div>
-            <textarea id="markdown-input" spellcheck="false"># Documento de ejemplo
+            <textarea id="markdown-input" spellcheck="false"># markEDdown
 
-Escribe aqui tu contenido. Usa los botones de la izquierda si no recuerdas la sintaxis.
+Un editor Markdown local, editorial y hecho para trabajar con ideas conectadas.
 
-## Lista de tareas
+## Características
 
-- [x] Crear el documento
-- [ ] Revisar el contenido
-- [ ] Descargar como Markdown
+- Editor con vista previa en tiempo real.
+- Organización por proyectos, carpetas y etiquetas.
+- Historial de versiones local.
+- Exportación a Markdown, HTML y PDF.
 
-## Tabla simple
+## Filosofía
 
-| Elemento | Estado |
-| --- | --- |
-| Editor | Listo |
-| Markdown | Disponible |
-
-> La vista previa se actualiza automaticamente.</textarea>
+> Escribir, organizar y crear sin distracciones.</textarea>
             <div id="editor-host"></div>
             <div class="slash-menu" id="slash-menu" hidden>
               <div class="slash-list" id="slash-list" role="listbox" aria-label="Comandos de insercion"></div>
@@ -232,6 +298,10 @@ Escribe aqui tu contenido. Usa los botones de la izquierda si no recuerdas la si
               <span>Vista previa / En vivo</span>
               <span>Lectura editorial · Actualización automática</span>
             </div>
+            <header class="editorial-cover" id="editorial-cover" hidden>
+              <img src="/assets/editorial-cover.png" alt="Ilustración editorial grabada de una musa bajo un sol naranja" />
+              <div class="editorial-cover-copy"><span class="editorial-cover-kicker">ÍCARO DESPUÉS DEL SOL / PROYECTO 01</span><h2 id="editorial-cover-title">Sol</h2><p>La primera canción del proyecto.<br />El encuentro, el deseo y el deslumbramiento.</p></div>
+            </header>
             <article id="markdown-preview"></article>
           </section>
 
@@ -261,6 +331,7 @@ Escribe aqui tu contenido. Usa los botones de la izquierda si no recuerdas la si
         </footer>
         <button class="focus-exit" id="focus-exit" type="button">Salir de foco</button>
         <button class="presentation-exit" id="presentation-exit" type="button">Salir de presentacion</button>
+        <button id="print-pdf" type="button" hidden>Guardar como PDF</button>
         <div class="history-overlay" id="history-overlay" hidden>
           <section class="history-dialog" role="dialog" aria-modal="true" aria-labelledby="history-title">
             <div class="history-header">
@@ -276,6 +347,18 @@ Escribe aqui tu contenido. Usa los botones de la izquierda si no recuerdas la si
                 <p class="empty-state">Selecciona una version para ver su contenido.</p>
               </div>
             </div>
+          </section>
+        </div>
+        <div class="command-palette-overlay" id="command-palette-overlay" hidden>
+          <section class="command-palette" role="dialog" aria-modal="true" aria-labelledby="command-palette-title">
+            <h2 id="command-palette-title" class="visually-hidden">Buscar y ejecutar</h2>
+            <label class="command-palette-search">
+              <span aria-hidden="true">⌕</span>
+              <input id="command-palette-input" type="search" autocomplete="off" placeholder="Buscar documentos o ejecutar un comando…" aria-label="Buscar documentos o ejecutar un comando" aria-controls="command-palette-results" />
+              <kbd>ESC</kbd>
+            </label>
+            <div class="command-palette-results" id="command-palette-results" role="listbox" aria-label="Resultados"></div>
+            <footer><span><kbd>↑</kbd><kbd>↓</kbd> navegar</span><span><kbd>↵</kbd> abrir</span><span>Ctrl/Cmd + K</span></footer>
           </section>
         </div>
         <div class="help-overlay" id="help-overlay" hidden>
@@ -296,7 +379,7 @@ Escribe aqui tu contenido. Usa los botones de la izquierda si no recuerdas la si
                   <li><kbd>Ctrl/Cmd + Shift + H</kbd><span>Abre buscar y reemplazar desde cualquier vista</span></li>
                   <li><kbd>Ctrl/Cmd + B</kbd><span>Negrita sobre la seleccion</span></li>
                   <li><kbd>Ctrl/Cmd + I</kbd><span>Cursiva sobre la seleccion</span></li>
-                  <li><kbd>Ctrl/Cmd + K</kbd><span>Abre acciones rapidas</span></li>
+                  <li><kbd>Ctrl/Cmd + K</kbd><span>Busca documentos o ejecuta comandos</span></li>
                   <li><kbd>Ctrl/Cmd + Alt + N</kbd><span>Agrega o edita una nota interna del bloque actual</span></li>
                   <li><kbd>Ctrl/Cmd + Shift + F</kbd><span>Activa modo foco</span></li>
                   <li><kbd>Ctrl/Cmd + .</kbd><span>Abre o cierra el inspector</span></li>

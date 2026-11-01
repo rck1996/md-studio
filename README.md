@@ -74,10 +74,16 @@ Una pluma representa la escritura; el sol y las coordenadas representan explorac
 | :--- | :--- | :--- | :--- |
 | Oscuro | Azul nocturno `#020B1B` | Azul tinta `#041126` | Azul técnico y naranja |
 | Claro | Marfil `#E9E4DA` | Papel `#F5F1E7` | Naranja `#E34B12` |
-| Documento | — | Papel marfil en ambos temas del nuevo diseño | Tipografía editorial |
+| Documento | — | Papel cálido `#F1E4CF`, con textura de fibras en ambos temas | Tipografía editorial |
 
 El nombre de marca se escribe **markEDdown**, con **ED** destacado y **sin textos japoneses**.  
 [Guía de identidad →](docs/EDITORIAL-IDENTITY.md) · [Icono SVG →](public/assets/logo/markeddown-studio-icon.svg) · [Logotipo vectorial →](public/assets/logo/markeddown-studio-wordmark.svg)
+
+La ilustración editorial se integra con el papel mediante el mismo tono de base y una mezcla de luminancia; el grano y las fibras se sirven desde `public/assets/paper-grain.svg`. La portada es opcional por documento: solo `01_Sol.md` viene marcada con `cover: "editorial"` en el espacio de muestra.
+
+<div align="center">
+  <img src="public/assets/editorial-cover.png" alt="Ilustración editorial de Sol sobre papel texturado" width="720">
+</div>
 
 <a id="start"></a>
 ## 🚀 Empieza en cinco minutos
@@ -128,7 +134,7 @@ Después prueba el índice, el historial y la descarga del documento.
 | Buscar | `Ctrl/Cmd + F` |
 | Buscar y reemplazar | `Ctrl/Cmd + Shift + H` |
 | Insertar bloques | `/` |
-| Acciones rápidas | `Ctrl/Cmd + K` |
+| Buscar documentos y ejecutar comandos | `Ctrl/Cmd + K` |
 | Ayuda | `F1` o **Más → Atajos y ayuda** |
 | Modo foco | **Foco** |
 | Historial de versiones | Menú contextual del documento |
@@ -144,6 +150,7 @@ Algunos atajos dependen del navegador y del foco activo.
 | **Editor** | CodeMirror 6, formato, búsqueda, reemplazo, slash commands y plegado |
 | **Biblioteca** | Crear, renombrar, mover, duplicar, archivar, eliminar y restaurar documentos |
 | **Organización** | Carpetas, favoritos, recientes, filtros e índice de encabezados |
+| **Paleta global** | Busca documentos y contenido, crea desde plantillas, cambia vistas y ejecuta comandos con teclado |
 | **Historial** | Versiones locales, instantáneas y restauración |
 | **Recursos** | Pegar/arrastrar imágenes, reutilizar assets y descargar ZIP |
 | **Lectura** | Vista previa viva, modo presentación, ancho de lectura y tipografía configurable |
@@ -223,7 +230,8 @@ El workflow [CI](.github/workflows/cloudflare-pages.yml) ejecuta `npm ci`, `npm 
 | Instalación y compilación de la rama editorial | ✅ Exitoso | [GitHub Actions](https://github.com/rck1996/mded/actions/runs/41254761664) |
 | Accesos rápidos, delegación de exportaciones, Escape, tema y estado | ✅ Tests automatizados de módulo | [tests/studio-flow.test.cjs](tests/studio-flow.test.cjs) |
 | Estructura HTML e IDs de la cabecera | ✅ Comprobación automatizada | [tests/studio-flow.test.cjs](tests/studio-flow.test.cjs) |
-| Flujo visual e interactivo desktop/móvil | ⏳ Pendiente | [Matriz móvil](docs/MOBILE-UI-VERIFICATION.md) |
+| Revisión visual desktop (Dividido, Editor, Vista previa, Foco y Presentación) | ✅ Revisada | [Identidad editorial](docs/EDITORIAL-IDENTITY.md) |
+| Flujo visual e interactivo móvil | ⏳ Pendiente | [Matriz móvil](docs/MOBILE-UI-VERIFICATION.md) |
 | Pruebas E2E en navegador real | ⏳ No acreditadas | [Roadmap](docs/ROADMAP.md) |
 | Respaldo integral y recuperación | 🛠 Pendiente | [Arquitectura](docs/ARCHITECTURE.md) |
 

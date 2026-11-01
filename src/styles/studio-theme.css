@@ -416,9 +416,9 @@ body {
   --text-strong: #101923;
   --muted: #665d54;
   --muted-strong: #433b34;
-  --surface: #f5f1e7;
-  --surface-soft: #eee7db;
-  --surface-muted: #e7dccd;
+  --surface: #f1e4cf;
+  --surface-soft: #e9ddc7;
+  --surface-muted: #dfd0b8;
   --border: #cfc1af;
   --border-strong: #c36d47;
   --accent: #d64a1b;
@@ -428,7 +428,7 @@ body {
   width: min(100%, var(--reading-width));
   min-height: 0;
   padding: 52px clamp(24px,4vw,64px) 80px;
-  background: #f5f1e7;
+  background: #f1e4cf;
   background-image:
     radial-gradient(circle at calc(100% - 63px) 77px,#e88b53 0 20px,transparent 21px),
     linear-gradient(rgba(77,67,54,.025) 1px,transparent 1px);

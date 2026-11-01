@@ -66,6 +66,7 @@ function setup() {
   exportMenu.querySelector = () => items[0];
 
   const docListeners = new Map();
+  const dispatched = [];
   const document = {
     querySelector(selector) {
       if (selector === ".workspace") return workspace;
@@ -81,6 +82,7 @@ function setup() {
     dispatch(type, event = {}) {
       for (const cb of docListeners.get(type) || []) cb({ type, ...event });
     },
+    dispatchEvent(event) { dispatched.push(event.type); },
   };
   const observers = [];
   class MockMutationObserver {
@@ -94,18 +96,19 @@ function setup() {
   }
   vm.runInNewContext(source, {
     document,
+    Event: class Event { constructor(type) { this.type = type; } },
     MutationObserver: MockMutationObserver,
     requestAnimationFrame: (cb) => cb(),
   }, { filename: "src/app/studio-flow.js" });
-  return { elements, actionsMenu, workspace, themeColor, exportMenu, items, document, observers };
+  return { elements, actionsMenu, workspace, themeColor, exportMenu, items, document, observers, dispatched };
 }
 
-test("new and search shortcuts reuse existing app actions", () => {
-  const { elements } = setup();
+test("new reuses its app action and global search opens the command palette", () => {
+  const { elements, dispatched } = setup();
   elements.get("studio-new").click();
   elements.get("studio-search").click();
   assert.equal(elements.get("new-document").clicks, 1);
-  assert.equal(elements.get("open-search").clicks, 1);
+  assert.deepEqual(dispatched, ["markeddown:open-command-palette"]);
 });
 
 test("export opens its own popover, delegates to the real action, and closes", () => {

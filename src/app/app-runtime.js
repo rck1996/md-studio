@@ -114,10 +114,14 @@ import {
   closeInspectorButton,
   closePreferencesButton,
   closeTemplatesButton,
+  commandPaletteInput,
+  commandPaletteOverlay,
+  commandPaletteResults,
   copyConfluenceButton,
   copyHtmlButton,
   copyMarkdownButton,
   dismissNoticeButton,
+  documentTabs,
   documentList,
   documentSearch,
   downloadMarkdownButton,
@@ -134,12 +138,19 @@ import {
   historyList,
   historyOverlay,
   historyPreview,
+  homeNewDocumentButton,
+  homePanel,
+  homeShowDocumentsButton,
+  homeTemplatesButton,
+  graphPanel,
+  editorialCover,
   inspectorToggleButton,
   newDocumentButton,
   newFolderButton,
   notesList,
   openGuideButton,
   openPreferencesButton,
+  openPersonalNoticeButton,
   openSearchButton,
   openTemplatesButton,
   outlineList,
@@ -174,15 +185,19 @@ import {
 } from "./dom.js";
 import { defaultFolderId, maxDocumentHistory, mobileViewMedia, snapshotIntervalMs } from "./config.js";
 import { bindWorkspaceEvents } from "./bindings.js";
+import { createCommandPalette } from "./command-palette.js";
 import { createDocumentWorkflow } from "./document-workflow.js";
 import { createEditorCommands } from "./editor-commands.js";
 import { documentTemplates } from "./templates.js";
 import { createPreviewRenderer } from "./preview-renderer.js";
+import { renderGraphPanel, renderHomePanel } from "../ui/workspace-panels.js";
 
 let feedbackTimer;
 let appFeedbackTimer;
 let saveTimer;
 let activeDocumentId;
+let openDocumentIds = [];
+let closingDocumentTabId = null;
 let editor;
 let previewRenderer;
 
@@ -225,7 +240,7 @@ const defaultMarkdown = hiddenInput.value;
 const setPersonalNoticeVisible = (visible) => {
   personalNotice.hidden = !visible;
   workspace.dataset.noticeVisible = String(visible);
-  storageSet(noticeStorageKey, visible ? "false" : "true");
+  storageSet(noticeStorageKey, visible ? "show" : "dismissed");
 };
 
 const updateStickyOffsets = () => {
@@ -367,6 +382,12 @@ const setExplorerFilter = (filter) => {
     button.classList.toggle("is-selected", selected);
     button.setAttribute("aria-pressed", String(selected));
   });
+  document.querySelectorAll("[data-studio-action]").forEach((button) => {
+    const selected = ["favorites", "recent", "trash"].includes(nextFilter) && button.dataset.studioAction === nextFilter;
+    button.classList.toggle("is-selected", selected);
+    if (selected) button.setAttribute("aria-current", "page");
+    else button.removeAttribute("aria-current");
+  });
 };
 
 const formatRelativeDocumentTime = (timestamp) => {
@@ -383,7 +404,7 @@ const formatRelativeDocumentTime = (timestamp) => {
 
 const getDocumentSearchText = (doc, foldersById) => {
   const folderName = foldersById.get(getDocumentFolderId(doc))?.name || "";
-  return `${doc.title} ${folderName} ${doc.markdown}`.toLowerCase();
+  return `${doc.title} ${folderName} ${(doc.tags || []).join(" ")} ${doc.markdown}`.toLowerCase();
 };
 
 const createDocumentFromTemplate = (...args) => documentWorkflow.createDocumentFromTemplate(...args);
@@ -445,6 +466,73 @@ const restoreFolder = (...args) => documentWorkflow.restoreFolder(...args);
 const moveDocumentToFolder = (...args) => documentWorkflow.moveDocumentToFolder(...args);
 const reorderFolders = (...args) => documentWorkflow.reorderFolders(...args);
 const reorderDocuments = (...args) => documentWorkflow.reorderDocuments(...args);
+
+const closeDocumentTab = (documentId) => {
+  if (openDocumentIds.length < 2) return;
+  const tabIndex = openDocumentIds.indexOf(documentId);
+  if (tabIndex < 0) return;
+  const nextIds = openDocumentIds.filter((id) => id !== documentId);
+  openDocumentIds = nextIds;
+  if (documentId === activeDocumentId) {
+    const nextId = nextIds[Math.min(tabIndex, nextIds.length - 1)];
+    const nextDocument = getVisibleDocuments(defaultMarkdown).find((doc) => doc.id === nextId);
+    closingDocumentTabId = documentId;
+    if (nextDocument) openDocumentInEditor(nextDocument);
+    closingDocumentTabId = null;
+  }
+  renderDocumentTabs();
+};
+
+const renderDocumentTabs = () => {
+  const visibleDocuments = getVisibleDocuments(defaultMarkdown);
+  const documentsById = new Map(visibleDocuments.map((doc) => [doc.id, doc]));
+  openDocumentIds = [...new Set(openDocumentIds.filter((id) => documentsById.has(id)))];
+  if (activeDocumentId && activeDocumentId !== closingDocumentTabId && documentsById.has(activeDocumentId) && !openDocumentIds.includes(activeDocumentId)) {
+    openDocumentIds.push(activeDocumentId);
+  }
+
+  documentTabs.replaceChildren();
+  openDocumentIds.forEach((documentId) => {
+    const doc = documentsById.get(documentId);
+    if (!doc) return;
+    const group = document.createElement("div");
+    group.className = "document-tab-group";
+    const tab = document.createElement("button");
+    tab.type = "button";
+    tab.className = documentId === activeDocumentId ? "document-tab is-active" : "document-tab";
+    tab.setAttribute("role", "tab");
+    tab.setAttribute("aria-selected", String(documentId === activeDocumentId));
+    tab.tabIndex = documentId === activeDocumentId ? 0 : -1;
+    tab.setAttribute("aria-label", `Abrir ${doc.title}`);
+    tab.textContent = doc.title;
+    tab.addEventListener("click", () => {
+      if (documentId !== activeDocumentId) openDocumentInEditor(doc);
+    });
+    tab.addEventListener("keydown", (event) => {
+      if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+      event.preventDefault();
+      const currentIndex = openDocumentIds.indexOf(documentId);
+      const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? openDocumentIds.length - 1 :
+        (currentIndex + (event.key === "ArrowRight" ? 1 : -1) + openDocumentIds.length) % openDocumentIds.length;
+      const nextDocument = documentsById.get(openDocumentIds[nextIndex]);
+      if (nextDocument) openDocumentInEditor(nextDocument);
+      requestAnimationFrame(() => documentTabs.querySelector('[aria-selected="true"]')?.focus());
+    });
+    group.appendChild(tab);
+
+    if (openDocumentIds.length > 1) {
+      const close = document.createElement("button");
+      close.type = "button";
+      close.className = "document-tab-close";
+      close.setAttribute("aria-label", `Cerrar pestaña: ${doc.title}`);
+      close.title = `Cerrar ${doc.title}`;
+      close.textContent = "×";
+      close.addEventListener("click", () => closeDocumentTab(documentId));
+      group.appendChild(close);
+    }
+    documentTabs.appendChild(group);
+  });
+};
 
 const updateActiveDocument = (markdown) => {
   const documents = getDocuments(defaultMarkdown);
@@ -549,7 +637,7 @@ const renderDocuments = () => {
   const baseDocuments = documents.filter((doc) => getDocumentSearchText(doc, foldersById).includes(query));
   const recentDocuments = [...baseDocuments].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
   const visibleDocuments =
-    explorerFilter === "favorites" ? baseDocuments.filter((doc) => doc.favorite) : explorerFilter === "recent" ? recentDocuments : baseDocuments;
+    explorerFilter === "favorites" ? baseDocuments.filter((doc) => doc.favorite) : explorerFilter === "recent" ? recentDocuments : explorerFilter === "trash" ? [] : baseDocuments;
 
   renderExplorerPanel({
     container: documentList,
@@ -654,6 +742,47 @@ const renderDocuments = () => {
       if (restored) openDocumentInEditor({ ...restored, archivedAt: null });
     },
   });
+  renderDocumentTabs();
+  renderWorkspacePanels();
+};
+
+const renderWorkspacePanels = () => {
+  const documents = getVisibleDocuments(defaultMarkdown);
+  const folders = getVisibleFolders();
+  const tags = new Map();
+  documents.forEach((doc) => (doc.tags || []).forEach((tag) => tags.set(tag, (tags.get(tag) || 0) + 1)));
+  const tagList = document.querySelector("#tag-list");
+  const tagCount = document.querySelector("#tag-count");
+  tagList.replaceChildren();
+  tagCount.textContent = String(tags.size);
+  [...tags.entries()].sort(([a], [b]) => a.localeCompare(b, "es")).forEach(([tag, count]) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "tag-shelf-chip";
+    const label = document.createElement("span");
+    label.textContent = `# ${tag}`;
+    const total = document.createElement("small");
+    total.textContent = String(count);
+    button.append(label, total);
+    button.addEventListener("click", () => {
+      documentSearch.value = tag;
+      setExplorerFilter("all");
+      renderDocuments();
+    });
+    tagList.appendChild(button);
+  });
+  renderHomePanel({
+    container: homePanel,
+    documents,
+    folders,
+    onOpenDocument: openDocumentInEditor,
+  });
+  renderGraphPanel({
+    container: graphPanel,
+    documents,
+    activeDocumentId,
+    onOpenDocument: openDocumentInEditor,
+  });
 };
 
 const isHeadingFolded = (state, lineStart) => {
@@ -686,7 +815,21 @@ const moveHeadingSection = (sourceIndex, targetIndex) => {
 const renderOutline = (...args) => previewRenderer.renderOutline(...args);
 const setAssetPreviewVisible = (...args) => previewRenderer.setAssetPreviewVisible(...args);
 const renderAssets = (...args) => previewRenderer.renderAssets(...args);
-const renderMarkdown = (markdown) => previewRenderer.renderMarkdown({ markdown, editorState: editor?.state || null });
+const renderMarkdown = (markdown) => {
+  const activeDocument = getDocuments(defaultMarkdown).find((doc) => doc.id === activeDocumentId);
+  const hasCover = activeDocument?.cover === "editorial";
+  editorialCover.hidden = true;
+  workspace.dataset.coverActive = String(hasCover);
+  previewRenderer.renderMarkdown({ markdown, editorState: editor?.state || null });
+  if (hasCover) {
+    const coverArt = editorialCover.querySelector("img")?.cloneNode();
+    if (coverArt) {
+      coverArt.className = "editorial-cover-art";
+      coverArt.alt = "Ilustración editorial de la portada";
+      preview.prepend(coverArt);
+    }
+  }
+};
 
 const setSaveStatus = (value) => {
   saveStatus.textContent = value;
@@ -1286,6 +1429,36 @@ sidePanelButtons.forEach((button) => {
   });
 });
 
+homeNewDocumentButton.addEventListener("click", () => setTemplatePickerVisible(true, getActiveFolderId()));
+homeTemplatesButton.addEventListener("click", () => setTemplatePickerVisible(true, getActiveFolderId()));
+document.querySelector("#home-new-project").addEventListener("click", () => newFolderButton.click());
+homeShowDocumentsButton.addEventListener("click", () => {
+  setSidePanel("documents");
+  setSidePanelVisible(true);
+});
+document.querySelector("#close-graph").addEventListener("click", () => {
+  setSidePanel("documents");
+  setSidePanelVisible(true);
+});
+
+document.querySelectorAll("[data-studio-action]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const action = button.dataset.studioAction;
+    if (action === "history") {
+      setHistoryVisible(activeDocumentId);
+      return;
+    }
+    if (action === "templates") {
+      setTemplatePickerVisible(true, getActiveFolderId());
+      return;
+    }
+    setExplorerFilter(action);
+    setSidePanel("documents");
+    setSidePanelVisible(true);
+    renderDocuments();
+  });
+});
+
 hideSidePanelButton.addEventListener("click", () => {
   setSidePanelVisible(workspace.dataset.sideVisible !== "true");
 });
@@ -1383,6 +1556,35 @@ const handleCreateFolder = () => {
   renderDocuments();
 };
 
+const commandPalette = createCommandPalette({
+  overlay: commandPaletteOverlay,
+  input: commandPaletteInput,
+  results: commandPaletteResults,
+  getDocuments: () => getVisibleDocuments(defaultMarkdown),
+  getTemplates: () => documentTemplates,
+  onOpenDocument: openDocumentInEditor,
+  onCreateTemplate: (templateId) => spawnDocumentFromTemplate(getActiveFolderId(), templateId),
+});
+
+preview.addEventListener("click", (event) => {
+  const link = event.target.closest('a[href^="#doc="]');
+  if (!link) return;
+  event.preventDefault();
+  let title = "";
+  try { title = decodeURIComponent(link.getAttribute("href").slice(5)); } catch { return; }
+  const match = getVisibleDocuments(defaultMarkdown).find((doc) => doc.title.toLowerCase() === title.toLowerCase() || doc.title.replace(/\.md$/i, "").toLowerCase() === title.replace(/\.md$/i, "").toLowerCase());
+  if (match) openDocumentInEditor(match);
+  else showAppFeedback({ message: `No se encontró “${title}” en este espacio.`, tone: "error" });
+});
+
+document.querySelector("#print-pdf").addEventListener("click", () => {
+  workspace.dataset.printing = "true";
+  window.addEventListener("afterprint", () => { workspace.dataset.printing = "false"; }, { once: true });
+  setTimeout(() => {
+    window.print();
+  }, 0);
+});
+
 bindWorkspaceEvents({
   clearButton,
   newDocumentButton,
@@ -1400,6 +1602,7 @@ bindWorkspaceEvents({
   closeTemplatesButton,
   closeAssetPreviewButton,
   dismissNoticeButton,
+  openPersonalNoticeButton,
   togglePresentationButton,
   presentationExitButton,
   preferenceWidthInput,
@@ -1455,6 +1658,7 @@ bindWorkspaceEvents({
   isModKey,
   editCurrentSectionNote,
   slashMenuController: () => slashMenuController,
+  commandPalette,
 });
 
 documentWorkflow = createDocumentWorkflow({
@@ -1481,7 +1685,13 @@ documentWorkflow = createDocumentWorkflow({
   setMarkdown,
   renderDocuments: () => renderDocuments(),
   onActiveDocumentChange: (documentId) => {
+    if (documentId !== activeDocumentId) preview.scrollTop = 0;
     activeDocumentId = documentId;
+    if (documentId && !openDocumentIds.includes(documentId)) openDocumentIds.push(documentId);
+  },
+  onBeforeActiveDocumentChange: () => {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveDocument();
   },
 });
 
@@ -1537,11 +1747,13 @@ previewRenderer = createPreviewRenderer({
 
 const activeDocument = ensureActiveDocument();
 activeDocumentId = activeDocument.id;
+if (activeDocumentId === "starter-sol") openDocumentIds = ["starter-readme", "starter-sol"];
 createEditor(activeDocument.markdown);
 workspace.dataset.chrome = "resting";
 workspace.dataset.view = getDefaultWorkspaceView();
 syncViewButtons();
-setPersonalNoticeVisible(storageGet(noticeStorageKey) !== "true");
+personalNotice.hidden = true;
+workspace.dataset.noticeVisible = "false";
 setSidePanel(storageGet(sidePanelStorageKey) || "documents");
 setInsertPanelVisible(storageGet(insertPanelStorageKey) ? storageGet(insertPanelStorageKey) !== "false" : !mobileViewMedia.matches);
 setExplorerFilter(getExplorerFilter());

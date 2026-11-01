@@ -50,8 +50,21 @@ export const expandStoredTokens = (markdown, readToken) =>
     .replace(/mded-image:([a-z0-9-]+)/g, (_, id) => readToken("image", id) || "")
     .replace(/mded-link:([a-z0-9-]+)/g, (_, id) => readToken("link", id) || "#");
 
-export const preprocessMarkdown = (markdown, readToken) =>
-  expandStoredTokens(markdown, readToken).replace(/==([^=\n]+)==/g, "<mark>$1</mark>");
+export const preprocessMarkdown = (markdown, readToken) => {
+  const protectedSegments = [];
+  const expanded = expandStoredTokens(markdown, readToken).replace(/```[\s\S]*?```|`[^`\n]*`/g, (segment) => {
+    const token = `MDWIKICODE${protectedSegments.length}TOKEN`;
+    protectedSegments.push(segment);
+    return token;
+  });
+  const linked = expanded
+    .replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, target, label) => {
+      const cleanTarget = target.trim();
+      return `[${(label || cleanTarget).trim()}](#doc=${encodeURIComponent(cleanTarget)})`;
+    })
+    .replace(/==([^=\n]+)==/g, "<mark>$1</mark>");
+  return linked.replace(/MDWIKICODE(\d+)TOKEN/g, (_, index) => protectedSegments[Number(index)] || "");
+};
 
 export const escapeHtml = (value) =>
   String(value)

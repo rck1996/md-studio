@@ -15,6 +15,7 @@ export const bindWorkspaceEvents = ({
   closeTemplatesButton,
   closeAssetPreviewButton,
   dismissNoticeButton,
+  openPersonalNoticeButton,
   togglePresentationButton,
   presentationExitButton,
   preferenceWidthInput,
@@ -62,15 +63,8 @@ export const bindWorkspaceEvents = ({
   isModKey,
   editCurrentSectionNote,
   slashMenuController,
+  commandPalette,
 }) => {
-  const openQuickActions = () => {
-    actionsMenu.open = true;
-    requestAnimationFrame(() => {
-      const firstAction = actionsMenu.querySelector(".actions-menu-content button");
-      firstAction?.focus();
-    });
-  };
-
   clearButton.addEventListener("click", () => {
     const confirmed = window.confirm("Limpiar todo el contenido del documento actual? Esta accion no se puede deshacer.");
     if (!confirmed) return;
@@ -135,6 +129,11 @@ export const bindWorkspaceEvents = ({
 
   dismissNoticeButton.addEventListener("click", () => {
     setPersonalNoticeVisible(false);
+  });
+
+  openPersonalNoticeButton.addEventListener("click", () => {
+    setPersonalNoticeVisible(true);
+    actionsMenu.open = false;
   });
 
   togglePresentationButton.addEventListener("click", () => {
@@ -227,6 +226,10 @@ export const bindWorkspaceEvents = ({
         setAssetPreviewVisible(null);
         return;
       }
+      if (commandPalette?.isOpen()) {
+        commandPalette.close();
+        return;
+      }
       if (slashMenuController()?.isActive()) {
         closeSlashMenu();
         return;
@@ -256,11 +259,8 @@ export const bindWorkspaceEvents = ({
 
     if (isModKey(event) && !event.shiftKey && event.key.toLowerCase() === "k") {
       event.preventDefault();
-      if (actionsMenu.open) {
-        actionsMenu.open = false;
-      } else {
-        openQuickActions();
-      }
+      actionsMenu.open = false;
+      commandPalette?.open();
       return;
     }
 

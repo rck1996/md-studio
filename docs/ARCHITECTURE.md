@@ -21,7 +21,9 @@ La estructura actual se divide en capas claras:
 - `index.html`: shell semantico del workspace.
 - `src/main.js`: entrypoint minimo.
 - `src/app/`: runtime, wiring, coordinacion y adaptadores del tema editorial.
+- `src/app/command-palette.js`: busqueda local de documentos y ejecucion de comandos existentes.
 - `src/domain/`: reglas de negocio y transformaciones del documento.
+- `src/domain/starter-workspace.js`: documentos y metadatos del espacio de muestra.
 - `src/editor/`: integracion con CodeMirror.
 - `src/ui/`: render de paneles y piezas visuales complejas.
 - `src/styles/`: sistema CSS por capas.
@@ -65,6 +67,7 @@ El runtime ya no concentra toda la UI como antes, pero sigue siendo el mayor pun
 - `documents.js`: documentos, snapshots e historial.
 - `folders.js`: carpetas, orden, filtro y colapso.
 - `markdown.js`: expansion de tokens, sanitizacion y export HTML.
+- `starter-workspace.js`: contenido inicial; la portada editorial se activa por documento con `cover: "editorial"`.
 - `assets.js`: assets embebidos y referencias.
 - `outline.js`: headings, fold range y movimiento de secciones.
 
@@ -131,6 +134,12 @@ El orden de los `@import` es deliberado: la capa editorial se agrega al final si
 7. `studio-flow.js` delega los accesos de cabecera a los handlers existentes; observa el estado real de guardado y el tema sin acceder al almacenamiento.
 
 En escritorio el estado de lectura y guardado se muestra en la barra inferior; en movil ocupa una fila independiente de la cabecera para no colisionar con las acciones.
+
+### Portada y papel del preview
+
+`app-runtime.js` consulta `cover` en el documento activo. Solo los documentos con el valor `editorial` reciben una copia de la ilustracion en la vista previa; no se infiere por el nombre ni se hereda desde la carpeta. En el workspace inicial, esa marca solo esta en `01_Sol.md`.
+
+El papel se mantiene legible en tema claro y oscuro, con base `#F1E4CF` y textura SVG repetible (`public/assets/paper-grain.svg`). La ilustracion `public/assets/editorial-cover.png` usa mezcla `darken` sobre ese papel para integrar el fondo crema con la superficie y reducir el borde de imagen pegada. La cabecera editorial y el contenido de lectura usan el mismo tono y textura.
 
 ## Verificacion automatizada
 

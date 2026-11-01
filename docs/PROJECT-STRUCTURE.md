@@ -40,6 +40,7 @@ Configuracion de despliegue para Cloudflare Pages.
 Documentacion del proyecto.
 
 - `ARCHITECTURE.md`: limites tecnicos y capas.
+- `EDITORIAL-IDENTITY.md`: identidad visual, tokens y controles de revision.
 - `PROJECT-STRUCTURE.md`: esta guia.
 - `ROADMAP.md`: fases siguientes.
 - `EDITORIAL-IDENTITY.md`: identidad editorial, UI y criterios de aceptación.
@@ -51,6 +52,8 @@ Documentacion del proyecto.
 Assets estaticos servidos tal cual.
 
 - `assets/logo/`: icono, favicon y variantes SVG.
+- `assets/editorial-cover.png`: ilustracion usada por documentos con portada editorial.
+- `assets/paper-grain.svg`: textura repetible de fibras y grano para el papel del preview.
 
 ## `src/`
 
@@ -74,6 +77,7 @@ Conecta estilos, runtime y adaptador de controles editoriales.
 Orquestacion y wiring de la app.
 
 - `app-runtime.js`: coordinacion principal.
+- `command-palette.js`: busqueda de documentos y activacion de comandos existentes.
 - `bindings.js`: eventos globales y shortcuts.
 - `config.js`: constantes compartidas.
 - `document-workflow.js`: casos de uso de documentos y carpetas.
@@ -92,6 +96,7 @@ Reglas de negocio y transformaciones puras o semi-puras.
 - `documents.js`
 - `folders.js`
 - `markdown.js`
+- `starter-workspace.js`: documentos de muestra y metadatos como `cover: "editorial"`.
 - `assets.js`
 - `outline.js`
 

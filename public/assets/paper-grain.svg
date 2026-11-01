@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320">
+  <filter id="fiber" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency=".022 .24" numOctaves="2" seed="11" stitchTiles="stitch" />
+  </filter>
+  <filter id="grain" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency=".82" numOctaves="4" seed="19" stitchTiles="stitch" />
+  </filter>
+  <rect width="100%" height="100%" filter="url(#fiber)" opacity=".12" />
+  <rect width="100%" height="100%" filter="url(#grain)" opacity=".29" />
+  <g fill="none" stroke="#8e7452" stroke-linecap="round" opacity=".10">
+    <path d="M18 34h18m34 18h11m92-31h22m52 42h14M40 105h25m48-24h15m79 20h20m39 22h15" stroke-width=".55" />
+    <path d="M15 174h13m54 19h22m52-39h17m64 49h19m29-32h12M30 269h23m60 16h16m49-24h20m57 18h18" stroke-width=".7" />
+    <path d="M53 140l11-1m76 73 16-1m91-105 13 1M99 30l8 1m146 230 12-1M31 226l9 1" stroke-width=".45" />
+  </g>
+  <g fill="#8e7452" opacity=".12">
+    <circle cx="43" cy="71" r=".7" /><circle cx="126" cy="46" r=".55" />
+    <circle cx="222" cy="73" r=".8" /><circle cx="287" cy="158" r=".55" />
+    <circle cx="73" cy="239" r=".65" /><circle cx="174" cy="286" r=".7" />
+    <circle cx="264" cy="221" r=".6" /><circle cx="118" cy="151" r=".5" />
+  </g>
+</svg>

@@ -6,7 +6,8 @@ import {
   storageKey,
 } from "../app/storage.js";
 import { defaultFolderId, maxDocumentHistory } from "../app/config.js";
-import { compareByOrder, getActiveFolderId, getDocumentFolderId } from "./folders.js";
+import { compareByOrder, getActiveFolderId, getDocumentFolderId, setActiveFolderId, setFolders } from "./folders.js";
+import { starterDocuments, starterFolders } from "./starter-workspace.js";
 
 export const getDocumentTitle = (markdown) => markdown.match(/^#\s+(.+)$/m)?.[1]?.trim() || "Sin titulo";
 
@@ -59,8 +60,43 @@ export const normalizeDocument = (doc, index, defaultMarkdown) => {
 };
 
 export const getDocuments = (defaultMarkdown) => {
+  const legacyStarterMarkdown = `# Documento de ejemplo
+
+Escribe aqui tu contenido. Usa los botones de la izquierda si no recuerdas la sintaxis.
+
+## Lista de tareas
+
+- [x] Crear el documento
+- [ ] Revisar el contenido
+- [ ] Descargar como Markdown
+
+## Tabla simple
+
+| Elemento | Estado |
+| --- | --- |
+| Editor | Listo |
+| Markdown | Disponible |
+
+> La vista previa se actualiza automaticamente.`;
+
   const createInitial = () => {
     const migrated = storageGet(storageKey) || defaultMarkdown;
+    const shouldSeedWorkspace = !storageGet(storageKey) || migrated.trim() === legacyStarterMarkdown.trim();
+
+    if (shouldSeedWorkspace) {
+      const initial = starterDocuments.map((doc, index) => {
+        const normalized = normalizeDocument(doc, index, defaultMarkdown);
+        normalized.history = [createSnapshot(normalized, normalized.markdown, "initial")];
+        normalized.lastSnapshotAt = normalized.history[0].createdAt;
+        return normalized;
+      });
+      setFolders(starterFolders);
+      setActiveFolderId("project-icaro");
+      setDocuments(initial);
+      storageSet(activeDocumentKey, "starter-sol");
+      return initial;
+    }
+
     const now = Date.now();
     const initial = [
       {
@@ -89,6 +125,24 @@ export const getDocuments = (defaultMarkdown) => {
     try {
       const parsed = JSON.parse(stored);
       if (!Array.isArray(parsed) || !parsed.length) return createInitial();
+      if (parsed.length === 1 && parsed[0]?.title === "Documento de ejemplo" && parsed[0]?.markdown?.trim() === legacyStarterMarkdown.trim()) {
+        return createInitial();
+      }
+      const isMarkeddownStarter = parsed.some((doc) => doc.id === "starter-readme") && parsed.every((doc) => String(doc.id).startsWith("starter-"));
+      if (isMarkeddownStarter) {
+        const existingIds = new Set(parsed.map((doc) => doc.id));
+        const additions = starterDocuments.filter((doc) => !existingIds.has(doc.id)).map((doc, index) => {
+          const normalized = normalizeDocument(doc, parsed.length + index, defaultMarkdown);
+          normalized.history = [createSnapshot(normalized, normalized.markdown, "initial")];
+          normalized.lastSnapshotAt = normalized.history[0].createdAt;
+          return normalized;
+        });
+        if (additions.length) {
+          const migratedStarter = [...parsed.map((doc, index) => normalizeDocument(doc, index, defaultMarkdown)), ...additions];
+          setDocuments(migratedStarter);
+          return sortDocuments(migratedStarter);
+        }
+      }
       const migrated = parsed.map((doc, index) => normalizeDocument(doc, index, defaultMarkdown));
       if (JSON.stringify(parsed) !== JSON.stringify(migrated)) setDocuments(migrated);
       return sortDocuments(migrated);

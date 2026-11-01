@@ -71,11 +71,11 @@ export const setCollapsedFolders = (folders) => {
 
 export const getExplorerFilter = () => {
   const stored = storageGet(explorerFilterKey);
-  return ["all", "favorites", "recent"].includes(stored) ? stored : "all";
+  return ["all", "favorites", "recent", "trash"].includes(stored) ? stored : "all";
 };
 
 export const persistExplorerFilter = (filter) => {
-  const nextFilter = ["all", "favorites", "recent"].includes(filter) ? filter : "all";
+  const nextFilter = ["all", "favorites", "recent", "trash"].includes(filter) ? filter : "all";
   storageSet(explorerFilterKey, nextFilter);
   return nextFilter;
 };
