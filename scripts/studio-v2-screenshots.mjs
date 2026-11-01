@@ -57,6 +57,10 @@ try {
   });
   assert.equal(await desktop.locator(".workspace").getAttribute("data-theme"), "dark");
   await capture(desktop, "desktop-05-editor-dark");
+  await desktop.locator("#studio-v2-compose").click();
+  await capture(desktop, "desktop-06-visual-composition");
+  await desktop.locator("#studio-v2-backup").click();
+  await capture(desktop, "desktop-07-workspace-backup");
   await desktopContext.close();
 
   const mobileContext = await browser.newContext({
@@ -93,6 +97,9 @@ try {
   await mobile.locator('[data-studio-go="editor"]').click();
   assert.equal(await mobile.locator(".workspace").getAttribute("data-studio-space"), "editor");
   await capture(mobile, "pocket-03-markdown-editor");
+  await mobile.locator("#studio-v2-pocket-compose").click();
+  await capture(mobile, "pocket-11-visual-composition");
+  await mobile.locator("#studio-v2-pocket-compose").click();
 
   // A real editor mutation, not a mock screen. It must survive reload.
   const cm = mobile.locator(".cm-content").first();
@@ -116,6 +123,10 @@ try {
   await mobile.locator("#studio-v2-tools-back").click();
   await mobile.locator('[data-studio-tool="outline"]').click();
   await capture(mobile, "pocket-07-outline");
+  await mobile.locator('[data-studio-go="tools"]').click();
+  await mobile.locator('[data-studio-tool="backup"]').click();
+  await capture(mobile, "pocket-12-workspace-backup");
+  await mobile.locator("[data-backup-close]").click();
 
   await mobile.evaluate(() => {
     if (document.querySelector(".workspace")?.dataset.theme !== "dark") document.getElementById("theme-toggle")?.click();
