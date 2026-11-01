@@ -74,14 +74,17 @@ try {
 
   // Reader must show the same image at full width without altering the source.
   await page.locator("#studio-v2-pocket-preview").click();
-  const readerPhoto = page.locator("#markdown-preview img").first();
+  const readerPhoto = page.locator("#markdown-preview img.mded-local-image").first();
   await readerPhoto.waitFor({ state: "visible" });
-  assert.ok(await readerPhoto.evaluate(async (img) => {
+  const readerImage = await readerPhoto.evaluate(async (img) => {
     await img.decode();
-    return img.naturalWidth > 0;
-  }), "Reader displays a decoded image");
+    return { width: img.naturalWidth, source: img.getAttribute("src") };
+  });
+  assert.ok(readerImage.width > 0, "Reader displays a decoded image");
+  assert.match(readerImage.source, /^data:image\/(?:png|jpe?g|webp|gif);base64,/);
+  assert.ok(readerImage.source.length > 100, "Reader contains the real saved image, not a placeholder");
   await page.locator("#studio-v2-pocket-preview").click();
-  console.log("PASS Pocket reader renders the same stored image");
+  console.log("PASS Pocket reader hydrates the stored image after Markdown parsing");
 
   // Android image clipboard can be read explicitly even if Gboard omits the paste event.
   await page.evaluate(() => {
@@ -105,6 +108,39 @@ try {
   }, [...png]);
   await waitForImages(initial + 3);
   console.log("PASS Native image paste inserted");
+
+  // Samsung Keyboard / Android IMEs may deliver a rich paste as beforeinput,
+  // without a ClipboardEvent.
+  await page.locator(".cm-content").click();
+  await page.evaluate((bytes) => {
+    const data = new DataTransfer();
+    data.items.add(new File([new Uint8Array(bytes)], "teclado.png", { type: "image/png" }));
+    const event = new InputEvent("beforeinput", {
+      bubbles: true, cancelable: true, inputType: "insertFromPaste", dataTransfer: data,
+    });
+    document.querySelector(".cm-content").dispatchEvent(event);
+  }, [...png]);
+  await waitForImages(initial + 4);
+  console.log("PASS Android IME image beforeinput inserted");
+
+  await page.locator(".cm-content").click();
+  await page.evaluate((encoded) => {
+    const data = new DataTransfer();
+    data.setData("text/html", '<img src="data:image/png;base64,' + encoded + '">');
+    const event = new ClipboardEvent("paste", { bubbles: true, cancelable: true, clipboardData: data });
+    document.querySelector(".cm-content").dispatchEvent(event);
+  }, png.toString("base64"));
+  await waitForImages(initial + 5);
+  console.log("PASS HTML clipboard image inserted");
+
+  // Persistence: both stored assets and their Markdown references survive reload.
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await page.locator('[data-studio-go="editor"]').click();
+  await page.locator("#studio-v2-pocket-preview").click();
+  await page.locator("#markdown-preview img.mded-local-image").first().waitFor();
+  assert.ok(await page.locator("#markdown-preview img.mded-local-image").first()
+    .evaluate(async (img) => { await img.decode(); return img.naturalWidth > 0; }));
+  console.log("PASS Reader image survives reload");
 
   assert.deepEqual(errors, [], "No browser runtime errors");
 } finally {
