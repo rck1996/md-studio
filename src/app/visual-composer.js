@@ -175,9 +175,8 @@ export const createVisualComposer = ({ root, bridge, onOpenSource, onOpenPreview
       const actions = document.createElement("div");
       actions.className = "studio-compose-block-actions";
       actions.append(makeButton("↗", "Editar este bloque como Markdown", () => openSourceAt(block)));
-      if (descriptor) {
-        actions.prepend(makeButton("✎", "Editar directamente", () => body.querySelector('[contenteditable]')?.focus()));
-      }
+      // Ordinary text is already directly editable on tap; adding a second
+      // pencil control wastes screen space and duplicates the interaction.
       item.append(actions, body);
       container.appendChild(item);
     }
