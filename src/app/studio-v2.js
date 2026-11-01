@@ -358,7 +358,7 @@ if (root) {
       return;
     }
     const focused = document.activeElement;
-    const inEditor = Boolean(focused?.closest?.(".cm-editor"));
+    const inEditor = Boolean(focused?.closest?.(".cm-editor, .studio-compose-inline"));
     const viewport = window.visualViewport;
     const offset = viewport ? Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop) : 0;
     root.style.setProperty("--studio-keyboard-gap", Math.round(offset) + "px");
