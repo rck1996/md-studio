@@ -41,7 +41,9 @@ try {
   await check("Pocket: editar título visual actualiza CodeMirror sin transformación HTML", async () => {
     const title = page.locator(".studio-compose-inline").first();
     await title.fill("Sol desde Pocket");
-    await page.locator("#studio-compose-title").click();
+    // The compact Pocket layout intentionally hides the redundant heading.
+    // Blur the contenteditable to commit exactly as when changing focus.
+    await title.evaluate((element) => element.blur());
     await page.waitForTimeout(450);
     const markdown = await readMarkdown();
     assert.match(markdown, /^# Sol desde Pocket/m);
