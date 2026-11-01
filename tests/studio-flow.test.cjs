@@ -169,7 +169,7 @@ test("source keeps a single DOM id per control and dedicated status region", () 
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]);
   assert.equal(new Set(ids).size, ids.length, "Duplicate HTML id detected");
-  for (const id of ["studio-export-menu", "document-stats", "save-status", "studio-live-status", "inspector-toggle"]) {
+  for (const id of ["studio-export-menu", "document-stats", "save-status", "studio-live-status", "inspector-toggle", "studio-active-file"]) {
     assert.ok(ids.includes(id), "Missing " + id);
   }
   assert.match(html, /class="status-cluster" aria-label="Estado del documento"/);
