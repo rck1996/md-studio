@@ -41,6 +41,27 @@ export const createVisualComposer = ({ root, bridge, onOpenSource, onOpenPreview
   let currentDocument = "";
   let activeEditor = null;
   let blocks = [];
+  let openBlockMenu = null;
+  let insertAnchor = null;
+  const insertTray = document.createElement("div");
+  insertTray.className = "studio-compose-insert-tray";
+  insertTray.hidden = true;
+  insertTray.setAttribute("aria-label", "Insertar un bloque Markdown");
+  insertTray.innerHTML = [
+    '<div><span class="studio-v2-kicker">COMPOSICIÓN / INSERTAR</span>',
+    '<strong>Agregar bloque</strong>',
+    '<button type="button" data-compose-insert-close aria-label="Cerrar inserción">×</button></div>',
+    '<div class="studio-compose-insert-options">',
+    '<button type="button" data-compose-template="heading">Título H2</button>',
+    '<button type="button" data-compose-template="paragraph">Párrafo</button>',
+    '<button type="button" data-compose-template="task">Tarea</button>',
+    '<button type="button" data-compose-template="list">Lista</button>',
+    '<button type="button" data-compose-template="quote">Cita</button>',
+    '<button type="button" data-compose-template="table">Tabla</button>',
+    '<button type="button" data-compose-template="code">Código</button>',
+    '</div>',
+  ].join("");
+  panel.querySelector(".studio-compose-header").after(insertTray);
 
   const openSourceAt = (block) => {
     onOpenSource();
@@ -197,6 +218,107 @@ export const createVisualComposer = ({ root, bridge, onOpenSource, onOpenPreview
   });
   document.addEventListener("selectionchange", updateSelectionTools);
 
+  const closeMenu = () => {
+    openBlockMenu?.remove();
+    openBlockMenu = null;
+  };
+  const closeInsertTray = () => {
+    insertAnchor = null;
+    insertTray.hidden = true;
+  };
+  const blockTemplates = {
+    heading: "## Nuevo apartado",
+    paragraph: "Escribe un nuevo párrafo.",
+    task: "- [ ] Nueva tarea",
+    list: "- Primera idea\n- Segunda idea",
+    quote: "> Una cita importante.",
+    table: "| Columna | Detalle |\n| --- | --- |\n| Elemento | Texto |",
+    code: "~~~js\n// Código\n~~~",
+  };
+  const insertAfter = (type) => {
+    const snippet = blockTemplates[type];
+    if (!snippet) return;
+    const source = bridge.readMarkdown();
+    const anchor = insertAnchor;
+    if (anchor && source.slice(anchor.start, anchor.end) !== anchor.raw) {
+      closeInsertTray();
+      render();
+      return;
+    }
+    const at = anchor ? anchor.end : source.length;
+    const before = source.slice(0, at);
+    const after = source.slice(at);
+    const prefix = before.length === 0 || before.endsWith("\n\n")
+      ? "" : before.endsWith("\n") ? "\n" : "\n\n";
+    const suffix = after.length === 0 || after.startsWith("\n\n")
+      ? "" : after.startsWith("\n") ? "\n" : "\n\n";
+    if (bridge.replaceRange(at, at, prefix + snippet + suffix, "")) {
+      closeInsertTray();
+      render();
+    }
+  };
+  const moveBlock = (index, direction) => {
+    const a = blocks[index];
+    const b = blocks[index + direction];
+    if (!a || !b) return;
+    const first = direction < 0 ? b : a;
+    const second = direction < 0 ? a : b;
+    const source = bridge.readMarkdown();
+    const expected = source.slice(first.start, second.end);
+    if (!expected.startsWith(first.raw) || !expected.endsWith(second.raw)) {
+      render();
+      return;
+    }
+    const middle = expected.slice(first.raw.length, expected.length - second.raw.length);
+    if (bridge.replaceRange(first.start, second.end, second.raw + middle + first.raw, expected)) {
+      closeMenu();
+      render();
+    }
+  };
+  const showBlockMenu = (item, block, index) => {
+    if (openBlockMenu && openBlockMenu.parentElement === item) {
+      closeMenu();
+      return;
+    }
+    closeMenu();
+    const menu = document.createElement("div");
+    menu.className = "studio-compose-block-menu";
+    menu.setAttribute("role", "group");
+    menu.setAttribute("aria-label", "Acciones para el bloque");
+    const addAction = (label, fn) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = label;
+      button.addEventListener("click", () => { closeMenu(); fn(); });
+      menu.append(button);
+    };
+    addAction("Editar Markdown ↗", () => openSourceAt(block));
+    if (index > 0) addAction("Subir bloque ↑", () => moveBlock(index, -1));
+    if (index < blocks.length - 1) addAction("Bajar bloque ↓", () => moveBlock(index, 1));
+    addAction("Insertar debajo ＋", () => {
+      insertAnchor = block;
+      insertTray.hidden = false;
+      insertTray.querySelector("[data-compose-template]")?.focus();
+    });
+    item.append(menu);
+    openBlockMenu = menu;
+    menu.querySelector("button")?.focus();
+  };
+  insertTray.addEventListener("click", (event) => {
+    if (event.target.closest("[data-compose-insert-close]")) closeInsertTray();
+    const button = event.target.closest("[data-compose-template]");
+    if (button) insertAfter(button.dataset.composeTemplate);
+  });
+  document.addEventListener("click", (event) => {
+    if (openBlockMenu && !openBlockMenu.contains(event.target) &&
+      !event.target.closest(".studio-compose-more")) closeMenu();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    if (openBlockMenu) { closeMenu(); event.preventDefault(); }
+    else if (!insertTray.hidden) { closeInsertTray(); event.preventDefault(); }
+  });
+
   const makeToken = (token, start) => ({
     type: token.type,
     raw: token.raw,
@@ -212,6 +334,7 @@ export const createVisualComposer = ({ root, bridge, onOpenSource, onOpenPreview
     currentDocument = bridge.getDocumentId();
     title.textContent = document.getElementById("studio-active-file")?.textContent?.trim() || "Documento";
     const tokens = marked.lexer(markdown);
+    closeMenu();
     container.replaceChildren();
     blocks = [];
     let offset = 0;
@@ -259,8 +382,9 @@ export const createVisualComposer = ({ root, bridge, onOpenSource, onOpenPreview
       const actions = document.createElement("div");
       actions.className = "studio-compose-block-actions";
       actions.append(makeButton("↗", "Editar este bloque como Markdown", () => openSourceAt(block)));
-      // Ordinary text is already directly editable on tap; adding a second
-      // pencil control wastes screen space and duplicates the interaction.
+      const index = blocks.length - 1;
+      actions.append(makeButton("⋯", "Acciones: mover o insertar bloque",
+        () => showBlockMenu(item, block, index), "studio-compose-more"));
       item.append(actions, body);
       container.appendChild(item);
     }
@@ -282,6 +406,16 @@ export const createVisualComposer = ({ root, bridge, onOpenSource, onOpenPreview
     }
   };
 
+  const addAtEnd = document.createElement("button");
+  addAtEnd.type = "button";
+  addAtEnd.className = "studio-compose-add-last";
+  addAtEnd.textContent = "＋ Agregar bloque";
+  addAtEnd.addEventListener("click", () => {
+    insertAnchor = blocks.at(-1) || null;
+    insertTray.hidden = false;
+    insertTray.querySelector("[data-compose-template]")?.focus();
+  });
+  panel.querySelector(".studio-compose-scroll")?.append(addAtEnd);
   panel.querySelector('[data-compose-action="source"]').addEventListener("click", onOpenSource);
   panel.querySelector('[data-compose-action="preview"]').addEventListener("click", onOpenPreview);
   window.addEventListener("markeddown:document-opened", () => {
