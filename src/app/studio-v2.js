@@ -296,21 +296,16 @@ if (root) {
       refresh();
     });
   });
-  const linkDocumentToEditor = (container, selector) => {
-    container?.addEventListener("click", (event) => {
-      if (event.target.closest(selector)) setSpace("editor");
-    });
-  };
-  linkDocumentToEditor(byId("document-list"), ".document-item");
-  linkDocumentToEditor(byId("home-recent"), ".home-recent-item");
-  linkDocumentToEditor(byId("graph-panel"), ".graph-node, .graph-list-item");
-  linkDocumentToEditor(byId("template-grid"), ".template-card");
+  window.addEventListener("markeddown:document-opened", () => setSpace("editor"));
   byId("insert-panel")?.addEventListener("click", (event) => {
     if (event.target.closest("[data-format]")) setSpace("editor");
   });
   byId("home-show-documents")?.addEventListener("click", () => setSpace("library"));
   byId("home-new-project")?.addEventListener("click", () => setSpace("library"));
   byId("close-graph")?.addEventListener("click", () => setSpace("library"));
+  root.querySelectorAll('[data-studio-action="favorites"], [data-studio-action="recent"], [data-studio-action="trash"]').forEach((button) => {
+    button.addEventListener("click", () => setSpace("library"));
+  });
   root.querySelectorAll(".workspace-controls [data-view]").forEach((button) =>
     button.addEventListener("click", () => {
       if (currentSpace === "editor" || currentSpace === "preview") {
