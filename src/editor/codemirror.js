@@ -30,7 +30,50 @@ class InlineTokenWidget extends WidgetType {
   }
 }
 
-const createInlineTokenDecorations = ({ getImageTokenLabel, getLinkTokenLabel }) =>
+// Inline preview is only a widget: the Markdown token remains unchanged in
+// CodeMirror's document. The reader still owns the full-size image view.
+class InlineImageWidget extends WidgetType {
+  constructor(label, imageUrl) {
+    super();
+    this.label = label;
+    this.imageUrl = imageUrl;
+  }
+
+  eq(other) {
+    return other.label === this.label && other.imageUrl === this.imageUrl;
+  }
+
+  toDOM(view) {
+    const card = document.createElement("span");
+    card.className = "cm-inline-image-preview";
+    card.setAttribute("aria-label", this.label);
+
+    const image = document.createElement("img");
+    image.src = this.imageUrl;
+    image.alt = this.label;
+    image.loading = "lazy";
+    image.decoding = "async";
+    image.draggable = false;
+    image.addEventListener("load", () => view.requestMeasure(), { once: true });
+    image.addEventListener("error", () => {
+      card.classList.add("cm-inline-image-failed");
+      image.hidden = true;
+      view.requestMeasure();
+    }, { once: true });
+
+    const caption = document.createElement("span");
+    caption.className = "cm-inline-image-caption";
+    caption.textContent = this.label;
+    card.append(image, caption);
+    return card;
+  }
+
+  ignoreEvent() {
+    return false;
+  }
+}
+
+const createInlineTokenDecorations = ({ getImageTokenLabel, getImageTokenSource, getLinkTokenLabel }) =>
   ViewPlugin.fromClass(
     class {
       constructor(view) {
@@ -50,9 +93,11 @@ const createInlineTokenDecorations = ({ getImageTokenLabel, getLinkTokenLabel })
         for (const match of fullText.matchAll(imagePattern)) {
           const start = match.index;
           const end = start + match[0].length;
+          const label = getImageTokenLabel(match[1], match[2]);
+          const imageUrl = getImageTokenSource(match[2]);
           decorations.push(
             Decoration.replace({
-              widget: new InlineTokenWidget("image", getImageTokenLabel(match[1], match[2])),
+              widget: imageUrl ? new InlineImageWidget(label, imageUrl) : new InlineTokenWidget("image", label),
               inclusive: false,
             }).range(start, end),
           );
@@ -228,6 +273,7 @@ export const createCodeMirrorEditor = ({
   initialWrapExtension,
   getHeadingFoldRange,
   getImageTokenLabel,
+  getImageTokenSource,
   getLinkTokenLabel,
   isModKey,
   runFormatShortcut,
@@ -261,7 +307,7 @@ export const createCodeMirrorEditor = ({
           closedText: "+",
         }),
         editorTheme,
-        createInlineTokenDecorations({ getImageTokenLabel, getLinkTokenLabel }),
+        createInlineTokenDecorations({ getImageTokenLabel, getImageTokenSource, getLinkTokenLabel }),
         markdownHeadingFoldService(getHeadingFoldRange),
         themeCompartment.of(initialThemeExtension),
         wrapCompartment.of(initialWrapExtension),
