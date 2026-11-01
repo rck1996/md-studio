@@ -108,7 +108,8 @@ export const createVisualComposer = ({ root, bridge, onOpenSource, onOpenPreview
     field.addEventListener("blur", () => {
       activeEditor = null;
       commit();
-      render();
+      // Defer replacing the DOM until the click on another block/action lands.
+      window.requestAnimationFrame(() => { if (!activeEditor) render(); });
     });
     field.addEventListener("focus", () => { activeEditor = field; body.classList.add("is-editing"); });
     return field;
