@@ -97,6 +97,18 @@ try {
     await page.locator("#document-list .inline-rename button[type=submit]").first().click();
     assert.ok(await row("QA_Renamed_Document").count() >= 1);
   });
+  await run("Autosave no desmonta un menú abierto", async () => {
+    await go("editor");
+    await page.locator(".cm-content").first().click();
+    await page.keyboard.press("ControlOrMeta+End");
+    await page.keyboard.insertText("\n\n## QA_Menu_Activo");
+    await go("library");
+    const documentRow = row("QA_Renamed_Document");
+    await documentRow.locator("summary").click();
+    await page.waitForTimeout(450);
+    assert.equal(await documentRow.locator("details.document-menu").evaluate(el => el.open), true);
+    await documentRow.locator("summary").click();
+  });
   await run("Marcar favorito y filtrar", async () => {
     const before = await page.evaluate(() => JSON.parse(localStorage.getItem("mded.documents")||"[]")
       .find(d=>d.title==="QA_Renamed_Document")?.favorite);
