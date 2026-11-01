@@ -841,7 +841,10 @@ const saveDocument = () => {
   maybeCaptureSnapshot(activeDocumentId, markdown, defaultMarkdown, snapshotIntervalMs);
   const persisted = updateActiveDocument(markdown);
   storageSet(storageKey, markdown);
-  renderDocuments();
+  // Autosave must not tear down an open document/folder action menu or an
+  // inline rename form. Their callbacks render the explorer after committing.
+  const explorerInteractionActive = Boolean(documentList.querySelector("details[open], .inline-rename"));
+  if (!explorerInteractionActive) renderDocuments();
   if (!historyOverlay.hidden && historyState.documentId === activeDocumentId) renderHistoryPanel();
   setSaveStatus(persisted ? "Guardado" : "Sin guardar");
 };
