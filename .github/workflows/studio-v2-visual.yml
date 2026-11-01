@@ -49,6 +49,17 @@ jobs:
         run: node scripts/studio-v3-flows.mjs
       - name: Real browser screenshots and interaction checks
         run: node scripts/studio-v2-screenshots.mjs
+      - name: Start production preview for offline PWA QA
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4173 > /tmp/mded-preview.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:4173/ > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/mded-preview.log
+          exit 1
+      - name: Offline PWA smoke test
+        run: node scripts/studio-v3-pwa.mjs
       - name: Upload Studio and Pocket screenshots
         if: always()
         uses: actions/upload-artifact@v4
