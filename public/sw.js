@@ -1,5 +1,5 @@
 /* MarkEDdown offline app shell. User documents are NEVER written to the Cache API. */
-const CACHE_NAME = "markeddown-shell-v3-20261101";
+const CACHE_NAME = "markeddown-shell-v4-20261101";
 const CORE = ["/", "/manifest.webmanifest", "/assets/logo/markeddown-studio-icon.svg", "/icons/markeddown-192.png", "/icons/markeddown-512.png"];
 const sameOrigin = (url) => new URL(url, self.location.origin).origin === self.location.origin;
 const assetUrlsFromHtml = (html) => {
@@ -74,10 +74,14 @@ self.addEventListener("fetch", (event) => {
   // Fingerprinted JS/CSS, icons and fonts are safe to cache by URL.
   if (/^\/assets\//.test(url.pathname) || url.pathname === "/manifest.webmanifest") {
     event.respondWith((async () => {
-      const cached = await caches.match(request);
+      const cache = await caches.open(CACHE_NAME);
+      // The install phase precaches with a path string. Browser module fetches
+      // can supply different Vary headers (Accept/Origin), causing exact
+      // Request matching to miss a successfully cached chunk.
+      const cached = await cache.match(url.pathname, { ignoreVary: true, ignoreSearch: true });
       if (cached) return cached;
       const response = await fetch(request);
-      if (response.ok) (await caches.open(CACHE_NAME)).put(request, response.clone());
+      if (response.ok) cache.put(url.pathname, response.clone());
       return response;
     })());
   }
