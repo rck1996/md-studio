@@ -437,3 +437,15 @@
     overscroll-behavior:contain;
   }
 }
+
+
+/* The reader has its own controls: remove editor tabs and format toolbar. */
+@media screen and (min-width:901px) {
+  .workspace.studio-v2[data-studio-space="preview"]:not([data-presentation="true"]) .layout {
+    grid-template-areas:"preview" !important;
+    grid-template-rows:minmax(0,1fr) !important;
+  }
+  .workspace.studio-v2[data-studio-space="preview"] .workspace-toolbar {
+    display:none !important;
+  }
+}
