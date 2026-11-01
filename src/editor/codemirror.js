@@ -165,6 +165,32 @@ const editorTheme = EditorView.theme({
   },
 });
 
+// Android IMEs can send a picture through DataTransfer on beforeinput rather
+// than through a ClipboardEvent. Some Chromium/Samsung combinations do not
+// expose rich keyboard media to websites at all; the gallery button remains
+// the reliable fallback.
+const clipboardImageFile = (transfer) => {
+  if (!transfer) return null;
+  const direct = [...(transfer.files || [])].find((file) => file.type.startsWith("image/")) ||
+    [...(transfer.items || [])]
+      .filter((item) => item.kind === "file" && item.type.startsWith("image/"))
+      .map((item) => item.getAsFile())
+      .find(Boolean);
+  if (direct) return direct;
+
+  // Some keyboard clipboard providers expose a data-image only as text/html.
+  const html = transfer.getData?.("text/html") || "";
+  const match = html.match(/<img\b[^>]*\bsrc\s*=\s*["'](data:image\/(png|jpeg|gif|webp);base64,([A-Za-z0-9+/=]+))["']/i);
+  if (!match || match[3].length > 5_000_000) return null;
+  try {
+    const binary = atob(match[3]);
+    const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+    return new File([bytes], "imagen-portapapeles." + (match[2] === "jpeg" ? "jpg" : match[2]), { type: "image/" + match[2] });
+  } catch {
+    return null;
+  }
+};
+
 const createEditorListeners = ({
   isModKey,
   runFormatShortcut,
@@ -228,14 +254,17 @@ const createEditorListeners = ({
     keyup(event) {
       if (!["ArrowDown", "ArrowUp", "Enter", "Escape"].includes(event.key)) updateSlashMenu();
     },
+    beforeinput(event) {
+      if (event.inputType !== "insertFromPaste" && event.inputType !== "insertFromDrop") return false;
+      const image = clipboardImageFile(event.dataTransfer);
+      if (!image) return false;
+      event.preventDefault();
+      void insertPastedImage(image);
+      return true;
+    },
     paste(event) {
-      // Android clipboard providers may expose images only in DataTransfer.items.
       const clipboard = event.clipboardData;
-      const image = [...(clipboard?.files || [])].find((file) => file.type.startsWith("image/")) ||
-        [...(clipboard?.items || [])]
-          .filter((item) => item.kind === "file" && item.type.startsWith("image/"))
-          .map((item) => item.getAsFile())
-          .find(Boolean);
+      const image = clipboardImageFile(clipboard);
       if (image) {
         event.preventDefault();
         void insertPastedImage(image);
