@@ -64,9 +64,11 @@ try {
     await go("home");
     await palette("Ver favoritos", "Ver favoritos");
     assert.equal(await space(), "library");
-    assert.equal(await page.locator('[data-explorer-filter="favorites"]').getAttribute("aria-pressed"), "true");
+    assert.equal(await page.locator('#documents-panel [data-explorer-filter="favorites"]').first().getAttribute("aria-pressed"), "true");
   });
   await run("Paleta: nueva carpeta dirige a biblioteca", async () => {
+    await go("library");
+    await page.locator('#documents-panel [data-explorer-filter="all"]').first().click();
     await page.evaluate(() => { window.prompt = () => "QA_Project_Audit"; });
     await go("home");
     await palette("Crear carpeta", "Crear carpeta");
@@ -96,10 +98,13 @@ try {
     assert.ok(await row("QA_Renamed_Document").count() >= 1);
   });
   await run("Marcar favorito y filtrar", async () => {
+    const before = await page.evaluate(() => JSON.parse(localStorage.getItem("mded.documents")||"[]")
+      .find(d=>d.title==="QA_Renamed_Document")?.favorite);
+    if (before) await doMenu("QA_Renamed_Document", "Quitar de favoritos");
     await doMenu("QA_Renamed_Document", "Marcar favorito");
-    await page.locator('[data-explorer-filter="favorites"]').click();
+    await page.locator('#documents-panel [data-explorer-filter="favorites"]').first().click();
     assert.ok(await row("QA_Renamed_Document").count() >= 1);
-    await page.locator('[data-explorer-filter="all"]').click();
+    await page.locator('#documents-panel [data-explorer-filter="all"]').first().click();
   });
   await run("Mover documento a carpeta", async () => {
     await doMenu("QA_Renamed_Document", "QA_Project_Audit");
