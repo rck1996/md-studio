@@ -1,0 +1,30 @@
+{
+  "name": "MarkEDdown Studio · Pocket",
+  "short_name": "MarkEDdown",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "background_color": "#F1E4CF",
+  "theme_color": "#071A2C",
+  "description": "Escribe, organiza y conecta documentos Markdown. Tus archivos permanecen en tu dispositivo.",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/assets/logo/markeddown-studio-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/logo/markeddown-studio-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
