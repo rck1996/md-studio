@@ -413,3 +413,27 @@
   .studio-v4-inspector,
   .studio-v4-destinations
 ) { display:none !important; }
+
+
+/* Long Markdown must scroll INSIDE the preview, never grow beyond the pane.
+ * This also makes source/preview sync meaningful and reader progress accurate.
+ */
+@media screen and (min-width:901px) {
+  .workspace.studio-v2:is([data-studio-space="editor"],[data-studio-space="preview"]) .preview-panel {
+    display:flex !important;
+    flex-direction:column;
+    min-height:0 !important;
+    max-height:100% !important;
+    height:100% !important;
+    overflow:hidden !important;
+  }
+  .workspace.studio-v2:is([data-studio-space="editor"],[data-studio-space="preview"]) #markdown-preview {
+    flex:1 1 0 !important;
+    height:0 !important;
+    min-height:0 !important;
+    max-height:100% !important;
+    overflow-x:hidden;
+    overflow-y:auto !important;
+    overscroll-behavior:contain;
+  }
+}
