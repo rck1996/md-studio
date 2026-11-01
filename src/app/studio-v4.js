@@ -67,7 +67,12 @@ if (root) {
       if (action === "editor") byId("studio-v2-editor")?.click();
       if (action === "compose") byId("studio-v2-compose")?.click();
       if (action === "present") byId("toggle-presentation")?.click();
-      if (action === "export") byId("studio-export")?.click();
+      if (action === "export") {
+        // The original export menu closes on an outside document click.
+        // Stop the reader click bubbling after delegating to the real control.
+        event.stopPropagation();
+        byId("studio-export")?.click();
+      }
     });
 
     const inspector = document.createElement("aside");
