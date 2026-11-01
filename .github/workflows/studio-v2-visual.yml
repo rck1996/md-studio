@@ -43,6 +43,8 @@ jobs:
           exit 1
       - name: Full desktop and Pocket flow audit
         run: node scripts/studio-v2-flows.mjs
+      - name: CRUD, history and command-palette audit
+        run: node scripts/studio-v2-crud-audit.mjs
       - name: Real browser screenshots and interaction checks
         run: node scripts/studio-v2-screenshots.mjs
       - name: Upload Studio and Pocket screenshots
