@@ -161,6 +161,22 @@ try {
     await tools(phone, "export");
     assert.equal(await phone.locator(".studio-v2-export-options").isVisible(), true);
     assert.equal(await phone.locator("#studio-v2-tools-back").isVisible(), true);
+    const expectedMarkdown = await readMarkdown(phone);
+    await phone.evaluate(() => {
+      Object.defineProperty(navigator, "share", {
+        configurable: true,
+        value: async (payload) => { window.__nexusSharePayload = payload; },
+      });
+    });
+    await phone.locator('[data-studio-pocket-export="share-nexusos"]').click();
+    await phone.waitForFunction(() => Boolean(window.__nexusSharePayload));
+    const shared = await phone.evaluate(() => window.__nexusSharePayload);
+    assert.ok(shared.title.length > 0);
+    assert.ok(shared.text.length > 0);
+    assert.ok(expectedMarkdown.includes(shared.text.slice(0, Math.min(20, shared.text.length))));
+    assert.equal(await phone.locator(".studio-v2-tools-veil").isVisible(), false);
+
+    await tools(phone, "export");
     const downloadPromise = phone.waitForEvent("download", { timeout: 10000 });
     await phone.locator('[data-studio-pocket-export="download-markdown"]').click();
     const download = await downloadPromise;

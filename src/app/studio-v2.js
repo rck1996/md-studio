@@ -160,6 +160,7 @@ if (root) {
     '<button type="button" data-studio-tool="preferences"><b>⚙</b><strong>Preferencias</strong><small>Lectura y apariencia</small></button>' +
     '<button type="button" data-studio-tool="focus"><b>□</b><strong>Foco</strong><small>Sin distracciones</small></button>' +
     '</div><div class="studio-v2-export-options" hidden>' +
+    '<button type="button" data-studio-pocket-export="share-nexusos"><span>↗</span><strong>Enviar a NexusOS</strong><small>Compartir Markdown como nota</small></button>' +
     '<button type="button" data-studio-pocket-export="download-markdown"><span>↓</span><strong>Descargar Markdown</strong><small>Archivo .md</small></button>' +
     '<button type="button" data-studio-pocket-export="export-html"><span>⌘</span><strong>Exportar HTML</strong><small>Documento web</small></button>' +
     '<button type="button" data-studio-pocket-export="print-pdf"><span>▤</span><strong>Imprimir / PDF</strong><small>Diálogo del navegador</small></button>' +
@@ -340,7 +341,8 @@ if (root) {
     if (!item) return;
     const action = item.dataset.studioPocketExport;
     closeTools();
-    trigger(action);
+    if (action === "share-nexusos") document.dispatchEvent(new Event("markeddown:send-to-nexus"));
+    else trigger(action);
   });
   document.addEventListener("keydown", (event) => {
     if (veil.hidden) return;
