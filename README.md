@@ -20,7 +20,7 @@ Pensado para escribir sin distracciones ni cuentas obligatorias.
 </div>
 
 > [!IMPORTANT]
-> **Estado actual.** El rediseño editorial ya está integrado en `main`. El editor publicado está en [markeddown.rck1996.dev](https://markeddown.rck1996.dev/); la integración en `main` no confirma por sí sola que el despliegue haya terminado. Las capturas reales de sus vistas principales están en la [galería de pantallas](docs/SCREENSHOTS.md). La versión `1.0.0` corresponde a `package.json`, no a una release pública certificada.
+> **Estado actual.** El rediseño editorial y el envío de notas a NEXUS OS ya están integrados y publicados en [markeddown.rck1996.dev](https://markeddown.rck1996.dev/). Para recibirlas, el dispositivo Android debe tener instalada una versión de NEXUS OS que incluya el receptor de Markdown. Las capturas reales de sus vistas principales están en la [galería de pantallas](docs/SCREENSHOTS.md). La versión `1.0.0` corresponde a `package.json`, no a una release pública certificada.
 
 <a id="tour"></a>
 ## ✦ Conoce el espacio de trabajo
@@ -36,7 +36,7 @@ En escritorio, markEDdown presenta **Explorador · Editor · Vista previa**. En 
 | 🧭 Recorrer el texto | **Índice** | Encabezados, plegado y reordenación de secciones |
 | 🕘 Recuperar una versión | **Historial** | Instantáneas locales y restauración |
 | 🖼️ Gestionar recursos | **Assets / Inspector** | Imágenes, notas por bloque y avisos de validación |
-| 📤 Exportar | **Exportar** | Menú propio para `.md`, HTML, ZIP de recursos y copiar Markdown/HTML |
+| 📤 Exportar | **Exportar** | `.md`, HTML, ZIP, copiar Markdown/HTML y compartir una nota con NEXUS OS en Android |
 
 <details>
 <summary><strong>🖥️ Cómo se organiza la interfaz</strong></summary>
@@ -161,7 +161,15 @@ Algunos atajos dependen del navegador y del foco activo.
 | **Recursos** | Pegar/arrastrar imágenes, reutilizar assets y descargar ZIP |
 | **Lectura** | Vista previa viva, modo presentación, ancho de lectura y tipografía configurable |
 | **Concentración** | Modo foco y notas internas por encabezado |
-| **Salida** | Descargar Markdown, copiar Markdown/HTML, exportar HTML y assets |
+| **Salida** | Descargar Markdown, copiar Markdown/HTML, exportar HTML/assets y enviar una nota a NEXUS OS en Android |
+
+## 🔁 Enviar una nota a NEXUS OS
+
+En Android, abre una nota y selecciona **Exportar ↗ → Enviar a NexusOS**. El menú de compartir del sistema muestra las aplicaciones compatibles; elige **NEXUS OS**. La app recibe el título y el contenido Markdown, abre **Importar nota** para revisión y solo la guarda cuando confirmas con **Guardar**. **Cancelar** descarta el borrador.
+
+Es una copia puntual: la nota original de markEDdown no cambia y no hay sincronización. Se transfiere texto Markdown; las imágenes guardadas localmente en el navegador y su contenido no se adjuntan. Tampoco se transfieren las categorías, proyectos ni relaciones entre notas. El receptor de NEXUS OS debe estar instalado para que aparezca como destino. Si el navegador no ofrece Web Share, markEDdown indica descargar el archivo `.md` para importarlo manualmente.
+
+El flujo se verificó en una Tab S8 con Android 16 usando una copia QA aislada de NEXUS OS: el título y el Markdown llegaron a la vista previa y se guardó una nota. La aplicación habitual y sus datos no se modificaron. [Protocolo y alcance de la importación →](https://github.com/rck1996/NexusOS/blob/main/docs/MARKEDDOWN_HANDOFF.md)
 
 **Fuera del alcance actual:** sincronización cloud de documentos, backup/restauración integral del workspace y exportación PDF nativa. El render conceptual del rediseño no debe interpretarse como una lista de funciones ya implementadas.
 
