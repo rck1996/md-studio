@@ -60,7 +60,7 @@ function setup() {
   const themeColor = { content: "" };
   const exportMenu = elements.get("studio-export-menu");
   exportMenu.hidden = true;
-  const targets = ["download-markdown", "export-html", "export-assets", "copy-markdown", "copy-html"];
+  const targets = ["download-markdown", "share-nexusos", "export-html", "export-assets", "copy-markdown", "copy-html"];
   const items = targets.map((id) => makeElement("proxy-" + id, { dataset: { studioExportAction: id } }));
   exportMenu.querySelectorAll = () => items;
   exportMenu.querySelector = () => items[0];
@@ -127,10 +127,11 @@ test("export opens its own popover, delegates to the real action, and closes", (
 
 test("every export option dispatches to its existing handler", () => {
   const { elements, items } = setup();
-  const targets = ["download-markdown", "export-html", "export-assets", "copy-markdown", "copy-html"];
+  const targets = ["download-markdown", "share-nexusos", "export-html", "export-assets", "copy-markdown", "copy-html"];
   for (let i = 0; i < targets.length; i++) {
     elements.get("studio-export").click();
     items[i].click();
+    if (targets[i] === "share-nexusos") continue;
     assert.equal(elements.get(targets[i]).clicks, 1);
   }
 });

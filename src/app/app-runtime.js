@@ -1617,6 +1617,29 @@ bindFileActionButtons({
   },
 });
 
+// Keep Web Share inside the button gesture so Android opens its native
+// Sharesheet and NexusOS can receive the active note as plain Markdown.
+document.querySelector('[data-studio-export-action="share-nexusos"]')?.addEventListener("click", async () => {
+  const markdown = getMarkdown();
+  if (!markdown.trim()) {
+    showAppFeedback({ message: "La nota esta vacia.", tone: "error" });
+    return;
+  }
+  if (typeof navigator.share !== "function") {
+    showAppFeedback({ message: "Este navegador no permite compartir. Descarga el archivo Markdown.", tone: "error" });
+    return;
+  }
+  const active = getDocuments(defaultMarkdown).find((doc) => doc.id === activeDocumentId);
+  const title = active?.title?.trim() || getDocumentTitle(markdown);
+  try {
+    await navigator.share({ title, text: markdown });
+  } catch (error) {
+    if (error?.name !== "AbortError") {
+      showAppFeedback({ message: "No se pudo compartir la nota.", tone: "error" });
+    }
+  }
+});
+
 const handleCreateFolder = () => {
   const name = window.prompt("Nombre de la carpeta", "Nueva carpeta")?.trim();
   if (!name) return;
