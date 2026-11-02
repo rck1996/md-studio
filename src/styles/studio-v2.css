@@ -238,7 +238,7 @@
 }
 
 /* Studio dashboard */
-.workspace.studio-v2 .home-panel { background: var(--surface-elevated); }
+.workspace.studio-v2 .home-panel { background: var(--surface-elevated); container: studio-home / inline-size; overflow-x: hidden; }
 .workspace.studio-v2 .home-panel .workspace-panel-heading {
   padding: 20px 30px 8px; border: 0; background: transparent;
 }
@@ -294,6 +294,31 @@
 .workspace.studio-v2 .home-panel .home-recent-list { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 12px; }
 .workspace.studio-v2 .home-panel .home-recent-item { border-radius: 8px; min-height: 72px; }
 .workspace.studio-v2 .home-panel .home-feature-list { display: flex; flex-wrap: wrap; gap: 12px; }
+
+/* The home panel also lives beside the editor. Adapt its dashboard to that narrower column. */
+@container studio-home (max-width: 620px) {
+  .workspace.studio-v2 .home-panel .workspace-panel-heading { padding: 16px 16px 4px; }
+  .workspace.studio-v2 .studio-v2-home-hero {
+    grid-template-columns: minmax(0,1fr); min-height: 0; margin: 10px 16px 16px;
+  }
+  .workspace.studio-v2 .studio-v2-hero-copy { padding: 20px; }
+  .workspace.studio-v2 .studio-v2-home-hero h2 { font-size: clamp(36px, 10cqi, 46px); }
+  .workspace.studio-v2 .studio-v2-home-hero p { max-width: 42ch; }
+  .workspace.studio-v2 .studio-v2-hero-art { display: none; }
+  .workspace.studio-v2 .home-panel .home-actions {
+    grid-template-columns: minmax(0,1fr); gap: 8px; padding: 0 16px 10px;
+  }
+  .workspace.studio-v2 .home-panel .home-actions button {
+    display: grid; grid-template-columns: 30px minmax(0,1fr); align-items: center;
+    min-height: 66px; padding: 11px 14px;
+  }
+  .workspace.studio-v2 .home-panel .home-actions button > span { grid-column: 1; grid-row: 1 / span 2; }
+  .workspace.studio-v2 .home-panel .home-actions button strong,
+  .workspace.studio-v2 .home-panel .home-actions button small { grid-column: 2; min-width: 0; }
+  .workspace.studio-v2 .home-panel .home-actions button strong { white-space: normal; }
+  .workspace.studio-v2 .home-panel .home-section { margin-inline: 16px; }
+  .workspace.studio-v2 .home-panel .home-recent-list { grid-template-columns: minmax(0,1fr); }
+}
 
 /* Medium notebooks keep spacious content without topbar collisions. */
 @media (min-width: 901px) and (max-width: 1180px) {
