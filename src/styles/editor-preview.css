@@ -109,11 +109,17 @@
 }
 @media (max-width: 900px) {
   .cm-inline-image-preview {
-    max-width: min(100%, 255px);
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
   }
   .cm-inline-image-preview img {
-    max-height: 180px;
+    max-height: none;
+    border-radius: var(--radius-md);
   }
+  .cm-inline-image-caption { display: none; }
 }
 
 .slash-menu {

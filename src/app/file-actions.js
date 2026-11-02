@@ -17,8 +17,14 @@ export const downloadFile = ({ filename, content, type }) => {
   const link = document.createElement("a");
   link.href = url;
   link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
+  document.body.appendChild(link);
+  try {
+    link.click();
+  } finally {
+    link.remove();
+    // Mobile browsers may start consuming the blob only after the click task.
+    setTimeout(() => URL.revokeObjectURL(url), 1200);
+  }
 };
 
 export const exportAssetsArchive = async ({ entries, filename = "markeddown-assets.zip" }) => {
