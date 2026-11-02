@@ -18,7 +18,12 @@
     box-shadow:0 2px 7px #071a2c09;
   }
   .workspace.studio-v2 .studio-v4-context .studio-v2-location strong {
-    font-size:23px;letter-spacing:-.035em;
+    max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    font-size:clamp(16px,1.2vw,20px);line-height:1.05;letter-spacing:-.035em;
+  }
+  .workspace.studio-v2 .studio-v4-context .studio-v2-location .studio-v2-kicker {
+    display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    font-size:clamp(8px,.55vw,9px);letter-spacing:.1em;
   }
   .workspace.studio-v2 .studio-v4-context .studio-v2-location small {
     display:none;

@@ -317,6 +317,13 @@
   .workspace.studio-v2 .home-panel .home-actions button small { grid-column: 2; min-width: 0; }
   .workspace.studio-v2 .home-panel .home-actions button strong { white-space: normal; }
   .workspace.studio-v2 .home-panel .home-section { margin-inline: 16px; }
+  .workspace.studio-v2 .home-panel .workspace-section-heading { gap: 6px; }
+  .workspace.studio-v2 .home-panel .workspace-section-heading h3 {
+    min-width: 0; font-size: 16px; white-space: nowrap;
+  }
+  .workspace.studio-v2 .home-panel .workspace-section-heading button {
+    flex: 0 0 auto; font-size: 9px; white-space: nowrap;
+  }
   .workspace.studio-v2 .home-panel .home-recent-list { grid-template-columns: minmax(0,1fr); }
 }
 
