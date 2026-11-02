@@ -40,6 +40,7 @@ import {
   themeKey,
 } from "./storage.js";
 import { bindFileActionButtons } from "./file-actions.js";
+import { sendToNexus } from "./nexus-handoff.js";
 import {
   buildImageMarkdown,
   countImageReferences,
@@ -1617,27 +1618,30 @@ bindFileActionButtons({
   },
 });
 
-// Keep Web Share inside the button gesture so Android opens its native
-// Sharesheet and NexusOS can receive the active note as plain Markdown.
-document.querySelector('[data-studio-export-action="share-nexusos"]')?.addEventListener("click", async () => {
+// The desktop and Pocket menus dispatch this synchronously from a button
+// gesture, keeping Android's Sharesheet available on both layouts.
+document.addEventListener("markeddown:send-to-nexus", () => {
   const markdown = getMarkdown();
   if (!markdown.trim()) {
     showAppFeedback({ message: "La nota esta vacia.", tone: "error" });
     return;
   }
-  if (typeof navigator.share !== "function") {
-    showAppFeedback({ message: "Este navegador no permite compartir. Descarga el archivo Markdown.", tone: "error" });
-    return;
-  }
   const active = getDocuments(defaultMarkdown).find((doc) => doc.id === activeDocumentId);
-  const title = active?.title?.trim() || getDocumentTitle(markdown);
-  try {
-    await navigator.share({ title, text: markdown });
-  } catch (error) {
-    if (error?.name !== "AbortError") {
-      showAppFeedback({ message: "No se pudo compartir la nota.", tone: "error" });
-    }
-  }
+  const title = active?.title || getDocumentTitle(markdown);
+  void sendToNexus({ markdown, title, readToken: readMarkdownToken, slugify })
+    .then(({ status, imagesOmitted }) => {
+      if (status === "canceled") return;
+      const imageNotice = imagesOmitted ? ` · ${imagesOmitted} imagen(es) locales no incluidas` : "";
+      showAppFeedback({
+        message: status === "shared" ? "Contenido enviado al menú Compartir" + imageNotice :
+          "Descargado como Markdown para importar en NEXUS OS" + imageNotice,
+        tone: imagesOmitted ? "warning" : "success",
+      });
+    })
+    .catch((error) => showAppFeedback({
+      message: error?.message === "No hay contenido para enviar." ? error.message : "No se pudo compartir la nota.",
+      tone: "error",
+    }));
 });
 
 const handleCreateFolder = () => {

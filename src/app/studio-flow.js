@@ -44,7 +44,8 @@ exportMenu?.querySelectorAll("[data-studio-export-action]").forEach((button) => 
   button.addEventListener("click", () => {
     setExportOpen(false);
     const action = button.dataset.studioExportAction;
-    if (action) activateExistingAction(action);
+    if (action === "share-nexusos") document.dispatchEvent(new Event("markeddown:send-to-nexus"));
+    else if (action) activateExistingAction(action);
     exportButton?.focus();
   });
 });

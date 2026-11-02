@@ -165,7 +165,7 @@ Algunos atajos dependen del navegador y del foco activo.
 
 ## 🔁 Enviar una nota a NEXUS OS
 
-En Android, abre una nota y selecciona **Exportar ↗ → Enviar a NexusOS**. El menú de compartir del sistema muestra las aplicaciones compatibles; elige **NEXUS OS**. La app recibe el título y el contenido Markdown, abre **Importar nota** para revisión y solo la guarda cuando confirmas con **Guardar**. **Cancelar** descarta el borrador.
+Abre una nota y elige **Enviar a NexusOS**: en escritorio está en **Exportar ↗**; en Pocket móvil, en **Herramientas → Exportar → Enviar a NexusOS**. El menú de compartir del sistema muestra las aplicaciones compatibles; elige **NEXUS OS**. La app recibe el título y el contenido Markdown, abre **Importar nota** para revisión y solo la guarda cuando confirmas con **Guardar**. **Cancelar** descarta el borrador.
 
 Es una copia puntual: la nota original de markEDdown no cambia y no hay sincronización. Se transfiere texto Markdown; las imágenes guardadas localmente en el navegador y su contenido no se adjuntan. Tampoco se transfieren las categorías, proyectos ni relaciones entre notas. El receptor de NEXUS OS debe estar instalado para que aparezca como destino. Si el navegador no ofrece Web Share, markEDdown indica descargar el archivo `.md` para importarlo manualmente.
 

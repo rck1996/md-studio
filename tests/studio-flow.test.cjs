@@ -126,14 +126,23 @@ test("export opens its own popover, delegates to the real action, and closes", (
 });
 
 test("every export option dispatches to its existing handler", () => {
-  const { elements, items } = setup();
+  const { elements, items, dispatched } = setup();
   const targets = ["download-markdown", "share-nexusos", "export-html", "export-assets", "copy-markdown", "copy-html"];
   for (let i = 0; i < targets.length; i++) {
     elements.get("studio-export").click();
     items[i].click();
-    if (targets[i] === "share-nexusos") continue;
+    if (targets[i] === "share-nexusos") {
+      assert.equal(dispatched.at(-1), "markeddown:send-to-nexus");
+      continue;
+    }
     assert.equal(elements.get(targets[i]).clicks, 1);
   }
+});
+
+test("Pocket export menu exposes NexusOS and dispatches through the same share action", () => {
+  const html = fs.readFileSync(path.join(root, "src/app/studio-v2.js"), "utf8");
+  assert.match(html, /data-studio-pocket-export="share-nexusos"/);
+  assert.match(html, /markeddown:send-to-nexus/);
 });
 
 test("Escape, outside click, and the original Más menu dismiss export", () => {
