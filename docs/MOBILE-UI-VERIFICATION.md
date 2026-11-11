@@ -1,102 +1,36 @@
-# Verificación visual y funcional · markEDdown
+# Verificación en PC y móvil · MD.studio
 
-**Objetivo:** comprobar el rediseño editorial sin perder edición, documentos locales, exportación ni accesibilidad. Esta es una **lista de pruebas por ejecutar**, no un reporte de pruebas ya aprobadas.
+Esta guía sirve para repetir la comprobación con un perfil temporal y notas de ejemplo. La [galería de la app publicada](SCREENSHOTS.md) muestra el escritorio a **1440 × 900** y el móvil emulado a **427 × 900**.
 
 ## Preparación
 
-1. Trabajar desde la rama [design/editorial-markeddown-studio](https://github.com/rck1996/mded/pull/3).
-2. Ejecutar `npm ci`, `npm run test`, `npm run build` y `npm run dev`.
-3. Abrir la dirección local de Vite y DevTools → Device Toolbar.
-4. Probar **ambos temas**, con navegador recargado y con datos de prueba.
-5. **No eliminar datos de un navegador personal**. Usar un perfil temporal si se quiere comprobar un workspace vacío.
+1. Abre [MD.studio](https://md.rck1996.dev/) o ejecuta `npm ci` y `npm run dev`.
+2. Usa un perfil temporal para aislar los datos. Prueba los temas **Claro** y **Oscuro** desde **Más → Preferencias**.
+3. Comprueba al menos **1440 × 900**, **900 × 800**, **427 × 900** y **320 × 640**. A 900 px o menos se muestran **Editar** y **Vista previa**. En tamaños mayores también aparece **Dividido**.
 
-## Matriz de tamaños y cabeceras
+## Flujos para comprobar
 
-| Tamaño | Distribución esperada |
+| Flujo | Comprobación |
 | :--- | :--- |
-| `1920 × 1080` y `1440 × 900` | Marca, selector y acciones en una fila; estadísticas abajo |
-| `1366 × 768` y `1024 × 768` | Marca y acciones arriba, selector en segunda fila; barra inferior |
-| `900 × 800` y `768 × 1024` | Marca/acciones, selector y estado en tres filas; navegación inferior |
-| `600 × 900` y `390 × 844` | Marca, acciones, selector y estado en cuatro filas independientes |
-| `360 × 800` y `320 × 720` | Controles compactos, sin corte horizontal y con inspector accesible |
+| Crear y guardar | Pulsa **Nuevo**, escribe un H1 y espera **Guardado**. Recarga y confirma que aparecen el título y el contenido. |
+| Editar y leer | Escribe una lista, una tabla y un bloque de código. Cambia a **Vista previa** y desplázate hasta el final de la nota. |
+| Pantalla estrecha | Usa un título largo, comprueba que se lea completo y abre **Más**. El menú debe poder desplazarse sin mover la página en horizontal. |
+| Teclado móvil | Escribe cerca del final de una nota larga. El cursor y la barra de formato deben quedar visibles por encima del teclado. |
+| Buscar y volver | Abre **Más → Buscar documentos y comandos**. Comprueba los resultados con el teclado activo y vuelve con **Cerrar**. |
+| Plantillas | Abre **Más → Crear desde plantilla** mientras editas. El teclado debe ocultarse y la cuadrícula permitir llegar a la última plantilla. |
+| Biblioteca | Abre **Documentos**, filtra por título y vuelve a una nota existente. |
+| Imágenes y exportación | Inserta una imagen desde el portapapeles o el dispositivo. Comprueba la vista previa y descarga Markdown y el ZIP de recursos. |
+| Historial | Edita una nota de prueba y restaura una versión desde **Más → Historial de versiones**. |
+| Respaldo | Descarga un ZIP desde **Más → Respaldo del espacio** y restáuralo en otro perfil temporal. Comprueba notas, carpetas, imágenes y versiones. |
 
-**El breakpoint funcional es 900px:** JavaScript y CSS deben coincidir. En móvil no se muestra `Dividido`, sino `Editor` o `Vista previa`.
+## Android y NEXUS OS
 
-### Cabecera: regresión observada
+En un Android con NEXUS OS instalado y compatible con la recepción de Markdown, abre una nota de prueba y toca **Más → Enviar a NexusOS**. Verifica que el selector nativo muestre el destino y que **Importar nota** conserve título y texto. Prueba **Cancelar** y **Guardar** con notas de ejemplo. Si el navegador no puede compartir, comprueba que se descargue el `.md`.
 
-El problema original consistía en solapamiento de `palabras · caracteres · lectura`, `Guardado`, alertas y botones `Nuevo / Buscar / Foco / Tema / Exportar / Más`. Ya no deben compartir una celda de anchura forzada.
+Las capturas móviles muestran la interfaz web emulada. La comprobación del selector nativo requiere Android con el receptor instalado.
 
-- [ ] Estadísticas y guardado permanecen **fuera del grupo de acciones**.
-- [ ] Ninguna etiqueta se monta encima de un botón ni se corta una acción crítica.
-- [ ] El botón Inspector está disponible con alertas y sin alertas, también a 320px.
-- [ ] El botón Exportar cabe y su popover no sale del viewport.
-- [ ] El selector mantiene alineación en escritorio y tablet; no hay scroll horizontal del documento entero.
-- [ ] Todos los botones táctiles mantienen al menos unos 40–44px de altura y foco visible.
-- [ ] La fuente del editor se puede leer cómodamente y no se reduce de forma agresiva.
+## Evidencia
 
-## Flujo de regresión mínimo
+Registra la versión, el navegador o dispositivo, el tamaño de pantalla, el tema y el resultado. Incluye una captura o pasos para repetir cualquier fallo.
 
-| Paso | Acción | Resultado esperado |
-| :--- | :--- | :--- |
-| 1 | Crear documento desde Explorador | Documento aparece y queda activo |
-| 2 | Crear desde `+ Nuevo` en escritorio | Reutiliza el mismo flujo de creación |
-| 3 | Escribir títulos, lista y tabla | CodeMirror conserva contenido; preview actualiza |
-| 4 | Ejecutar `Buscar` o `Ctrl/Cmd+F` | Se abre el buscador de CodeMirror |
-| 5 | Pulsar `Exportar` | Solo aparecen opciones de descarga/copia, nunca «Limpiar contenido» |
-| 6 | Seleccionar `.md` y `HTML` | Se generan descargas reales; archivos contienen el documento |
-| 7 | Exportar `ZIP` con una imagen | Se descarga un archivo con los recursos disponibles |
-| 8 | Copiar Markdown y HTML | La operación informa resultado y pega contenido correcto |
-| 9 | Abrir Exportar y pulsar Escape | Se cierra y el foco vuelve al botón Exportar |
-| 10 | Abrir Exportar y pulsar fuera / Más | Se cierra el popover; Más conserva las opciones originales |
-| 11 | Abrir Inspector desde cabecera y cerrar | Se ven validaciones y assets, sin quedarse atrapado |
-| 12 | Cambiar tema y recargar | Se conserva la preferencia; la vista previa mantiene papel marfil |
-| 13 | Guardar versión, editar y restaurar | Se restaura el contenido esperado |
-| 14 | Cambiar de vista con panel lateral abierto en móvil | Se cierra el panel sin ocultar editor/vista previa |
-| 15 | Alternar Foco y Presentación | Se puede volver al workspace sin perder contenido |
-
-## Paneles móviles y teclado
-
-- [ ] `.side-tabs` permanece en la parte inferior con altura definida, sin cubrir toda la pantalla.
-- [ ] Los paneles de **Explorador**, **Insertar** e **Índice** se abren como sheets sobre la navegación inferior.
-- [ ] El campo de búsqueda y los comandos de Insertar son accesibles por teclado/tacto.
-- [ ] La navegación inferior no cubre el cursor cuando aparece el teclado móvil.
-- [ ] Un cambio `Editor ↔ Vista previa` cierra cualquier sheet, sin alteración de preferencia del panel en escritorio.
-- [ ] `Escape` cierra menús, help y exportación en el contexto correspondiente.
-- [ ] Se puede tabular entre controles y volver al editor con indicador visible de foco.
-- [ ] El editor no presenta una falsa apariencia de «guardado remoto».
-- [ ] Los mensajes de copia/exportación aparecen sin tapar las acciones móviles.
-
-## Vista previa y estilos
-
-- [ ] Sin el círculo naranja sobre el título del documento.
-- [ ] El documento conserva contraste en claro y oscuro y usa fondo marfil en ambos.
-- [ ] Tablas anchas, bloques de código, imágenes y URL largas no producen scroll horizontal global.
-- [ ] Los títulos H1–H3, listas, citas y tablas mantienen jerarquía tipográfica.
-- [ ] Las preferencias de ancho, densidad y tipografía afectan la vista sin destruir su composición.
-- [ ] El editor y la vista previa manejan documentos largos con scroll independiente.
-- [ ] No aparecen ilustraciones debajo del texto editable.
-- [ ] `prefers-reduced-motion` reduce animaciones; `prefers-contrast: more` refuerza límites.
-
-## Datos y seguridad del cambio
-
-- [ ] Los documentos, carpetas, preferencias, historial y assets previamente guardados se cargan.
-- [ ] Ninguna clave de `src/app/storage.js` cambió por un ajuste visual.
-- [ ] El HTML de exportación conserva la sanitización actual.
-- [ ] No se guarda contenido en servicios externos por activar el nuevo diseño.
-- [ ] No se promete sincronización cloud ni respaldo integral como funciones existentes.
-
-## Evidencia antes de fusionar
-
-Para marcar una casilla como verificada, registrar: resolución, navegador, tema, operación, resultado y captura o pasos para reproducir. Anotar fallos con selector/componentes afectados.
-
-| Vista | Claro | Oscuro | Observaciones |
-| :--- | :---: | :---: | :--- |
-| 1920/1440 | ☐ | ☐ | |
-| 1366/1024 | ☐ | ☐ | |
-| 900/768 | ☐ | ☐ | |
-| 600/390 | ☐ | ☐ | |
-| 360/320 | ☐ | ☐ | |
-
-Una ejecución exitosa de `npm run build` y `npm run test` es evidencia de compilación y comportamiento aislado del módulo, **no de QA visual completo**.
-
-[Diseño editorial](EDITORIAL-IDENTITY.md) · [README](../README.md)
+[Galería](SCREENSHOTS.md) · [README](../README.md)

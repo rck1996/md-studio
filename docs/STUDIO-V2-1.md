@@ -1,7 +1,8 @@
 # MarkEDdown Studio 2.1 / Pocket
 
 **Branch:** `feat/studio-2-desktop-pocket`  
-**PR:** https://github.com/rck1996/mded/pull/4  
+**PR:** https://github.com/rck1996/md-studio/pull/4
+
 **Status:** feature branch for review, **not merged or deployed**.
 
 ## Product direction

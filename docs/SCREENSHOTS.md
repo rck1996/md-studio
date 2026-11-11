@@ -1,49 +1,51 @@
-# Pantallas de markEDdown
+# Pantallas de MD.studio
 
-Capturas reales de la aplicación ejecutándose en local. Se tomaron en escritorio a **1280 × 720**, con tema oscuro y documentos de muestra. Sirven para mostrar la interfaz y sus funciones; no sustituyen la matriz de pruebas responsive ni certifican cada flujo.
+Capturas de la versión publicada en [md.rck1996.dev](https://md.rck1996.dev/), tomadas con un perfil de navegador temporal y la nota de ejemplo **Plan de lanzamiento**. El escritorio se capturó a **1440 × 900** y el móvil emulado a **427 × 900**.
 
-## Workspace dividido
+## Escritorio
 
-Explorador de documentos a la izquierda, fuente Markdown en el centro y hoja de lectura a la derecha. La imagen editorial se integra sobre el mismo papel texturado.
+### Editor y vista dividida
 
-![Workspace dividido con explorador, editor y vista previa](screenshots/editor-split.png)
+El editor abre al centro. **Dividido** coloca el Markdown junto a la vista previa de lectura.
 
-## Vista previa
+| Editor | Dividido |
+| :---: | :---: |
+| [![Editor Markdown de escritorio](screenshots/md-studio/desktop-editor.png)](screenshots/md-studio/desktop-editor.png) | [![Editor y vista previa lado a lado](screenshots/md-studio/desktop-split.png)](screenshots/md-studio/desktop-split.png) |
 
-La hoja mantiene tono marfil y textura de fibras; el contenido queda alineado en una columna de lectura.
+### Documentos y plantillas
 
-![Vista previa editorial sobre papel](screenshots/preview-paper.png)
+**Documentos** reúne carpetas, búsqueda y filtros. **Más → Crear desde plantilla** abre estructuras listas para usar.
 
-## Inserción de bloques
+| Documentos | Plantillas |
+| :---: | :---: |
+| [![Biblioteca y carpetas en escritorio](screenshots/md-studio/desktop-library.png)](screenshots/md-studio/desktop-library.png) | [![Selector de plantillas](screenshots/md-studio/desktop-templates.png)](screenshots/md-studio/desktop-templates.png) |
 
-El panel **Insertar** agrupa estructuras, texto, listas y contenido, con búsqueda y ejemplos de sintaxis.
+### Exportación, historial y respaldo
 
-![Panel Insertar con bloques de Markdown](screenshots/insert-toolbox.png)
+| Exportar | Historial | Respaldo |
+| :---: | :---: | :---: |
+| [![Menú de exportación](screenshots/md-studio/desktop-export.png)](screenshots/md-studio/desktop-export.png) | [![Historial de versiones de la nota](screenshots/md-studio/desktop-history.png)](screenshots/md-studio/desktop-history.png) | [![Descarga y restauración del respaldo ZIP](screenshots/md-studio/desktop-backup.png)](screenshots/md-studio/desktop-backup.png) |
 
-## Buscar y ejecutar comandos
+## Móvil
 
-La paleta reúne navegación, cambios de vista, documentos, plantillas y exportaciones.
+### Escritura y lectura
 
-![Paleta de búsqueda y comandos](screenshots/command-palette.png)
+| Editar | Vista previa |
+| :---: | :---: |
+| <img src="screenshots/md-studio/mobile-editor.png" width="300" alt="Editor móvil y controles de formato"> | <img src="screenshots/md-studio/mobile-preview.png" width="300" alt="Vista previa móvil con encabezados y tareas"> |
 
-## Grafo de documentos
+### Buscar y compartir
 
-Los enlaces `[[Nombre del documento]]` se convierten en nodos y conexiones navegables.
+La búsqueda abre documentos por nombre o contenido. **Más → Enviar a NexusOS** entrega el título y Markdown al menú de compartir en Android compatible.
 
-![Grafo de documentos conectados](screenshots/document-graph.png)
+| Buscar | Más y NexusOS |
+| :---: | :---: |
+| <img src="screenshots/md-studio/mobile-search.png" width="300" alt="Buscador móvil con un resultado"> | <img src="screenshots/md-studio/mobile-share.png" width="300" alt="Opción Enviar a NexusOS en el menú Más"> |
 
-## Preferencias
+### Biblioteca y plantillas
 
-Ancho de lectura, densidad, tipografía, ajuste de línea y tema se configuran por separado.
+| Documentos | Crear desde plantilla |
+| :---: | :---: |
+| <img src="screenshots/md-studio/mobile-library.png" width="300" alt="Biblioteca en móvil"> | <img src="screenshots/md-studio/mobile-templates.png" width="300" alt="Selector desplazable de plantillas en móvil"> |
 
-![Preferencias de lectura y editor](screenshots/preferences.png)
-
-## Exportación
-
-El menú ofrece descargas Markdown, HTML, PDF e imágenes, además de copiar Markdown o HTML.
-
-![Menú de exportación](screenshots/export-menu.png)
-
----
-
-[README](../README.md) · [Identidad editorial](EDITORIAL-IDENTITY.md) · [Verificación responsive](MOBILE-UI-VERIFICATION.md) · [Roadmap](ROADMAP.md)
+[Volver al README](../README.md) · [Guía de verificación](MOBILE-UI-VERIFICATION.md)

@@ -1,7 +1,7 @@
 # MarkEDdown Studio 2.2 — Diseño y flujos de escritorio
 
 **Rama:** feat/studio-2-desktop-pocket
-**PR:** https://github.com/rck1996/mded/pull/4
+**PR:** https://github.com/rck1996/md-studio/pull/4
 **Estado:** desarrollo / revisión. No se ha desplegado a producción.
 
 ## Visión

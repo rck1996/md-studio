@@ -3,7 +3,7 @@
 ## Vista rapida
 
 ```text
-mded/
+md-studio/
   index.html
   package.json
   package-lock.json
@@ -11,7 +11,7 @@ mded/
   wrangler.toml
   README.md
   docs/
-    screenshots/
+    screenshots/md-studio/
   public/
   src/
   tests/
@@ -45,7 +45,7 @@ Documentacion del proyecto.
 - `PROJECT-STRUCTURE.md`: esta guia.
 - `ROADMAP.md`: fases siguientes.
 - `SCREENSHOTS.md`: galería de capturas reales de la interfaz.
-- `screenshots/`: imágenes usadas por la galería y el README.
+- `screenshots/md-studio/`: capturas de la versión publicada usadas en el README y la galería.
 - `MOBILE-UI-VERIFICATION.md`: matriz de pruebas visuales y funcionales.
 - `markeddown-banner.svg`: portada del README.
 

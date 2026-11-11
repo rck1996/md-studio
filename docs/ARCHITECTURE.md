@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-markEDdown es una SPA local-first para escribir, organizar y exportar Markdown sin backend.
+MD.studio es una SPA para escribir, organizar y exportar Markdown con almacenamiento en el navegador.
 El objetivo de la arquitectura es mantener tres cosas bajo control:
 
 - flujo de edicion rapido;
@@ -34,14 +34,10 @@ La estructura actual se divide en capas claras:
 
 `index.html` define regiones estables para:
 
-- topbar;
-- navegacion lateral;
-- paneles de documentos, insert y outline;
-- editor;
-- preview;
-- overlays;
-- cabecera con estado del documento y opciones de exportacion;
-- barra inferior de guardado/estadisticas.
+- cabecera con Documentos, Nuevo, Más y exportación en escritorio;
+- título, estado de guardado y controles de Editar, Vista previa y Dividido;
+- editor Markdown, lector y paneles de biblioteca, formato e índice;
+- diálogos de búsqueda, plantillas, historial y preferencias.
 
 La logica no deberia vivir aqui.
 
@@ -58,7 +54,7 @@ Coordina:
 - overlays;
 - estados visuales del workspace.
 
-El runtime ya no concentra toda la UI como antes, pero sigue siendo el mayor punto de composicion. `studio-flow.js` es un adaptador ligero para los accesos Nuevo/Buscar/Exportar y el estado de la cabecera: delega en los controles existentes y no implementa un motor documental paralelo.
+`studio-v2.js` coordina las rutas y controles de escritura en PC y móvil. `studio-flow.js` conecta la búsqueda y exportación de escritorio con el runtime. Los dos adaptadores comparten el mismo documento activo. `workspace-backup.js` genera y restaura el ZIP del espacio local y `nexus-handoff.js` prepara el Markdown para compartir o descargar.
 
 ### Domain
 

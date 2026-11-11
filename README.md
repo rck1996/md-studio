@@ -4,321 +4,133 @@
 
 # MD.studio
 
-**Un espacio para escribir, organizar y crear.**
+**Un editor Markdown para escribir y revisar notas en PC y móvil.**
 
-Editor Markdown **local-first** con vista previa en vivo, documentos organizados, historial de versiones y exportación.  
-Pensado para escribir sin distracciones ni cuentas obligatorias.
+Abre una nota en blanco, revisa el resultado en una hoja de lectura y guarda tus documentos en el navegador.
 
-![Package](https://img.shields.io/badge/package-1.0.0-041126?style=flat-square)
 ![CodeMirror](https://img.shields.io/badge/editor-CodeMirror%206-25456B?style=flat-square)
-![JavaScript](https://img.shields.io/badge/JavaScript-modular-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
 ![Vite](https://img.shields.io/badge/build-Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
-![Local](https://img.shields.io/badge/datos-local--first-E34B12?style=flat-square)
+![Datos locales](https://img.shields.io/badge/datos-en_el_navegador-E34B12?style=flat-square)
 
-[**Abrir el editor ↗**](https://markeddown.rck1996.dev/) · [Recorrido](#tour) · [Pantallas](docs/SCREENSHOTS.md) · [Empezar](#start) · [Desarrollo](#build) · [Calidad](#quality) · [Roadmap](#roadmap) · [Docs](#docs)
+[**Abrir MD.studio**](https://md.rck1996.dev/) · [Recorrido](#tour) · [Empezar](#start) · [Desarrollo](#build) · [Calidad](#quality) · [Documentación](#docs) · [Reportar un problema](https://github.com/rck1996/md-studio/issues/new)
 
 </div>
 
-> [!IMPORTANT]
-> **Estado actual.** El rediseño editorial y el envío de notas a NEXUS OS ya están integrados y publicados en [markeddown.rck1996.dev](https://markeddown.rck1996.dev/). Para recibirlas, el dispositivo Android debe tener instalada una versión de NEXUS OS que incluya el receptor de Markdown. Las capturas reales de sus vistas principales están en la [galería de pantallas](docs/SCREENSHOTS.md). La versión `1.0.0` corresponde a `package.json`, no a una release pública certificada.
+> **En producción.** MD.studio está disponible en [md.rck1996.dev](https://md.rck1996.dev/). La [galería](docs/SCREENSHOTS.md) muestra la app publicada con datos de ejemplo en escritorio y móvil emulado.
 
 <a id="tour"></a>
-## ✦ Conoce el espacio de trabajo
+## Recorrido
 
-MD.studio abre el **Editor** directamente. En escritorio puedes activar **Dividido** para ver el Markdown junto a la vista previa. En móvil, **Editar** y **Vista previa** ocupan la pantalla por separado.
+![MD.studio en escritorio con Markdown y vista previa lado a lado](docs/screenshots/md-studio/desktop-split.png)
 
-| Quiero… | Abro… | Qué hace |
+En escritorio, **Dividido** muestra el Markdown y la vista previa juntos. En móvil, **Editar** y **Vista previa** alternan entre dos pantallas completas y la barra de formato queda junto al teclado.
+
+| Quiero… | Dónde | Qué puedo hacer |
 | :--- | :--- | :--- |
-| ✍️ Escribir | **Editor** | CodeMirror 6, Markdown, búsqueda/reemplazo y comandos con `/` |
-| 👁️ Revisar el resultado | **Vista previa** | Renderizado vivo y lectura tipográfica |
-| 🗂️ Ordenar ideas | **Documentos** | Documentos, carpetas, favoritos, recientes, archivo y papelera |
-| 🧩 Insertar elementos | **Barra de formato** | Encabezados, listas, enlaces, imágenes y más formatos |
-| 🧭 Recorrer el texto | **Más → Índice del documento** | Navegación por encabezados |
-| 🕘 Recuperar una versión | **Más → Historial de versiones** | Instantáneas locales y restauración |
-| 📤 Exportar | **Exportar** en PC, **Más** en móvil | Descargar Markdown, HTML o imprimir como PDF |
-| 📲 Enviar a NexusOS | **Más → Enviar a NexusOS** en Android | Comparte la nota activa o descarga un `.md` si el navegador no puede compartir |
+| Escribir | **Nuevo** | Abrir una nota en blanco y empezar a escribir |
+| Revisar | **Vista previa** | Leer Markdown renderizado con encabezados, tablas, listas e imágenes |
+| Organizar | **Documentos** | Abrir, buscar y ordenar notas en carpetas |
+| Dar formato | **Barra de formato** o **/** | Insertar encabezados, listas, enlaces, imágenes y bloques |
+| Empezar con una estructura | **Más → Crear desde plantilla** | Elegir una plantilla de reunión, proyecto u otro tipo de nota |
+| Volver a una versión | **Más → Historial de versiones** | Revisar y restaurar instantáneas locales |
+| Llevarme el contenido | **Exportar** en PC o **Más** en móvil | Descargar Markdown, HTML o recursos, o imprimir como PDF |
+| Cambiar de dispositivo | **Más → Respaldo del espacio** | Descargar o restaurar el espacio completo en ZIP |
 
-<details>
-<summary><strong>🖥️ Cómo se organiza la interfaz</strong></summary>
+<details open>
+<summary><strong>Ver la app en móvil</strong></summary>
 
-```text
-MD.studio                   Documentos  Nuevo  Exportar  Más
-Título · Guardado           Editar  Vista previa  Dividido
-                       Barra de formato
-                              │
-                       Editor Markdown
-```
-
-En pantallas de **900 px o menos**, el modo dividido se sustituye por vistas individuales. Este esquema explica la estructura; **no es una captura real ni una prueba visual**.
+| Editar | Vista previa | Compartir |
+| :---: | :---: | :---: |
+| <img src="docs/screenshots/md-studio/mobile-editor.png" width="260" alt="Editor Markdown móvil con barra de formato"> | <img src="docs/screenshots/md-studio/mobile-preview.png" width="260" alt="Vista previa móvil sobre papel"> | <img src="docs/screenshots/md-studio/mobile-share.png" width="260" alt="Menú Más con Enviar a NexusOS"> |
 
 </details>
 
-## ✦ Pantallas reales
-
-![Editor dividido con documentos, Markdown y vista previa editorial](docs/screenshots/editor-split.png)
-
-[Abrir la galería completa de pantallas y características →](docs/SCREENSHOTS.md)
-
-## ✧ Identidad: escritura × astronomía
-
-<div align="center">
-  <img src="public/assets/logo/markeddown-studio-icon.svg" alt="Icono de MD.studio: pluma grabada y sol" width="124">
-</div>
-
-Una pluma representa la escritura; el sol y las coordenadas representan exploración y conexiones. El diseño pertenece a la familia **RCK1996 Studio**, con grabado editorial y detalles técnicos **fuera de la superficie de escritura**.
-
-| Tema | Fondo | Superficie | Acento |
-| :--- | :--- | :--- | :--- |
-| Oscuro | Azul nocturno `#020B1B` | Azul tinta `#041126` | Azul técnico y naranja |
-| Claro | Marfil `#E9E4DA` | Papel `#F5F1E7` | Naranja `#E34B12` |
-| Documento | — | Papel cálido `#F1E4CF`, con textura de fibras en ambos temas | Tipografía editorial |
-
-El nombre de marca se escribe **MD.studio**. [Icono SVG →](public/assets/logo/markeddown-studio-icon.svg)
-
-La ilustración editorial se integra con el papel mediante el mismo tono de base y una mezcla de luminancia; el grano y las fibras se sirven desde `public/assets/paper-grain.svg`. La portada es opcional por documento: solo `01_Sol.md` viene marcada con `cover: "editorial"` en el espacio de muestra.
-
-<div align="center">
-  <img src="public/assets/editorial-cover.png" alt="Ilustración editorial de Sol sobre papel texturado" width="720">
-</div>
+[Ver las capturas de biblioteca, plantillas, búsqueda, exportación, historial y respaldo →](docs/SCREENSHOTS.md)
 
 <a id="start"></a>
-## 🚀 Empieza en cinco minutos
+## Empieza a escribir
 
-1. Abre [MD.studio](https://markeddown.rck1996.dev/).
-2. Pulsa **Nuevo** para empezar en blanco o **Documentos** para abrir una nota. Las plantillas están en **Más → Crear desde plantilla**.
-3. Escribe Markdown y observa la **Vista previa**.
-4. Pulsa `/` para insertar bloques desde la paleta de comandos o usa **Insertar**.
-5. Guarda tu trabajo fuera del navegador con **Exportar → Archivo Markdown (.md)** (en la rama editorial) o con **Más → Descargar .md** (versión publicada).
-
-No hay que crear una cuenta para las funciones locales. Los documentos se guardan en **ese navegador y ese origen**, sin sincronización automática entre dispositivos.
+1. Abre [MD.studio](https://md.rck1996.dev/) y pulsa **Nuevo**.
+2. Escribe Markdown o usa la barra de formato para insertar encabezados, enlaces y listas.
+3. Cambia a **Vista previa** para revisar el resultado.
+4. Pulsa **Documentos** para volver a una nota anterior o **Exportar** para guardar una copia fuera del navegador.
 
 <details>
-<summary><strong>🧪 Prueba este documento</strong></summary>
-
-Copia en el editor y cambia a **Vista previa**:
+<summary><strong>Probar con una nota de ejemplo</strong></summary>
 
 ```markdown
-# Cuaderno de ideas
+# Plan de lanzamiento
 
-> Escribir también es ordenar el mundo.
+> Ejemplo de MD.studio · Una nota para preparar la publicación.
 
-## Hoy
+## Antes de publicar
 
-- [x] Capturar una idea
-- [ ] Convertirla en un proyecto
-- [ ] Compartir el resultado
+- [x] Revisar el diseño en PC
+- [x] Comprobar la vista previa
+- [ ] Compartir el resumen con el equipo
 
-## Próximos pasos
-
-| Prioridad | Acción |
-| :--- | :--- |
-| Alta | Definir el objetivo |
-| Media | Preparar el borrador |
-
-**Una idea pequeña puede convertirse en un gran proyecto.**
+| Entrega | Estado |
+| --- | --- |
+| Guía de uso | Lista |
+| Anuncio | En revisión |
 ```
 
-Después prueba el índice, el historial y la descarga del documento.
-
 </details>
 
-<details>
-<summary><strong>⌨️ Atajos útiles</strong></summary>
+## Enviar una nota a NEXUS OS
 
-| Acción | Acceso |
-| :--- | :--- |
-| Buscar | `Ctrl/Cmd + F` |
-| Buscar y reemplazar | `Ctrl/Cmd + Shift + H` |
-| Insertar bloques | `/` |
-| Buscar documentos y ejecutar comandos | `Ctrl/Cmd + K` |
-| Ayuda | `F1` o **Más → Atajos y ayuda** |
-| Modo foco | **Foco** |
-| Historial de versiones | Menú contextual del documento |
+En Android, abre una nota y pulsa **Más → Enviar a NexusOS**. Selecciona **NEXUS OS** en el menú de compartir. Si tu versión de NEXUS OS incluye el receptor Markdown, podrás revisar la nota en **Importar nota** y guardarla allí.
 
-Algunos atajos dependen del navegador y del foco activo.
+Se envían el título y una copia del texto Markdown. Las referencias a imágenes guardadas en el navegador se reemplazan por un aviso. Si el navegador no ofrece la función de compartir, MD.studio descarga un archivo `.md`. [Protocolo de importación de NEXUS OS](https://github.com/rck1996/NexusOS/blob/main/docs/MARKEDDOWN_HANDOFF.md)
 
-</details>
+## Datos y respaldo
 
-## ✍️ Lo que ofrece
+Las notas, carpetas, imágenes y preferencias viven en el almacenamiento de cada navegador. Usa **Más → Respaldo del espacio** para guardar un ZIP antes de cambiar de navegador o equipo. Restaurarlo reemplaza el espacio local tras confirmar. Un archivo `.md` exporta una nota individual.
 
-| Área | Funcionalidad |
-| :--- | :--- |
-| **Editor** | CodeMirror 6, formato, búsqueda, reemplazo, slash commands y plegado |
-| **Biblioteca** | Crear, renombrar, mover, duplicar, archivar, eliminar y restaurar documentos |
-| **Organización** | Carpetas, favoritos, recientes, filtros e índice de encabezados |
-| **Paleta global** | Busca documentos y contenido, crea desde plantillas, cambia vistas y ejecuta comandos con teclado |
-| **Historial** | Versiones locales, instantáneas y restauración |
-| **Recursos** | Pegar/arrastrar imágenes, reutilizar assets y descargar ZIP |
-| **Lectura** | Vista previa viva, modo presentación, ancho de lectura y tipografía configurable |
-| **Concentración** | Modo foco y notas internas por encabezado |
-| **Salida** | Descargar Markdown, copiar Markdown/HTML, exportar HTML/assets y enviar una nota a NEXUS OS en Android |
-
-## 🔁 Enviar una nota a NEXUS OS
-
-Abre una nota y elige **Enviar a NexusOS**: en escritorio está en **Exportar ↗**; en Pocket móvil, en **Herramientas → Exportar → Enviar a NexusOS**. El menú de compartir del sistema muestra las aplicaciones compatibles; elige **NEXUS OS**. La app recibe el título y el contenido Markdown, abre **Importar nota** para revisión y solo la guarda cuando confirmas con **Guardar**. **Cancelar** descarta el borrador.
-
-Es una copia puntual: la nota original de markEDdown no cambia y no hay sincronización. Se transfiere texto Markdown; las imágenes guardadas localmente en el navegador y su contenido no se adjuntan. Tampoco se transfieren las categorías, proyectos ni relaciones entre notas. El receptor de NEXUS OS debe estar instalado para que aparezca como destino. Si el navegador no ofrece Web Share, markEDdown indica descargar el archivo `.md` para importarlo manualmente.
-
-El flujo se verificó en una Tab S8 con Android 16 usando una copia QA aislada de NEXUS OS: el título y el Markdown llegaron a la vista previa y se guardó una nota. La aplicación habitual y sus datos no se modificaron. [Protocolo y alcance de la importación →](https://github.com/rck1996/NexusOS/blob/main/docs/MARKEDDOWN_HANDOFF.md)
-
-**Fuera del alcance actual:** sincronización cloud de documentos, backup/restauración integral del workspace y exportación PDF nativa. El render conceptual del rediseño no debe interpretarse como una lista de funciones ya implementadas.
-
-## 🔒 Privacidad y datos
-
-MD.studio guarda documentos, carpetas, preferencias, referencias e imágenes en `localStorage` del navegador. Si cambias de dominio, exporta un respaldo desde la dirección anterior e impórtalo en la nueva.
-
-- No hay un servidor propio donde subir automáticamente los documentos.
-- Cambiar de navegador o dispositivo **no** transporta los datos.
-- Borrar los datos del sitio o utilizar navegación privada puede hacerte perder el contenido.
-- `localStorage` **no está cifrado**; evita guardar secretos o datos altamente sensibles.
-- Exporta con frecuencia `.md` y assets. Un archivo Markdown **no** contiene la biblioteca completa, su historial ni todos los recursos.
-- El HTML de la vista previa y de las exportaciones se procesa con sanitización y restricciones de protocolos, sin que eso sustituya una evaluación de seguridad independiente.
-
-<details>
-<summary><strong>¿Funciona sin conexión?</strong></summary>
-
-Una vez cargada, la edición y persistencia son locales. **No se garantiza arranque offline completo**: el proyecto no documenta una PWA instalada con caché suficiente para abrir la web sin conexión desde cero.
-
-</details>
-
-<details>
-<summary><strong>¿Qué hago antes de cambiar de teléfono o computador?</strong></summary>
-
-Descarga los documentos y los recursos necesarios. La exportación/importación completa del workspace, con carpetas, preferencias y versiones, figura como trabajo pendiente en el [roadmap](docs/ROADMAP.md).
-
-</details>
+Puedes instalar MD.studio desde **Más** cuando el navegador ofrece esa opción. Tras la primera carga, el servicio de caché de la aplicación permite abrir el editor sin conexión en navegadores compatibles.
 
 <a id="build"></a>
-## 🛠 Desarrollo local
+## Desarrollo
 
-**Requisitos:** Node.js **20** (versión usada en CI), npm y un navegador actualizado.
+Requiere Node.js **20.19+ o 22.12+** y npm.
 
 ```bash
-git clone https://github.com/rck1996/mded.git
-cd mded
+git clone https://github.com/rck1996/md-studio.git
+cd md-studio
 npm ci
 npm run dev
 ```
 
-Abre la dirección local mostrada por Vite. Los scripts del proyecto inician el servidor sobre `127.0.0.1`.
+`npm run build` genera `dist/`. `npm run preview` abre esa compilación de forma local. Cloudflare Pages construye la rama `main` con `npm run build` y sirve `dist/` en [md.rck1996.dev](https://md.rck1996.dev/).
 
-| Tarea | Comando |
+| Ruta | Qué contiene |
 | :--- | :--- |
-| Desarrollo | `npm run dev` |
-| Compilación | `npm run build` |
-| Vista previa del build | `npm run preview` |
-| Despliegue manual en Pages | `npm run cf:deploy` |
-| Preview con Wrangler | `npm run cf:deploy:preview` |
-
-Los comandos de despliegue necesitan permisos de Cloudflare; **no son necesarios** para trabajar localmente.
-
-### Probar el rediseño en revisión
-
-```bash
-git fetch origin
-git switch design/editorial-markeddown-studio
-npm ci
-npm run test
-npm run dev
-```
-
-Esta rama incorpora el icono editorial, cabecera sin superposiciones, una exportación acotada que reutiliza los comandos existentes, mayor legibilidad, accesos reales y una barra de estado basada en datos del runtime. El trabajo se revisa en el [PR #3](https://github.com/rck1996/mded/pull/3), sin fusionarlo automáticamente a `main`.
+| `src/app/` | Edición, navegación, almacenamiento, respaldo y exportación |
+| `src/editor/` | Integración con CodeMirror |
+| `src/domain/` | Documentos, carpetas, recursos y Markdown |
+| `src/styles/` | Diseño del editor, lector y pantallas adaptables |
+| `public/` | Iconos, manifiesto y caché para la app instalable |
 
 <a id="quality"></a>
-## 🧪 Calidad: qué está probado
+## Calidad
 
-El workflow [CI](.github/workflows/cloudflare-pages.yml) ejecuta `npm ci`, `npm run test` y `npm run build` en pull requests y cambios a `main`. Los tests usan el runner integrado de Node.js y validan el flujo de la nueva cabecera.
-
-| Comprobación | Estado | Evidencia |
-| :--- | :--- | :--- |
-| Instalación y compilación de la rama editorial | ✅ Exitoso | [GitHub Actions](https://github.com/rck1996/mded/actions/runs/41254761664) |
-| Accesos rápidos, delegación de exportaciones, Escape, tema y estado | ✅ Tests automatizados de módulo | [tests/studio-flow.test.cjs](tests/studio-flow.test.cjs) |
-| Estructura HTML e IDs de la cabecera | ✅ Comprobación automatizada | [tests/studio-flow.test.cjs](tests/studio-flow.test.cjs) |
-| Revisión visual desktop (Dividido, Editor, Vista previa, Foco y Presentación) | ✅ Revisada | [Identidad editorial](docs/EDITORIAL-IDENTITY.md) |
-| Flujo visual e interactivo móvil | ⏳ Pendiente | [Matriz móvil](docs/MOBILE-UI-VERIFICATION.md) |
-| Pruebas E2E en navegador real | ⏳ No acreditadas | [Roadmap](docs/ROADMAP.md) |
-| Respaldo integral y recuperación | 🛠 Pendiente | [Arquitectura](docs/ARCHITECTURE.md) |
-
-**Las pruebas de módulo y la compilación no sustituyen el QA visual.** Antes de publicar el rediseño deben revisarse en navegador los menús, teclado móvil, temas, navegación, inspector, historial, exportaciones y documentos previamente guardados. [Matriz de verificación detallada →](docs/MOBILE-UI-VERIFICATION.md)
-
-<a id="architecture"></a>
-## 🧠 Arquitectura
-
-```mermaid
-flowchart LR
-    UI[Interfaz y paneles] --> APP[Runtime y eventos]
-    APP --> CM[CodeMirror 6]
-    CM --> DOC[Estado del documento]
-    DOC --> DB[(localStorage)]
-    DOC --> HIST[Versiones y assets]
-    CM --> MD[Markdown renderer]
-    MD --> SAFE[Sanitización]
-    SAFE --> PREVIEW[Vista previa]
-    SAFE --> HTML[Exportación HTML]
-    DOC --> FILE[Descarga Markdown]
-    HIST --> ZIP[ZIP de recursos]
+```bash
+npm test
+npm run build
 ```
 
-La aplicación utiliza **JavaScript modular** y Vite, sin framework de interfaz obligatorio ni backend documental. Las responsabilidades están separadas:
-
-```text
-mded/
-├── index.html              Shell de la aplicación
-├── public/assets/logo/     Identidad e iconos SVG
-├── src/
-│   ├── main.js             Punto de entrada
-│   ├── app/                Runtime, eventos, persistencia y exportación
-│   ├── domain/             Documentos, carpetas, Markdown, assets e índice
-│   ├── editor/             Integración CodeMirror
-│   ├── ui/                 Componentes y renderizadores
-│   └── styles/             Tokens, tema editorial, refinamientos y responsive
-├── tests/                  Tests de accesos, exportación y estado de la UI
-├── docs/                   Arquitectura, diseño, roadmap y QA
-└── .github/workflows/      CI
-```
-
-[Leer arquitectura →](docs/ARCHITECTURE.md) · [Ver estructura →](docs/PROJECT-STRUCTURE.md)
-
-<a id="roadmap"></a>
-## 🗺 Roadmap
-
-| Estado | Objetivo |
-| :--- | :--- |
-| ✅ Disponible | Editor, vista previa, biblioteca local, historial, plantillas, assets, inspector, foco y exportaciones |
-| 🎨 En revisión | Rediseño editorial, logo renovado, temas y flujo mejorado ([PR #3](https://github.com/rck1996/mded/pull/3)) |
-| 🧪 Falta validar | Usabilidad móvil/tablet, contraste, teclado, accesibilidad, recuperación de datos y despliegue |
-| 🛠 Prioritario | Modularización, manejo de errores y límites de `localStorage`, backup e importación integral |
-| 📋 Futuro | Más pruebas automatizadas, mejoras de publicación y calidad operativa |
-
-[Roadmap completo →](docs/ROADMAP.md)
+La CI comprueba las conexiones de la interfaz, la paleta, las descargas y la preparación del Markdown para NEXUS OS. La galería muestra la versión publicada a **1440 × 900** y **427 × 900**. La prueba móvil emulada cubre escritura, vista previa, búsqueda y menú. El selector nativo depende del navegador Android y de las aplicaciones instaladas. [Guía de verificación](docs/MOBILE-UI-VERIFICATION.md)
 
 <a id="docs"></a>
-## 📚 Documentación
+## Documentación
 
-| Diseño y producto | Ingeniería y calidad |
+| Guía | Contenido |
 | :--- | :--- |
-| [Identidad editorial](docs/EDITORIAL-IDENTITY.md) | [Arquitectura](docs/ARCHITECTURE.md) |
-| [Banner](docs/markeddown-banner.svg) | [Estructura del proyecto](docs/PROJECT-STRUCTURE.md) |
-| [Icono SVG](public/assets/logo/markeddown-studio-icon.svg) | [Verificación móvil](docs/MOBILE-UI-VERIFICATION.md) |
-| [PR del rediseño](https://github.com/rck1996/mded/pull/3) | [Roadmap](docs/ROADMAP.md) |
-| [Controles y contratos de UI](docs/EDITORIAL-IDENTITY.md#05--contrato-de-interacción) | [Tests del editor](tests/studio-flow.test.cjs) |
-
-### Cloudflare Pages
-
-Configuración para integración Git: comando de build `npm run build`, directorio de salida `dist` y rama de producción `main`. La acción de GitHub **valida** el build; el deploy de producción depende de la integración del proyecto con Cloudflare Pages. No se ha publicado el rediseño desde este README.
+| [Galería](docs/SCREENSHOTS.md) | Pantallas actuales de PC y móvil |
+| [Arquitectura](docs/ARCHITECTURE.md) | Capas de la aplicación y almacenamiento |
+| [Estructura del proyecto](docs/PROJECT-STRUCTURE.md) | Dónde vive cada pieza del código |
+| [Roadmap](docs/ROADMAP.md) | Estado y próximas verificaciones |
 
 ## Licencia
 
-El repositorio es público, pero **no tiene un archivo `LICENSE` que otorgue permisos de reutilización**. Código público no significa automáticamente software con licencia abierta.
-
----
-
-<div align="center">
-
-**Menos ruido. Más espacio para tus ideas.**
-
-**MD.studio · RCK1996 Studio**
-
-[↑ Volver arriba](#mdstudio) · [Abrir el editor ↗](https://markeddown.rck1996.dev/)
-
-</div>
+El repositorio es público y no incluye un archivo `LICENSE` que otorgue permisos de reutilización.

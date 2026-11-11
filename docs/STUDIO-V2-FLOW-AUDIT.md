@@ -2,7 +2,7 @@
 
 Fecha: 2026-11-01
 Rama: feat/studio-2-desktop-pocket
-PR: https://github.com/rck1996/mded/pull/4
+PR: https://github.com/rck1996/md-studio/pull/4
 Estado: borrador, sin merge ni despliegue a producción.
 
 ## Alcance
