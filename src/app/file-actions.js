@@ -103,7 +103,7 @@ export const bindFileActionButtons = ({
 
   exportHtmlButton.addEventListener("click", () =>
     runAction(() => {
-      const title = getMarkdown().match(/^#\s+(.+)$/m)?.[1] || "MarkEDdown";
+      const title = getMarkdown().match(/^#\s+(.+)$/m)?.[1] || "MD.studio";
       downloadFile({
         filename: `${slugify(title)}.html`,
         content: getExportHtml(title),

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 400" role="img" aria-labelledby="title desc">
-<title id="title">markEDdown — RCK1996 Studio</title>
+<title id="title">MD.studio — Editor Markdown</title>
 <desc id="desc">Banner editorial azul nocturno, sol naranja, pluma grabada y diagramas astronómicos. Un espacio para escribir, organizar y crear.</desc>
 <defs>
   <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#9eb2ce" stroke-width=".5" opacity=".24"/></pattern>
@@ -39,9 +39,7 @@
 <rect x="0" y="0" width="1280" height="400" fill="url(#dots)" opacity=".2"/>
 <g font-family="Arial,Helvetica,sans-serif">
   <text x="68" y="62" font-size="13" font-weight="700" letter-spacing="3.4" fill="#bac4d4">RCK1996 / WRITING STUDIO</text>
-  <text x="68" y="186" font-size="112" font-weight="700" letter-spacing="-7" fill="#f1eddf" font-family="Georgia,serif">mark</text>
-  <text x="333" y="186" font-size="112" font-weight="700" letter-spacing="-7" fill="#f26b39" font-family="Georgia,serif">ED</text>
-  <text x="486" y="186" font-size="112" font-weight="700" letter-spacing="-7" fill="#f1eddf" font-family="Georgia,serif">down</text>
+  <text x="68" y="186" font-size="112" font-weight="700" letter-spacing="-7" fill="#f1eddf" font-family="Georgia,serif">MD<tspan fill="#f26b39">.</tspan>studio</text>
   <text x="68" y="238" font-size="22" letter-spacing=".2" fill="#bac4d4">Escribe. Organiza. Crea.</text>
   <path d="M68 260H706" stroke="#4d7396" stroke-width="1"/>
   <text x="68" y="302" font-size="13" letter-spacing="2.1" font-weight="700" fill="#f1eddf">LOCAL FIRST</text>

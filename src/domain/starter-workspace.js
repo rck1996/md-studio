@@ -13,8 +13,8 @@ const starterDocumentSources = [
     title: "README.md",
     folderId: "project-icaro",
     favorite: true,
-    tags: ["proyecto", "markEDdown"],
-    markdown: `# markEDdown
+    tags: ["proyecto", "MD.studio"],
+    markdown: `# MD.studio
 
 Un editor Markdown local, editorial y hecho para trabajar con ideas conectadas.
 

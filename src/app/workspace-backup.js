@@ -44,7 +44,7 @@ export const createWorkspaceBackup = async () => {
   zip.file("workspace.json", JSON.stringify({
     format: FORMAT, version: VERSION, createdAt: new Date().toISOString(), keys: snapshot(),
   }));
-  zip.file("LEEME.txt", "MarkEDdown Studio / respaldo local\nImporta desde Herramientas > Respaldo.\nContiene documentos, carpetas, versiones e imágenes.\nNo se envía a la nube.\n");
+  zip.file("LEEME.txt", "MD.studio / respaldo local\nImporta desde Más > Respaldo del espacio.\nContiene documentos, carpetas, versiones e imágenes.\nNo se envía a la nube.\n");
   return zip.generateAsync({ type: "blob", compression: "DEFLATE", compressionOptions: { level: 5 } });
 };
 
@@ -111,7 +111,7 @@ if (root) {
     '<strong>Restaurar desde un ZIP</strong><small>Reemplaza los datos locales después de confirmar</small></button></div>',
     '<input type="file" id="studio-backup-file" accept=".zip,application/zip" hidden />',
     '<div class="studio-backup-review" hidden><strong id="studio-backup-file-label"></strong>',
-    '<p>La restauración sustituirá todos los datos de MarkEDdown en este navegador. Descarga primero una copia del espacio actual.</p>',
+    '<p>La restauración sustituirá todos los datos de MD.studio en este navegador. Descarga primero una copia del espacio actual.</p>',
     '<div class="studio-backup-footer"><button type="button" id="studio-backup-cancel">Cancelar</button>',
     '<button type="button" id="studio-backup-confirm">Confirmar restauración</button></div></div>',
     '<p class="studio-backup-status" id="studio-backup-status" role="status" aria-live="polite"></p>',

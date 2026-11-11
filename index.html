@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>markEDdown — RCK1996 Studio</title>
-    <meta name="description" content="markEDdown: editor Markdown local, vista previa en vivo y un espacio editorial para tus ideas." />
+    <title>MD.studio — Editor Markdown</title>
+    <meta name="description" content="MD.studio: escribe Markdown, revisa la vista previa y guarda tus documentos en este navegador." />
     <meta name="theme-color" content="#020b1b" />
     <link rel="icon" type="image/svg+xml" href="/assets/logo/markeddown-studio-icon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
@@ -13,7 +13,7 @@
   </head>
   <body>
     <main class="app">
-      <section class="workspace">
+      <section class="workspace writing-workspace">
         <div class="personal-notice" id="personal-notice" role="note">
           <div class="personal-notice-copy">
             <strong>Herramienta personal</strong>
@@ -22,12 +22,10 @@
           <button class="panel-toggle" id="dismiss-notice" type="button" aria-label="Ocultar aviso" title="Ocultar aviso">Ocultar</button>
         </div>
         <header class="topbar">
-          <div class="brand" aria-label="MarkEDdown">
+          <div class="brand">
             <img class="brand-mark" src="/assets/logo/markeddown-studio-icon.svg" alt="" width="56" height="56" />
             <div class="brand-copy">
-              <p class="eyebrow">RCK1996 / Writing Studio</p>
-              <h1>mark<span>ED</span>down</h1>
-              <p class="brand-studio">Editor · escritura · exportación</p>
+              <h1>MD<span>.</span>studio</h1>
             </div>
           </div>
           <div class="brand-context">
@@ -39,11 +37,13 @@
           </button>
           <div class="document-actions">
             <div class="button-cluster">
+              <button class="writing-button" id="writing-library" type="button">Documentos</button>
+              <button class="writing-button writing-primary" id="writing-new" type="button" aria-label="Nuevo documento">Nuevo</button>
               <button class="inspector-toggle" id="inspector-toggle" type="button" aria-controls="inspector-panel" aria-expanded="false" title="Abrir inspector">Sin alertas</button>
               <button class="secondary-button header-icon-button" id="open-guide" type="button" aria-label="Atajos y ayuda" title="Atajos y ayuda">⌘</button>
               <button class="secondary-button header-icon-button" id="open-preferences" type="button" aria-label="Preferencias" title="Preferencias">⚙</button>
               <div class="studio-export-shell">
-                <button class="studio-export" id="studio-export" type="button" aria-expanded="false" aria-controls="studio-export-menu">Exportar ↗</button>
+                <button class="studio-export" id="studio-export" type="button" aria-expanded="false" aria-controls="studio-export-menu">Exportar</button>
                 <div class="studio-export-menu" id="studio-export-menu" role="group" aria-label="Opciones de exportación" hidden>
                   <span class="studio-export-caption">DESCARGAR</span>
                   <button type="button" data-studio-export-action="download-markdown">Archivo Markdown <span>.md</span></button>
@@ -57,35 +57,47 @@
                 </div>
               </div>
               <details class="actions-menu">
-                <summary class="secondary-button" aria-label="Mas acciones" title="Mas acciones">Mas</summary>
+                <summary class="secondary-button" aria-label="Más acciones">Más</summary>
                 <div class="actions-menu-content" id="studio-actions-content">
-                  <span>Espacio</span>
+                  <button type="button" data-writing-action="share-nexusos" data-writing-mobile-only>Enviar a NexusOS</button>
+                  <button type="button" data-writing-action="studio-search" data-writing-mobile-only>Buscar documentos y comandos</button>
+                  <button id="open-search" type="button">Buscar en el documento</button>
+                  <button id="open-templates" type="button">Crear desde plantilla</button>
+                  <button type="button" data-writing-action="side-tab-outline">Índice del documento</button>
+                  <button type="button" data-writing-action="nav-history">Historial de versiones</button>
+                  <button type="button" data-writing-action="studio-v2-backup">Respaldo del espacio</button>
+                  <button type="button" data-writing-action="open-preferences">Preferencias</button>
+                  <button type="button" data-studio-install data-writing-mobile-only hidden>Instalar MD.studio</button>
+                  <button type="button" data-writing-action="open-guide">Atajos y ayuda</button>
                   <button id="show-personal-notice" type="button">Privacidad y almacenamiento</button>
-                  <button class="quick-action" id="theme-toggle" type="button" aria-label="Cambiar tema" aria-pressed="false">Cambiar tema</button>
-                  <span>Aprender</span>
-                  <span>Editar</span>
-                  <button id="open-search" type="button">Buscar y reemplazar</button>
-                  <button id="open-templates" type="button">Plantillas</button>
-                  <span>Copiar</span>
-                  <button id="copy-markdown" type="button">Markdown</button>
-                  <button id="copy-html" type="button">HTML</button>
-                  <button id="copy-confluence" type="button">Confluence</button>
-                  <span>Exportar</span>
-                  <button id="download-markdown" type="button">Descargar .md</button>
-                  <button id="export-html" type="button">HTML</button>
-                  <button id="export-assets" type="button">Assets ZIP</button>
-                  <button id="toggle-presentation" type="button">Presentacion</button>
-                  <span>Documento</span>
-                  <button class="danger-action" id="clear-document" type="button">Limpiar contenido</button>
+                  <button id="download-markdown" type="button" data-writing-mobile-only>Descargar .md</button>
+                  <button id="export-html" type="button" data-writing-mobile-only>Descargar HTML</button>
+                  <button type="button" data-writing-action="print-pdf" data-writing-mobile-only>Imprimir / guardar PDF</button>
+                  <button id="copy-markdown" type="button" data-writing-mobile-only>Copiar Markdown</button>
+                  <button id="export-assets" type="button" data-writing-mobile-only>Descargar imágenes y recursos</button>
+                  <button class="quick-action" id="theme-toggle" type="button" aria-label="Cambiar tema" aria-pressed="false" hidden>Cambiar tema</button>
+                  <button id="copy-html" type="button" hidden>Copiar HTML</button>
+                  <button id="copy-confluence" type="button" hidden>Copiar para Confluence</button>
+                  <button id="toggle-presentation" type="button" hidden>Presentación</button>
+                  <button id="clear-document" type="button" hidden>Limpiar contenido</button>
                 </div>
               </details>
             </div>
           </div>
-          <div class="status-cluster" aria-label="Estado del documento">
-            <span id="document-stats">0 palabras</span>
+          <span id="document-stats" hidden>0 palabras</span>
+        </header>
+
+        <div class="writing-document" id="writing-document" aria-label="Documento actual">
+          <div class="writing-document-info">
+            <strong id="writing-title">Documento</strong>
             <span class="save-status" id="save-status" role="status" aria-live="polite">Guardado</span>
           </div>
-        </header>
+          <div class="writing-views" role="group" aria-label="Vista del documento">
+            <button class="writing-button" type="button" data-writing-view="editor" aria-pressed="true">Editar</button>
+            <button class="writing-button" type="button" data-writing-view="preview" aria-pressed="false">Vista previa</button>
+            <button class="writing-button" type="button" data-writing-view="split" aria-pressed="false">Dividido</button>
+          </div>
+        </div>
 
         <div class="layout">
           <div class="side-panel-shell">
@@ -276,7 +288,7 @@
               <span>Source / Markdown</span>
               <span class="studio-active-file" id="studio-active-file" title="Documento activo">Documento activo</span>
             </div>
-            <textarea id="markdown-input" spellcheck="false"># markEDdown
+            <textarea id="markdown-input" spellcheck="false"># MD.studio
 
 Un editor Markdown local, editorial y hecho para trabajar con ideas conectadas.
 
@@ -356,11 +368,11 @@ Un editor Markdown local, editorial y hecho para trabajar con ideas conectadas.
         <div class="command-palette-overlay" id="command-palette-overlay" hidden>
           <section class="command-palette" role="dialog" aria-modal="true" aria-labelledby="command-palette-title">
             <h2 id="command-palette-title" class="visually-hidden">Buscar y ejecutar</h2>
-            <label class="command-palette-search">
+            <div class="command-palette-search">
               <span aria-hidden="true">⌕</span>
               <input id="command-palette-input" type="search" autocomplete="off" placeholder="Buscar documentos o ejecutar un comando…" aria-label="Buscar documentos o ejecutar un comando" aria-controls="command-palette-results" />
-              <kbd>ESC</kbd>
-            </label>
+              <button class="panel-toggle" type="button" id="command-palette-close" aria-label="Cerrar búsqueda">Cerrar</button>
+            </div>
             <div class="command-palette-results" id="command-palette-results" role="listbox" aria-label="Resultados"></div>
             <footer><span><kbd>↑</kbd><kbd>↓</kbd> navegar</span><span><kbd>↵</kbd> abrir</span><span>Ctrl/Cmd + K</span></footer>
           </section>

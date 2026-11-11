@@ -1,5 +1,5 @@
-/* MarkEDdown offline app shell. User documents are NEVER written to the Cache API. */
-const CACHE_NAME = "markeddown-shell-v4-20261101-preview-ime";
+/* MD.studio offline app shell. User documents are NEVER written to the Cache API. */
+const CACHE_NAME = "markeddown-shell-v5-md-studio";
 const CORE = ["/", "/manifest.webmanifest", "/assets/logo/markeddown-studio-icon.svg", "/icons/markeddown-192.png", "/icons/markeddown-512.png"];
 const sameOrigin = (url) => new URL(url, self.location.origin).origin === self.location.origin;
 const assetUrlsFromHtml = (html) => {
@@ -34,7 +34,7 @@ self.addEventListener("install", (event) => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
     const page = await fetch("/", { cache: "reload" });
-    if (!page.ok) throw new Error("Unable to precache MarkEDdown shell");
+    if (!page.ok) throw new Error("Unable to precache MD.studio shell");
     const html = await page.clone().text();
     await cache.put("/", page);
     const entries = [...CORE.slice(1), ...assetUrlsFromHtml(html)];

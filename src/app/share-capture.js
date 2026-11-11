@@ -16,7 +16,7 @@ if (hasCapture) {
   overlay.innerHTML = [
     '<section class="studio-share-dialog" role="dialog" aria-modal="true" aria-labelledby="studio-share-title">',
     '<div class="studio-share-heading"><div><span class="studio-v2-kicker">CAPTURA RÁPIDA / ANDROID</span>',
-    '<h2 id="studio-share-title">Guardar en MarkEDdown</h2></div>',
+    '<h2 id="studio-share-title">Guardar en MD.studio</h2></div>',
     '<button type="button" id="studio-share-close" aria-label="Cancelar captura">×</button></div>',
     '<p>Recibiste contenido desde otra aplicación. Revísalo antes de guardarlo como documento local.</p>',
     '<label for="studio-share-name">Nombre del documento</label>',

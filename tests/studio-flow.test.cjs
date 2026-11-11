@@ -185,5 +185,6 @@ test("source keeps a single DOM id per control and dedicated status region", () 
   for (const id of ["studio-export-menu", "document-stats", "save-status", "studio-live-status", "inspector-toggle", "studio-active-file"]) {
     assert.ok(ids.includes(id), "Missing " + id);
   }
-  assert.match(html, /class="status-cluster" aria-label="Estado del documento"/);
+  assert.match(html, /id="save-status" role="status" aria-live="polite"/);
+  assert.match(html, /data-writing-action="share-nexusos" data-writing-mobile-only/);
 });

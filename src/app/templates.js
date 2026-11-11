@@ -3,7 +3,7 @@ export const documentTemplates = [
     id: "blank",
     label: "En blanco",
     title: "Nuevo documento",
-    markdown: "# Nuevo documento\n\nEmpieza a escribir aqui.",
+    markdown: "",
   },
   {
     id: "meeting",

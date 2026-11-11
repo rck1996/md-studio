@@ -1,15 +1,13 @@
 const normalize = (value) => String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase();
 
 const commands = [
-  ["side-tab-home", "Abrir Inicio", "Espacio", "Resumen y documentos recientes"],
   ["side-tab-documents", "Abrir Documentos", "Espacio", "Explora proyectos y carpetas"],
-  ["side-tab-graph", "Abrir grafo de notas", "Conectar", "Explora enlaces entre documentos"],
   ["nav-history", "Abrir historial", "Versiones", "Recupera una versión anterior"],
   ["nav-favorites", "Ver favoritos", "Documentos", "Filtra tus documentos favoritos"],
   ["nav-recent", "Ver recientes", "Documentos", "Filtra documentos recientes"],
   ["nav-trash", "Abrir papelera", "Documentos", "Restaura documentos eliminados"],
   ["print-pdf", "Imprimir o guardar PDF", "Exportar", "Prepara una versión editorial imprimible"],
-  ["new-document", "Crear documento", "Capturar", "Crea un documento en la carpeta actual"],
+  ["writing-new", "Crear documento", "Capturar", "Abre un documento en blanco"],
   ["open-templates", "Crear desde plantilla", "Capturar", "Elige una estructura para empezar"],
   ["new-folder", "Crear carpeta", "Organizar", "Añade una carpeta a la biblioteca"],
   ["open-search", "Buscar en el documento", "Escritura", "Abre buscar y reemplazar en el editor"],
@@ -34,6 +32,7 @@ export const filterPaletteItems = (items, query) => {
 };
 
 export const createCommandPalette = ({ overlay, input, results, getDocuments, getTemplates, onOpenDocument, onCreateTemplate }) => {
+  const closeButton = overlay.querySelector("#command-palette-close");
   let items = [];
   let activeIndex = 0;
   let returnFocus = null;
@@ -46,7 +45,7 @@ export const createCommandPalette = ({ overlay, input, results, getDocuments, ge
       hint,
       searchText: id.replaceAll("-", " "),
       action: () => {
-        if (id.startsWith("view-")) document.querySelector(`[data-view="${id.slice(5)}"]`)?.click();
+        if (id.startsWith("view-")) document.querySelector(`[data-writing-view="${id.slice(5)}"]`)?.click();
         else document.getElementById(id)?.click();
       },
     })),
@@ -131,7 +130,7 @@ export const createCommandPalette = ({ overlay, input, results, getDocuments, ge
     input.value = "";
     render();
     overlay.hidden = false;
-    requestAnimationFrame(() => input.focus());
+    input.focus({ preventScroll: true });
   };
 
   const close = () => {
@@ -143,6 +142,7 @@ export const createCommandPalette = ({ overlay, input, results, getDocuments, ge
   };
 
   input.addEventListener("input", render);
+  closeButton.addEventListener("click", close);
   input.addEventListener("keydown", (event) => {
     if (event.key === "ArrowDown") {
       event.preventDefault();
@@ -153,19 +153,20 @@ export const createCommandPalette = ({ overlay, input, results, getDocuments, ge
     } else if (event.key === "Enter") {
       event.preventDefault();
       results.querySelectorAll('[role="option"]')[activeIndex]?.click();
-    } else if (event.key === "Escape") {
-      event.preventDefault();
-      event.stopPropagation();
-      close();
     }
   });
   overlay.addEventListener("click", (event) => {
     if (event.target === overlay) close();
   });
   overlay.addEventListener("keydown", (event) => {
-    if (event.key === "Tab") {
+    if (event.key === "Escape") {
       event.preventDefault();
-      input.focus();
+      event.stopPropagation();
+      close();
+    } else if (event.key === "Tab") {
+      event.preventDefault();
+      const next = document.activeElement === closeButton ? input : closeButton;
+      next.focus({ preventScroll: true });
     }
   });
   document.addEventListener("markeddown:open-command-palette", open);

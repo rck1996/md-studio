@@ -43,6 +43,7 @@ export const bindWorkspaceEvents = ({
   setMarkdown,
   setTemplatePickerVisible,
   getActiveFolderId,
+  onCreateDocument,
   onCreateFolder,
   renderDocuments,
   setExplorerFilter,
@@ -72,9 +73,7 @@ export const bindWorkspaceEvents = ({
     actionsMenu.open = false;
   });
 
-  newDocumentButton.addEventListener("click", () => {
-    setTemplatePickerVisible(true, getActiveFolderId());
-  });
+  newDocumentButton.addEventListener("click", onCreateDocument);
 
   newFolderButton.addEventListener("click", onCreateFolder);
   documentSearch.addEventListener("input", renderDocuments);

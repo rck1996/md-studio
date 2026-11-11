@@ -1,6 +1,6 @@
 {
-  "name": "MarkEDdown Studio · Pocket",
-  "short_name": "MarkEDdown",
+  "name": "MD.studio",
+  "short_name": "MD.studio",
   "id": "/",
   "start_url": "/",
   "scope": "/",
@@ -11,7 +11,7 @@
   ],
   "background_color": "#F1E4CF",
   "theme_color": "#071A2C",
-  "description": "Escribe, organiza y conecta documentos Markdown. Tus archivos permanecen en tu dispositivo.",
+  "description": "Escribe y revisa documentos Markdown. Tus notas se guardan en este navegador.",
   "lang": "es",
   "icons": [
     {

@@ -86,14 +86,14 @@ if (root) {
   keyboardBar.setAttribute("role", "toolbar");
   keyboardBar.setAttribute("aria-label", "Formato rápido de Markdown");
   keyboardBar.innerHTML =
+    '<button type="button" data-pocket-format="h2" aria-label="Encabezado" title="Encabezado">#</button>' +
     '<button type="button" data-pocket-format="bold" aria-label="Negrita"><strong>B</strong></button>' +
     '<button type="button" data-pocket-format="italic" aria-label="Cursiva"><em>I</em></button>' +
+    '<button type="button" data-pocket-format="ul" aria-label="Lista con viñetas" title="Lista con viñetas">☷</button>' +
     '<button type="button" data-pocket-format="link" aria-label="Enlace">↗</button>' +
     '<button type="button" data-pocket-image="gallery" aria-label="Elegir imagen del dispositivo" title="Elegir imagen">▧</button>' +
     '<button type="button" data-pocket-image="clipboard" aria-label="Pegar imagen del portapapeles" title="Pegar imagen">⧉</button>' +
-    '<button type="button" data-pocket-format="table" aria-label="Tabla">▦</button>' +
-    '<button type="button" data-pocket-format="codeBlock" aria-label="Bloque de código">⌘</button>' +
-    '<button type="button" id="studio-v2-insert" class="studio-v2-toolbar-plus" aria-label="Más bloques">＋</button>';
+    '<button type="button" id="studio-v2-insert" class="studio-v2-toolbar-plus" aria-label="Más formatos" title="Más formatos">＋</button>';
   root.append(keyboardBar);
 
   // Android keyboards do not always expose images to the DOM paste event.
@@ -187,7 +187,8 @@ if (root) {
     toolsBack.focus();
   };
 
-  let currentSpace = mobileQuery.matches ? "home" : "editor";
+  let currentSpace = "editor";
+  let desktopEditView = "editor";
   let composer = null;
   let returnFocus = null;
   const labels = {
@@ -204,11 +205,23 @@ if (root) {
   const hint = byId("studio-v2-location-hint");
   const pocketTitle = byId("studio-v2-pocket-title");
   const pocketPreview = byId("studio-v2-pocket-preview");
+  const writingLibrary = byId("writing-library");
+  const writingTitle = byId("writing-title");
+  const writingDocument = byId("writing-document");
+  const writingViews = root.querySelectorAll("[data-writing-view]");
 
   const refresh = () => {
     root.dataset.studioSpace = currentSpace;
     root.dataset.studioPocket = String(mobileQuery.matches);
     const label = labels[currentSpace] || labels.editor;
+    const inDocument = ["editor", "preview"].includes(currentSpace);
+    writingDocument.hidden = !inDocument;
+    const libraryOpen = !inDocument;
+    writingLibrary.textContent = libraryOpen ? "Volver al editor" : "Documentos";
+    writingTitle.textContent = byId("studio-active-file")?.textContent?.trim() || "Documento";
+    writingViews.forEach((button) => {
+      button.setAttribute("aria-pressed", String(button.dataset.writingView === root.dataset.view));
+    });
     if (title) title.textContent = label[0];
     if (hint) hint.textContent = label[1];
     if (pocketTitle) pocketTitle.textContent = ["editor", "preview", "compose"].includes(currentSpace)
@@ -246,7 +259,7 @@ if (root) {
         // The original graph panel is a persistent overlay. Exit it before
         // opening the editor, otherwise its CSS keeps the editor obscured.
         if (root.dataset.sidePanel === "graph") trigger("side-tab-documents");
-        selectView(mobileQuery.matches ? "editor" : "split");
+        selectView(mobileQuery.matches ? "editor" : desktopEditView);
       }
       if (space === "preview") {
         if (root.dataset.sidePanel === "graph") trigger("side-tab-documents");
@@ -278,6 +291,25 @@ if (root) {
   nav.addEventListener("click", (event) => {
     const button = event.target.closest("[data-studio-go]");
     if (button) setSpace(button.dataset.studioGo);
+  });
+  writingLibrary.addEventListener("click", () => {
+    setSpace(["editor", "preview"].includes(currentSpace) ? "library" : "editor");
+  });
+  writingViews.forEach((button) => button.addEventListener("click", () => {
+    if (button.dataset.writingView === "preview") root.querySelector(".cm-content")?.blur();
+    selectView(button.dataset.writingView);
+  }));
+  const actionsMenu = root.querySelector(".actions-menu");
+  const actionsSummary = actionsMenu.querySelector("summary");
+  actionsMenu.addEventListener("click", (event) => {
+    const button = event.target.closest(".actions-menu-content button");
+    if (!button) return;
+    const restoreFocus = document.activeElement === button;
+    actionsMenu.open = false;
+    if (restoreFocus) actionsSummary.focus({ preventScroll: true });
+    const action = button.dataset.writingAction;
+    if (action === "share-nexusos") document.dispatchEvent(new Event("markeddown:send-to-nexus"));
+    else if (action) trigger(action);
   });
   byId("studio-v2-editor")?.addEventListener("click", () => setSpace("editor"));
   byId("studio-v2-compose")?.addEventListener("click", () => setSpace("compose"));
@@ -380,7 +412,9 @@ if (root) {
   });
   window.addEventListener("markeddown:document-opened", () => setSpace("editor"));
   byId("insert-panel")?.addEventListener("click", (event) => {
-    if (event.target.closest("[data-format]")) setSpace("editor");
+    if (!event.target.closest("[data-format]")) return;
+    setSpace("editor");
+    root.querySelector(".cm-content")?.focus();
   });
   byId("home-show-documents")?.addEventListener("click", () => setSpace("library"));
   byId("home-new-project")?.addEventListener("click", () => setSpace("library"));
@@ -391,11 +425,12 @@ if (root) {
   root.querySelectorAll(".workspace-controls [data-view]").forEach((button) =>
     button.addEventListener("click", () => {
       currentSpace = button.dataset.view === "preview" ? "preview" : "editor";
+      if (currentSpace === "editor" && !mobileQuery.matches) desktopEditView = root.dataset.view;
       refresh();
     })
   );
   byId("new-folder")?.addEventListener("click", () => setSpace("library"));
-  byId("open-search")?.addEventListener("click", () => setSpace("editor"));
+  byId("open-search")?.addEventListener("click", () => setSpace("editor"), { capture: true });
   byId("focus-mode")?.addEventListener("click", () => {
     if (root.dataset.focus === "true" && currentSpace !== "editor") setSpace("editor");
   });
@@ -463,8 +498,7 @@ if (root) {
   window.visualViewport?.addEventListener("resize", updateKeyboard);
   window.visualViewport?.addEventListener("scroll", updateKeyboard);
   mobileQuery.addEventListener("change", () => {
-    if (mobileQuery.matches) setSpace("home");
-    else setSpace("editor");
+    if (currentSpace === "editor" || currentSpace === "preview") setSpace(currentSpace);
     updateKeyboard();
   });
 

@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="docs/markeddown-banner.svg" alt="markEDdown — RCK1996 Studio. Escribe. Organiza. Crea." width="100%">
+<img src="docs/markeddown-banner.svg" alt="MD.studio — Editor Markdown" width="100%">
 
-# markEDdown
+# MD.studio
 
 **Un espacio para escribir, organizar y crear.**
 
@@ -25,37 +25,28 @@ Pensado para escribir sin distracciones ni cuentas obligatorias.
 <a id="tour"></a>
 ## ✦ Conoce el espacio de trabajo
 
-En escritorio, markEDdown presenta **Explorador · Editor · Vista previa**. En el móvil, permite alternar entre la escritura y la lectura sin comprimir el documento.
+MD.studio abre el **Editor** directamente. En escritorio puedes activar **Dividido** para ver el Markdown junto a la vista previa. En móvil, **Editar** y **Vista previa** ocupan la pantalla por separado.
 
 | Quiero… | Abro… | Qué hace |
 | :--- | :--- | :--- |
 | ✍️ Escribir | **Editor** | CodeMirror 6, Markdown, búsqueda/reemplazo y comandos con `/` |
 | 👁️ Revisar el resultado | **Vista previa** | Renderizado vivo y lectura tipográfica |
-| 🗂️ Ordenar ideas | **Explorador** | Documentos, carpetas, favoritos, recientes, archivo y papelera |
-| 🧩 Insertar elementos | **Insertar** | Listas, encabezados, imágenes, tablas, citas y bloques de código |
-| 🧭 Recorrer el texto | **Índice** | Encabezados, plegado y reordenación de secciones |
-| 🕘 Recuperar una versión | **Historial** | Instantáneas locales y restauración |
-| 🖼️ Gestionar recursos | **Assets / Inspector** | Imágenes, notas por bloque y avisos de validación |
-| 📤 Exportar | **Exportar** | `.md`, HTML, ZIP, copiar Markdown/HTML y compartir una nota con NEXUS OS en Android |
+| 🗂️ Ordenar ideas | **Documentos** | Documentos, carpetas, favoritos, recientes, archivo y papelera |
+| 🧩 Insertar elementos | **Barra de formato** | Encabezados, listas, enlaces, imágenes y más formatos |
+| 🧭 Recorrer el texto | **Más → Índice del documento** | Navegación por encabezados |
+| 🕘 Recuperar una versión | **Más → Historial de versiones** | Instantáneas locales y restauración |
+| 📤 Exportar | **Exportar** en PC, **Más** en móvil | Descargar Markdown, HTML o imprimir como PDF |
+| 📲 Enviar a NexusOS | **Más → Enviar a NexusOS** en Android | Comparte la nota activa o descarga un `.md` si el navegador no puede compartir |
 
 <details>
 <summary><strong>🖥️ Cómo se organiza la interfaz</strong></summary>
 
 ```text
-┌────────────────── markEDdown / RCK1996 STUDIO ──────────────────┐
-│  Marca                 Editor / Dividido / Vista previa   Exportar │
-├───────────────┬───────────────────────┬──────────────────────────┤
-│ EXPLORADOR    │ SOURCE / MARKDOWN     │ VISTA PREVIA / EN VIVO   │
-│               │                       │                          │
-│ 📂 Proyectos  │ # Documento           │ Documento                │
-│  └ README.md  │                       │                          │
-│ 📂 Notas      │ ## Ideas              │ Ideas                    │
-│               │ - Escribir            │ • Escribir               │
-│ Favoritos     │ - Organizar           │ • Organizar              │
-│ Recientes     │                       │                          │
-├───────────────┴───────────────────────┴──────────────────────────┤
-│ MARKDOWN / UTF-8             Guardado local       RCK1996 STUDIO │
-└──────────────────────────────────────────────────────────────────┘
+MD.studio                   Documentos  Nuevo  Exportar  Más
+Título · Guardado           Editar  Vista previa  Dividido
+                       Barra de formato
+                              │
+                       Editor Markdown
 ```
 
 En pantallas de **900 px o menos**, el modo dividido se sustituye por vistas individuales. Este esquema explica la estructura; **no es una captura real ni una prueba visual**.
@@ -71,7 +62,7 @@ En pantallas de **900 px o menos**, el modo dividido se sustituye por vistas ind
 ## ✧ Identidad: escritura × astronomía
 
 <div align="center">
-  <img src="public/assets/logo/markeddown-studio-icon.svg" alt="Logo de markEDdown: pluma grabada y sol en marco astronómico" width="124">
+  <img src="public/assets/logo/markeddown-studio-icon.svg" alt="Icono de MD.studio: pluma grabada y sol" width="124">
 </div>
 
 Una pluma representa la escritura; el sol y las coordenadas representan exploración y conexiones. El diseño pertenece a la familia **RCK1996 Studio**, con grabado editorial y detalles técnicos **fuera de la superficie de escritura**.
@@ -82,8 +73,7 @@ Una pluma representa la escritura; el sol y las coordenadas representan explorac
 | Claro | Marfil `#E9E4DA` | Papel `#F5F1E7` | Naranja `#E34B12` |
 | Documento | — | Papel cálido `#F1E4CF`, con textura de fibras en ambos temas | Tipografía editorial |
 
-El nombre de marca se escribe **markEDdown**, con **ED** destacado y **sin textos japoneses**.  
-[Guía de identidad →](docs/EDITORIAL-IDENTITY.md) · [Icono SVG →](public/assets/logo/markeddown-studio-icon.svg) · [Logotipo vectorial →](public/assets/logo/markeddown-studio-wordmark.svg)
+El nombre de marca se escribe **MD.studio**. [Icono SVG →](public/assets/logo/markeddown-studio-icon.svg)
 
 La ilustración editorial se integra con el papel mediante el mismo tono de base y una mezcla de luminancia; el grano y las fibras se sirven desde `public/assets/paper-grain.svg`. La portada es opcional por documento: solo `01_Sol.md` viene marcada con `cover: "editorial"` en el espacio de muestra.
 
@@ -94,8 +84,8 @@ La ilustración editorial se integra con el papel mediante el mismo tono de base
 <a id="start"></a>
 ## 🚀 Empieza en cinco minutos
 
-1. Abre [markEDdown](https://markeddown.rck1996.dev/).
-2. En **Explorador**, crea un documento o abre uno existente; también puedes comenzar con una plantilla desde **Más → Plantillas**.
+1. Abre [MD.studio](https://markeddown.rck1996.dev/).
+2. Pulsa **Nuevo** para empezar en blanco o **Documentos** para abrir una nota. Las plantillas están en **Más → Crear desde plantilla**.
 3. Escribe Markdown y observa la **Vista previa**.
 4. Pulsa `/` para insertar bloques desde la paleta de comandos o usa **Insertar**.
 5. Guarda tu trabajo fuera del navegador con **Exportar → Archivo Markdown (.md)** (en la rama editorial) o con **Más → Descargar .md** (versión publicada).
@@ -175,7 +165,7 @@ El flujo se verificó en una Tab S8 con Android 16 usando una copia QA aislada d
 
 ## 🔒 Privacidad y datos
 
-markEDdown es **local-first**, no una bóveda cifrada. Documentos, carpetas, preferencias, referencias e imágenes se guardan en `localStorage` del navegador.
+MD.studio guarda documentos, carpetas, preferencias, referencias e imágenes en `localStorage` del navegador. Si cambias de dominio, exporta un respaldo desde la dirección anterior e impórtalo en la nueva.
 
 - No hay un servidor propio donde subir automáticamente los documentos.
 - Cambiar de navegador o dispositivo **no** transporta los datos.
@@ -327,8 +317,8 @@ El repositorio es público, pero **no tiene un archivo `LICENSE` que otorgue per
 
 **Menos ruido. Más espacio para tus ideas.**
 
-**markEDdown · RCK1996 Studio**
+**MD.studio · RCK1996 Studio**
 
-[↑ Volver arriba](#markeddown) · [Abrir el editor ↗](https://markeddown.rck1996.dev/)
+[↑ Volver arriba](#mdstudio) · [Abrir el editor ↗](https://markeddown.rck1996.dev/)
 
 </div>

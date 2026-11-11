@@ -428,6 +428,7 @@ const renderTemplatePicker = () => {
     button.append(title, hint, previewText);
     button.addEventListener("click", () => {
       templateOverlay.hidden = true;
+      workspace.dataset.templateVisible = "false";
       spawnDocumentFromTemplate(templatePickerTargetFolderId, template.id);
       requestAnimationFrame(() => editor?.focus());
     });
@@ -438,6 +439,14 @@ const renderTemplatePicker = () => {
 
 const setTemplatePickerVisible = (visible, folderId = getActiveFolderId()) => {
   templatePickerTargetFolderId = folderId;
+  const isPocket = window.matchMedia("(max-width: 900px)").matches;
+  if (visible && isPocket) {
+    // Android can keep the software keyboard open when a toolbar button opens
+    // an overlay. Blur CodeMirror before showing the picker so its cards remain
+    // reachable on the shortened visual viewport.
+    editor?.contentDOM?.blur();
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+  }
   templateOverlay.hidden = !visible;
   workspace.dataset.templateVisible = String(visible);
   if (visible) {
@@ -448,13 +457,19 @@ const setTemplatePickerVisible = (visible, folderId = getActiveFolderId()) => {
     setPreferencesVisible(false);
     setAssetPreviewVisible(null);
     closeSlashMenu();
+    if (isPocket) requestAnimationFrame(() => closeTemplatesButton?.focus({ preventScroll: true }));
     return;
   }
-  requestAnimationFrame(() => editor?.focus());
+  if (!isPocket) requestAnimationFrame(() => editor?.focus());
 };
 
 const openDocumentInEditor = (...args) => documentWorkflow.openDocumentInEditor(...args);
 const spawnDocumentFromTemplate = (...args) => documentWorkflow.spawnDocumentFromTemplate(...args);
+const createEmptyDocument = () => {
+  const doc = spawnDocumentFromTemplate(getActiveFolderId(), "blank");
+  if (doc) editor.focus();
+};
+document.querySelector("#writing-new").addEventListener("click", createEmptyDocument);
 const ensureActiveDocument = (...args) => documentWorkflow.ensureActiveDocument(...args);
 const permanentlyDeleteDocument = (...args) => documentWorkflow.permanentlyDeleteDocument(...args);
 const deleteDocument = (...args) => documentWorkflow.deleteDocument(...args);
@@ -1734,6 +1749,7 @@ bindWorkspaceEvents({
   setMarkdown,
   setTemplatePickerVisible,
   getActiveFolderId,
+  onCreateDocument: createEmptyDocument,
   onCreateFolder: handleCreateFolder,
   renderDocuments,
   setExplorerFilter,

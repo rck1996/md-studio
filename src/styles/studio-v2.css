@@ -367,19 +367,22 @@
     width: 40px; min-width: 40px; height: 40px; min-height: 40px;
     border: 1px solid #47607a; background: #132a42; border-radius: 7px;
   }
-  .workspace.studio-v2 .topbar .actions-menu-content { z-index: 100; bottom: auto; top: calc(100% + 8px); left: auto; right: 8px; width: min(280px,85vw); }
+  .workspace.studio-v2 .topbar .actions-menu-content {
+    position: fixed; z-index: 120; inset: auto 10px calc(var(--mobile-nav-height) + var(--mobile-nav-bottom) + 8px);
+    width: auto; max-height: min(70dvh,560px); overscroll-behavior: contain;
+  }
   .workspace.studio-v2 .studio-v2-context { display: none; }
   .workspace.studio-v2 .studio-v2-pocket-header {
-    display: flex; flex: 0 0 69px; align-items: center; justify-content: space-between;
-    min-width: 0; padding: 12px 18px 10px; gap: 12px;
+    display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between;
+    min-width: 0; min-height: 69px; padding: 12px 18px 10px; gap: 12px;
     border-bottom: 1px solid var(--border); background: var(--surface-elevated);
   }
-  .studio-v2-pocket-header > div:first-child { display: grid; gap: 4px; min-width: 0; }
+  .workspace.studio-v2 .studio-v2-pocket-header > div:first-child { display: grid; flex: 1 1 auto; gap: 4px; min-width: 0; }
   .studio-v2-pocket-header strong {
-    display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    font: 700 27px/1 var(--type-display); color: var(--text-strong);
+    display: block; overflow: visible; text-overflow: clip; white-space: normal; overflow-wrap: anywhere;
+    font: 700 27px/1.08 var(--type-display); color: var(--text-strong);
   }
-  .studio-v2-pocket-actions { display: flex; gap: 6px; }
+  .studio-v2-pocket-actions { display: flex; flex: 0 0 auto; gap: 6px; }
   .studio-v2-pocket-actions button {
     min-height: 37px; border: 1px solid var(--border); border-radius: 7px;
     padding: 0 12px; color: var(--text-strong); background: var(--surface-soft);
