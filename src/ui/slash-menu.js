@@ -1,10 +1,10 @@
 export const createSlashMenuController = ({
   menu,
   list,
-  preview,
+  example,
   getEditor,
   getCommands,
-  renderPreviewHtml,
+  renderExampleHtml,
   onActionCommand,
   onInsertCommand,
 }) => {
@@ -37,36 +37,55 @@ export const createSlashMenuController = ({
       : commands;
   };
 
-  const renderPreview = () => {
-    const activeCommand = state.items[state.selected];
-    preview.replaceChildren();
-    const title = document.createElement("strong");
-    title.textContent = activeCommand ? activeCommand.title : "Sin resultados";
-    preview.appendChild(title);
+  const renderFooter = () => {
+    const footer = list.querySelector(".slash-footer");
+    if (!footer) return;
+    const selected = state.items[state.selected];
+    const enterLabel = !selected
+      ? "Sin comandos disponibles"
+      : selected.mode === "action"
+        ? selected.category === "Plantillas" ? "Enter para crear documento" : "Enter para ejecutar acción"
+        : "Enter para insertar";
+    footer.replaceChildren();
+    [enterLabel, "↑ ↓ para navegar", "Esc para cerrar"].forEach((label) => {
+      const item = document.createElement("span");
+      item.textContent = label;
+      footer.appendChild(item);
+    });
+  };
 
-    if (!activeCommand) {
-      const body = document.createElement("p");
-      body.textContent = "Prueba con otro termino.";
-      preview.appendChild(body);
-      return;
-    }
+  const renderExample = () => {
+    const command = state.items[state.selected];
+    example.replaceChildren();
 
-    const meta = document.createElement("div");
-    meta.className = "slash-preview-meta";
-    meta.innerHTML = `<span>${activeCommand.category}</span><kbd>${activeCommand.shortcut}</kbd>`;
+    const header = document.createElement("div");
+    header.className = "slash-example-header";
+    const label = document.createElement("strong");
+    label.className = "slash-example-label";
+    label.textContent = command ? "Vista previa" : "Sin coincidencias";
+    const effect = document.createElement("span");
+    effect.className = "slash-example-effect";
+    effect.textContent = !command
+      ? "Prueba con otro término."
+      : command.mode === "insert"
+        ? "Se insertará en el documento"
+        : command.category === "Plantillas"
+          ? "Creará un documento nuevo"
+          : "Al elegir, ejecutará esta acción";
+    header.append(label, effect);
 
     const rendered = document.createElement("div");
-    rendered.className = "slash-preview-rendered";
-    renderPreviewHtml(rendered, activeCommand.preview);
+    rendered.className = "slash-example-rendered";
+    if (command) renderExampleHtml(rendered, command.preview);
 
-    const snippetLabel = document.createElement("span");
-    snippetLabel.className = "slash-preview-label";
-    snippetLabel.textContent = "Markdown";
-
+    const source = document.createElement("details");
+    source.className = "slash-example-source";
+    const sourceLabel = document.createElement("summary");
+    sourceLabel.textContent = "Ver Markdown";
     const snippet = document.createElement("pre");
-    snippet.className = "slash-preview-code";
-    snippet.textContent = activeCommand.preview;
-    preview.append(meta, rendered, snippetLabel, snippet);
+    snippet.textContent = command?.preview || "";
+    source.append(sourceLabel, snippet);
+    example.append(header, rendered, source);
   };
 
   const updateSelection = (index) => {
@@ -77,7 +96,8 @@ export const createSlashMenuController = ({
         item.scrollIntoView({ block: "nearest" });
       }
     });
-    renderPreview();
+    renderFooter();
+    renderExample();
   };
 
   const executeCommand = (selectedCommand) => {
@@ -102,16 +122,18 @@ export const createSlashMenuController = ({
       const header = document.createElement("span");
       header.className = "slash-item-header";
       const title = document.createElement("span");
+      title.className = "slash-item-title";
       title.textContent = command.title;
       const category = document.createElement("em");
+      category.className = "slash-item-category";
       category.textContent = command.category;
-      header.append(title, category);
-      const hint = document.createElement("small");
-      hint.textContent = command.hint;
       const shortcut = document.createElement("kbd");
       shortcut.textContent = command.shortcut;
       shortcut.className = "slash-item-shortcut";
-      button.append(header, hint, shortcut);
+      header.append(title, category, shortcut);
+      const hint = document.createElement("small");
+      hint.textContent = command.hint;
+      button.append(header, hint);
       button.addEventListener("mouseenter", () => updateSelection(index));
       button.addEventListener("pointerdown", (event) => {
         if (event.pointerType === "mouse") {
@@ -129,10 +151,9 @@ export const createSlashMenuController = ({
 
     const footer = document.createElement("div");
     footer.className = "slash-footer";
-    footer.innerHTML = "<span>Enter para insertar</span><span>↑ ↓ para navegar</span><span>Esc para cerrar</span>";
     list.appendChild(footer);
-
-    renderPreview();
+    renderFooter();
+    renderExample();
   };
 
   const position = () => {
@@ -141,8 +162,11 @@ export const createSlashMenuController = ({
     const coords = editor.coordsAtPos(cursor);
     const panel = document.querySelector(".editor-panel").getBoundingClientRect();
     if (!coords) return;
-    menu.style.left = `${Math.max(14, Math.min(coords.left - panel.left, panel.width - 454))}px`;
-    menu.style.top = `${Math.max(52, Math.min(coords.bottom - panel.top + 8, panel.height - 310))}px`;
+    menu.style.maxHeight = `${Math.min(440, Math.max(220, panel.height - 64))}px`;
+    const menuHeight = menu.getBoundingClientRect().height;
+    const maxTop = Math.max(52, panel.height - menuHeight - 12);
+    menu.style.left = `${Math.max(14, Math.min(coords.left - panel.left, panel.width - 420))}px`;
+    menu.style.top = `${Math.max(52, Math.min(coords.bottom - panel.top + 8, maxTop))}px`;
   };
 
   const open = (match) => {
@@ -155,8 +179,8 @@ export const createSlashMenuController = ({
       items: getCommandMatches(match.query),
     };
     menu.hidden = false;
-    position();
     renderMenu();
+    position();
   };
 
   const close = () => {

@@ -167,9 +167,9 @@ import {
   saveStatus,
   showInsertButton,
   sidePanelButtons,
+  slashExample,
   slashList,
   slashMenu,
-  slashPreview,
   stats,
   templateGrid,
   templateOverlay,
@@ -1054,6 +1054,8 @@ const createActionSlashCommand = ({ id, title, hint, preview, keywords, category
   action,
 });
 
+const getTemplateMarkdown = (templateId) => documentTemplates.find((template) => template.id === templateId)?.markdown || "";
+
 const slashCommands = [
   ...[
     ["h1", "Titulo 1", "Encabezado principal", "# Titulo principal", "titulo heading h1 principal", "Estructura", "#"],
@@ -1118,7 +1120,7 @@ const slashCommands = [
     id: "new-template-meeting",
     title: "Nueva plantilla de reunion",
     hint: "Crea un documento nuevo de notas de reunion",
-    preview: "# Notas de reunion\n\n## Contexto\n\n## Puntos clave\n\n## Tareas",
+    preview: getTemplateMarkdown("meeting"),
     keywords: "plantilla reunion notas documento nuevo",
     category: "Plantillas",
     shortcut: "Tpl",
@@ -1128,7 +1130,7 @@ const slashCommands = [
     id: "new-template-brief",
     title: "Nuevo brief",
     hint: "Crea un documento nuevo para definir alcance y objetivos",
-    preview: "# Brief de proyecto\n\n## Problema\n\n## Objetivo\n\n## Alcance",
+    preview: getTemplateMarkdown("brief"),
     keywords: "plantilla brief alcance objetivos documento nuevo",
     category: "Plantillas",
     shortcut: "Tpl",
@@ -1138,7 +1140,7 @@ const slashCommands = [
     id: "new-template-spec",
     title: "Nueva especificacion",
     hint: "Crea una base tecnica con requisitos y casos borde",
-    preview: "# Especificacion tecnica\n\n## Resumen\n\n## Requisitos\n\n## Casos borde",
+    preview: getTemplateMarkdown("spec"),
     keywords: "plantilla especificacion tecnica requisitos documento nuevo",
     category: "Plantillas",
     shortcut: "Tpl",
@@ -1148,7 +1150,7 @@ const slashCommands = [
     id: "new-template-prd",
     title: "Nuevo PRD",
     hint: "Crea un documento de requerimientos de producto",
-    preview: "# Product requirements\n\n## Contexto\n\n## Usuarios objetivo\n\n## Objetivo del producto",
+    preview: getTemplateMarkdown("prd"),
     keywords: "plantilla prd producto requirements alcance kpi",
     category: "Plantillas",
     shortcut: "Tpl",
@@ -1158,7 +1160,7 @@ const slashCommands = [
     id: "new-template-incident",
     title: "Nuevo incidente",
     hint: "Crea un reporte con timeline, impacto y acciones",
-    preview: "# Reporte de incidente\n\n## Impacto\n\n## Timeline\n\n## Causa raiz",
+    preview: getTemplateMarkdown("incident"),
     keywords: "plantilla incidente postmortem reporte causa raiz timeline",
     category: "Plantillas",
     shortcut: "Tpl",
@@ -1168,7 +1170,7 @@ const slashCommands = [
     id: "new-template-runbook",
     title: "Nuevo runbook",
     hint: "Crea un procedimiento operativo repetible",
-    preview: "# Runbook operativo\n\n## Checklist previa\n\n## Pasos\n\n## Rollback",
+    preview: getTemplateMarkdown("runbook"),
     keywords: "plantilla runbook operativo procedimiento rollback",
     category: "Plantillas",
     shortcut: "Tpl",
@@ -1178,7 +1180,7 @@ const slashCommands = [
     id: "new-template-retro",
     title: "Nueva retro",
     hint: "Crea una retrospectiva para equipo o proyecto",
-    preview: "# Retrospectiva\n\n## Que salio bien\n\n## Que salio mal\n\n## Acciones",
+    preview: getTemplateMarkdown("retro"),
     keywords: "plantilla retro retrospectiva sprint equipo",
     category: "Plantillas",
     shortcut: "Tpl",
@@ -1188,7 +1190,7 @@ const slashCommands = [
     id: "new-template-proposal",
     title: "Nueva propuesta",
     hint: "Crea una propuesta comercial o interna",
-    preview: "# Propuesta\n\n## Resumen ejecutivo\n\n## Propuesta\n\n## Proximos pasos",
+    preview: getTemplateMarkdown("proposal"),
     keywords: "plantilla propuesta comercial interna alcance inversion",
     category: "Plantillas",
     shortcut: "Tpl",
@@ -1382,11 +1384,12 @@ const createEditor = (markdownText) => {
   slashMenuController = createSlashMenuController({
     menu: slashMenu,
     list: slashList,
-    preview: slashPreview,
+    example: slashExample,
     getEditor: () => editor,
     getCommands: () => slashCommands,
-    renderPreviewHtml: (element, markdown) => {
-      setSafeHtml(element, marked.parse(preprocessMarkdown(markdown, readMarkdownToken)));
+    renderExampleHtml: (element, markdown) => {
+      const imagePlaceholders = markdown.replace(/!\[([^\]]*)\]\([^)]+\)/g, "**Imagen:** $1");
+      setSafeHtml(element, marked.parse(preprocessMarkdown(imagePlaceholders, readMarkdownToken)));
     },
     onActionCommand: ({ command, start, end }) => {
       editor.dispatch({
@@ -1397,9 +1400,13 @@ const createEditor = (markdownText) => {
       editor.focus();
     },
     onInsertCommand: ({ command, start, end }) => {
+      const labelStart = command.id === "link" ? command.preview.indexOf("[") + 1 : -1;
+      const labelEnd = command.id === "link" ? command.preview.indexOf("](", labelStart) : -1;
       editor.dispatch({
         changes: { from: start, to: end, insert: command.preview },
-        selection: { anchor: start + command.preview.length },
+        selection: command.id === "link"
+          ? { anchor: start + labelStart, head: start + labelEnd }
+          : { anchor: start + command.preview.length },
       });
       editor.focus();
     },

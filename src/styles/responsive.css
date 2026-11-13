@@ -427,8 +427,6 @@
     width: calc(100% - 28px);
   }
 
-  .slash-preview { display: none; }
-
   .actions-menu-content {
     position: fixed;
     left: 8px;

@@ -7,14 +7,18 @@ import { EditorState, Prec } from "@codemirror/state";
 import { Decoration, ViewPlugin, WidgetType, keymap, placeholder } from "@codemirror/view";
 
 class InlineTokenWidget extends WidgetType {
-  constructor(kind, label) {
+  constructor(kind, label, editRange = null) {
     super();
     this.kind = kind;
     this.label = label;
+    this.editRange = editRange;
   }
 
   eq(other) {
-    return other.kind === this.kind && other.label === this.label;
+    return other.kind === this.kind &&
+      other.label === this.label &&
+      other.editRange?.from === this.editRange?.from &&
+      other.editRange?.to === this.editRange?.to;
   }
 
   toDOM() {
@@ -22,6 +26,24 @@ class InlineTokenWidget extends WidgetType {
     span.className = `cm-inline-token cm-inline-token-${this.kind}`;
     span.textContent = this.label;
     span.title = this.label;
+    if (this.kind === "link" && this.editRange) {
+      span.tabIndex = 0;
+      span.setAttribute("role", "button");
+      span.setAttribute("aria-label", `Editar enlace: ${this.label}`);
+      const revealMarkdown = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this.editRange.view.dispatch({
+          selection: { anchor: this.editRange.from, head: this.editRange.to },
+          scrollIntoView: true,
+        });
+        this.editRange.view.focus();
+      };
+      span.addEventListener("pointerdown", revealMarkdown);
+      span.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") revealMarkdown(event);
+      });
+    }
     return span;
   }
 
@@ -81,7 +103,7 @@ const createInlineTokenDecorations = ({ getImageTokenLabel, getImageTokenSource,
       }
 
       update(update) {
-        if (update.docChanged || update.viewportChanged) this.decorations = this.buildDecorations(update.view);
+        if (update.docChanged || update.viewportChanged || update.selectionSet) this.decorations = this.buildDecorations(update.view);
       }
 
       buildDecorations(view) {
@@ -106,9 +128,19 @@ const createInlineTokenDecorations = ({ getImageTokenLabel, getImageTokenSource,
         for (const match of fullText.matchAll(linkPattern)) {
           const start = match.index;
           const end = start + match[0].length;
+          const selectionTouchesLink = view.state.selection.ranges.some((range) =>
+            range.empty
+              ? range.from >= start && range.from <= end
+              : range.from < end && range.to > start,
+          );
+          if (selectionTouchesLink) continue;
           decorations.push(
             Decoration.replace({
-              widget: new InlineTokenWidget("link", getLinkTokenLabel(match[1], match[2])),
+              widget: new InlineTokenWidget("link", getLinkTokenLabel(match[1], match[2]), {
+                view,
+                from: start + 1,
+                to: start + 1 + match[1].length,
+              }),
               inclusive: false,
             }).range(start, end),
           );
@@ -162,7 +194,10 @@ const editorTheme = EditorView.theme({
   ".cm-inline-token-link": {
     borderColor: "color-mix(in srgb, #4f8cff 24%, var(--border))",
     backgroundColor: "color-mix(in srgb, #4f8cff 8%, var(--surface))",
+    cursor: "pointer",
+    outlineOffset: "2px",
   },
+  ".cm-inline-token-link:focus-visible": { outline: "2px solid var(--accent)" },
 });
 
 // Android IMEs can send a picture through DataTransfer on beforeinput rather
