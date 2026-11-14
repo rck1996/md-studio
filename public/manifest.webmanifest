@@ -1,6 +1,6 @@
 {
-  "name": "MD.studio",
-  "short_name": "MD.studio",
+  "name": "md.studio",
+  "short_name": "md.studio",
   "id": "/",
   "start_url": "/",
   "scope": "/",
@@ -9,27 +9,15 @@
     "standalone",
     "minimal-ui"
   ],
-  "background_color": "#F1E4CF",
-  "theme_color": "#071A2C",
+  "background_color": "#F6F1E7",
+  "theme_color": "#F6F1E7",
   "description": "Escribe y revisa documentos Markdown. Tus notas se guardan en este navegador.",
   "lang": "es",
   "icons": [
     {
-      "src": "/icons/markeddown-192.png",
-      "sizes": "192x192",
+      "src": "/assets/logo/md-studio-isotipo.png",
+      "sizes": "768x768",
       "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icons/markeddown-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/assets/logo/markeddown-studio-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
       "purpose": "any"
     }
   ],

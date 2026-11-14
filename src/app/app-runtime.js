@@ -306,12 +306,12 @@ const syncResponsiveWorkspace = ({ preserveView = true } = {}) => {
 
 const darkEditorTheme = EditorView.theme(
   {
-    "&": { backgroundColor: "#181c21", color: "#f1f3f6" },
+    "&": { backgroundColor: "#171717", color: "#F6F1E7" },
     ".cm-content": { caretColor: "#ffffff" },
-    ".cm-gutters": { backgroundColor: "#181c21", color: "#9da7b3", borderRightColor: "#313843" },
-    ".cm-activeLine": { backgroundColor: "#20252c" },
-    ".cm-activeLineGutter": { backgroundColor: "#20252c", color: "#c7d0da" },
-    ".cm-selectionBackground": { backgroundColor: "#385247 !important" },
+    ".cm-gutters": { backgroundColor: "#171717", color: "#B9B3A8", borderRightColor: "#494743" },
+    ".cm-activeLine": { backgroundColor: "#242321" },
+    ".cm-activeLineGutter": { backgroundColor: "#242321", color: "#F6F1E7" },
+    ".cm-selectionBackground": { backgroundColor: "#6A321F !important" },
   },
   { dark: true },
 );

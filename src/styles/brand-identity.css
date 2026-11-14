@@ -1,0 +1,181 @@
+:root {
+  color-scheme: light;
+  --bg: #F6F1E7;
+  --bg-soft: #F1EBE1;
+  --surface: #FBF8F1;
+  --surface-soft: #F5F0E7;
+  --surface-muted: #EDE7DD;
+  --surface-elevated: #FFFCF6;
+  --border: #D4CCC1;
+  --border-strong: #B9B3A8;
+  --text: #292724;
+  --text-strong: #111111;
+  --muted: #6B6862;
+  --muted-strong: #44413D;
+  --accent: #E84E0F;
+  --accent-strong: #C83B00;
+  --accent-soft: #FBE4D8;
+  --accent-contrast: #FFFFFF;
+  --code-bg: #171717;
+  --code-text: #F6F1E7;
+  --font-ui: "Inter", "Geist", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-code: "JetBrains Mono", "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  --type-display: "Inter", "Geist", ui-sans-serif, system-ui, sans-serif;
+  --type-label: "Inter", "Geist", ui-sans-serif, system-ui, sans-serif;
+  --shadow-sm: 0 1px 3px #11111112;
+  --shadow-md: 0 5px 16px #11111114;
+  --shadow-lg: 0 12px 32px #1111111A;
+}
+
+.workspace[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #171717;
+  --bg-soft: #1D1D1B;
+  --surface: #1D1D1B;
+  --surface-soft: #242321;
+  --surface-muted: #2C2A27;
+  --surface-elevated: #201F1D;
+  --border: #494743;
+  --border-strong: #6C6962;
+  --text: #E8E2D8;
+  --text-strong: #F6F1E7;
+  --muted: #B9B3A8;
+  --muted-strong: #D6D0C6;
+  --accent: #F26934;
+  --accent-strong: #FF9B70;
+  --accent-soft: #3B241B;
+  --accent-contrast: #171717;
+  --code-bg: #111111;
+  --code-text: #F6F1E7;
+  --shadow-sm: 0 1px 3px #00000030;
+  --shadow-md: 0 5px 16px #00000038;
+  --shadow-lg: 0 12px 32px #0000004A;
+}
+
+.workspace::before {
+  background: none;
+  opacity: 0;
+}
+
+.workspace.studio-v2 {
+  --studio-v2-navy: #111111;
+  --studio-v2-cream: #F6F1E7;
+  --studio-v2-orange: #E84E0F;
+  --studio-v2-surface: var(--surface-elevated);
+}
+
+.workspace[data-theme="dark"].studio-v2 {
+  --studio-v2-navy: #111111;
+  --studio-v2-cream: #F6F1E7;
+  --studio-v2-orange: #F26934;
+}
+
+.workspace .topbar {
+  border-color: var(--border);
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow-sm);
+}
+
+.workspace .brand {
+  gap: 8px;
+}
+
+.workspace.studio-v2 .topbar .brand-wordmark {
+  display: block;
+  flex: 0 1 auto;
+  width: clamp(124px, 13vw, 176px);
+  height: auto;
+  max-width: 100%;
+  border: 0;
+  border-radius: 0;
+  background: transparent !important;
+  object-fit: contain;
+}
+
+.workspace .brand-copy h1 {
+  font-family: var(--font-ui);
+  font-weight: 750;
+  letter-spacing: -0.04em;
+}
+
+.workspace .brand-copy h1::after {
+  content: none;
+}
+
+.workspace .brand-copy h1 span,
+.workspace.studio-v2 .topbar .brand-copy h1 span {
+  color: var(--accent);
+}
+
+.workspace.studio-v2 .topbar {
+  border-color: var(--border);
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow-sm);
+}
+
+.workspace.studio-v2[data-theme="dark"] .topbar {
+  --surface-elevated: #F6F1E7;
+  --surface-soft: #F1EBE1;
+  --border: #D4CCC1;
+  --text: #292724;
+  --text-strong: #111111;
+  --muted: #6B6862;
+  --muted-strong: #44413D;
+  --accent: #E84E0F;
+  --accent-contrast: #FFFFFF;
+}
+
+.workspace.studio-v2 .topbar > .studio-search-field,
+.workspace.studio-v2 .topbar .button-cluster :is(button, summary) {
+  border-color: var(--border);
+  background: var(--surface-soft);
+  color: var(--text-strong);
+}
+
+.workspace.studio-v2 .topbar > .studio-search-field :is(span, kbd) {
+  color: var(--muted);
+}
+
+.workspace.studio-v2 .topbar .button-cluster .studio-export,
+.workspace.studio-v2 .topbar .button-cluster .writing-primary,
+.writing-workspace.studio-v2 .topbar .button-cluster .studio-export {
+  border-color: var(--accent) !important;
+  background: var(--accent) !important;
+  color: #FFFFFF !important;
+}
+
+.workspace.studio-v2 .side-tabs {
+  border-color: var(--border);
+  background: var(--surface-soft);
+}
+
+.workspace.studio-v2 .side-tabs :is(button, .nav-icon) {
+  color: var(--muted-strong);
+}
+
+.workspace.studio-v2 .side-tabs button.is-selected,
+.workspace.studio-v2 .side-tabs button.is-selected .nav-icon {
+  color: var(--accent-contrast);
+  background: var(--accent);
+  box-shadow: none;
+}
+
+.workspace.studio-v2 .studio-v2-home-hero {
+  background: var(--surface-elevated);
+  color: var(--text);
+}
+
+.workspace.studio-v2 .studio-v2-home-hero h2 {
+  color: var(--text-strong);
+}
+
+.workspace.studio-v2 .studio-v2-hero-art {
+  background: var(--text-strong);
+  color: var(--bg);
+}
+
+@media (max-width: 600px) {
+  .workspace.studio-v2 .topbar .brand-wordmark {
+    width: min(154px, 42vw);
+  }
+}
